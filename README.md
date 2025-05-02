@@ -1,4 +1,4 @@
-# 🚀 DoorDash Clone – Food Delivery App
+# 🚀 Anything Door – Food Delivery App
 
 A full-stack food delivery web application inspired by DoorDash. Built using modern technologies with a monolithic architecture and modular design.
 
@@ -38,6 +38,6 @@ A full-stack food delivery web application inspired by DoorDash. Built using mod
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/doordash-clone.git
-cd doordash-clone
+git clone https://github.com/timphamvn33/AnythingDoor
+cd anythingdoor
 ```
