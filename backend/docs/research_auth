@@ -1,0 +1,92 @@
+To specifically focus on how hackers might try to **steal user passwords**, here are the **most common types of hacking techniques** used for this goal — each with real-world relevance:
+
+---
+
+## 🔑 1. **Brute Force Attack**
+
+- **How it works**: Repeatedly tries every possible password combination.
+- **Tools used**: Hydra, John the Ripper, Hashcat.
+- **Defense**: Use strong, long passwords and hash them with bcrypt and salt.
+
+---
+
+## 📚 2. **Dictionary Attack**
+
+- **How it works**: Tries passwords from a list of common or leaked passwords (e.g., `123456`, `qwerty`, `letmein`).
+- **Defense**: Block common passwords, enforce complexity.
+
+---
+
+## ♻️ 3. **Credential Stuffing**
+
+- **How it works**: Uses leaked username-password pairs from other websites (e.g., via a data breach).
+- **Why it works**: People reuse passwords across sites.
+- **Defense**: Enforce 2FA, use rate limiting, monitor for suspicious logins.
+
+---
+
+## 🌈 4. **Rainbow Table Attack**
+
+- **How it works**: Looks up precomputed hash-password pairs for cracking weak hashed passwords.
+- **Defense**: Use strong hashing (like `bcrypt`, `argon2`) with a **unique salt**.
+
+---
+
+## 🧑‍🎓 5. **Phishing**
+
+- **How it works**: Tricks users into entering passwords on fake websites.
+- **Example**: "Your account is locked — log in to fix it" → leads to fake login page.
+- **Defense**: Use email/link scanners, educate users, implement domain-level security (e.g., SPF, DMARC).
+
+---
+
+## 📥 6. **Keylogging**
+
+- **How it works**: Malware records every keystroke on a user's device, capturing passwords as they type.
+- **Defense**: Use antivirus, secure OS policies, avoid public/shared devices.
+
+---
+
+## 📡 7. **Man-in-the-Middle (MitM) Attack**
+
+- **How it works**: Intercepts data between the user and the server (often on public Wi-Fi).
+- **Goal**: Capture login credentials sent over unencrypted channels.
+- **Defense**: Enforce HTTPS, HSTS, use secure VPNs.
+
+---
+
+## ⚙️ 8. **Social Engineering**
+
+- **How it works**: Tricks users into revealing their credentials (e.g., fake tech support).
+- **Defense**: Train users to verify requests, use identity verification.
+
+---
+
+## 🔄 9. **Session Hijacking**
+
+- **How it works**: Steals session tokens (e.g., from cookies) to impersonate users.
+- **Defense**: Use `HttpOnly`, `Secure` cookies, rotate sessions on login/logout.
+
+---
+
+## 🧬 10. **Reverse Engineering or Source Code Leaks**
+
+- **How it works**: Examines leaked frontend/backend code or APIs for hardcoded passwords, token flaws, or insecure logic.
+- **Defense**: Never commit secrets; use `.env` files and secret managers.
+
+---
+
+## ✅ Summary Table
+
+| Attack Type         | Target               | Main Defense            |
+| ------------------- | -------------------- | ----------------------- |
+| Brute Force         | Weak passwords       | Bcrypt, rate limiting   |
+| Phishing            | Human trust          | 2FA, user training      |
+| Credential Stuffing | Password reuse       | 2FA, login monitoring   |
+| Rainbow Table       | Weak hash algorithms | Salted hashes           |
+| Keylogging          | User's device        | Antivirus, secure input |
+| MITM                | Network traffic      | HTTPS, VPN              |
+
+---
+
+Would you like this turned into a printable infographic or integrated into your project’s security documentation?

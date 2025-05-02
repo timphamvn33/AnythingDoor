@@ -6,10 +6,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from '../use-cases/auth.service';
+import { AuthService } from '../use-cases/services/auth.service';
 import { JwtAuthGuard } from '../use-cases/guards/jwt-auth.guard';
 import { LoginDto } from '../dto/login.dto';
 import { Public } from '../decorators/public.decorators';
+import type { SignupDto } from '../dto/signup.dto';
+import type { RefreshTokenDto } from '../dto/refreshToken.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -30,6 +32,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req) {
+    console.log('user: ', req.user);
     return this.authService.logout(req.user);
   }
 
