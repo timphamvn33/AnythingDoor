@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  # PostgreSQL database
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: anythingdoor
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  # Backend (NestJS app)
+  backend:
+    build:
+      context: ./backend
+    container_name: nestjs-backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: anythingdoor
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - backend-network
+    command: ["npm", "run", "start:prod"]
+
+# Volumes to persist DB data
+volumes:
+  db-data:
+
+# Networks for inter-service communication
+networks:
+  backend-network:
+    driver: bridge

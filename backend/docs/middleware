@@ -1,0 +1,1 @@
+[Client] → [Nginx / Kong / Traefik] → [NestJS App / Service]

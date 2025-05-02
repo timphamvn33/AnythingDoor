@@ -1,0 +1,27 @@
+{
+  "name": "anythingdoor",
+  "version": "1.0.0",
+  "description": "A full-stack food delivery web application inspired by DoorDash. Built using modern technologies with a monolithic architecture and modular design.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timphamvn33/AnythingDoor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/timphamvn33/AnythingDoor/issues"
+  },
+  "homepage": "https://github.com/timphamvn33/AnythingDoor#readme",
+  "private": true,
+  "workspaces": [
+    "backend/*",
+    "db/*",
+    "frontend/*"
+  ]
+}

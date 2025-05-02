@@ -1,0 +1,22 @@
+src/
+├── auth/
+│   ├── controllers/
+│   │   └── auth.controller.ts
+│   ├── use-cases/
+│   │   ├── auth.service.ts         # Business logic
+│   │   ├── strategies/
+│   │   │   ├── jwt.strategy.ts
+│   │   │   └── google.strategy.ts
+│   │   ├── guards/
+│   │   │   ├── jwt-auth.guard.ts
+│   │   │   └── roles.guard.ts
+│   ├── domain/
+│   │   ├── auth.entity.ts          # Optional entity/model
+│   │   └── auth.interface.ts
+│   ├── dto/
+│   │   ├── login.dto.ts
+│   │   ├── register.dto.ts
+│   │   └── oauth.dto.ts
+│   ├── constants/
+│   │   └── jwt.constants.ts
+│   └── auth.module.ts

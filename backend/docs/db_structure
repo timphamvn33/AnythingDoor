@@ -1,0 +1,95 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table users {
+  id uuid [pk]
+  name varchar
+  email varchar [unique]
+  password varchar
+  phone varchar
+  role varchar  // customer, driver, admin
+  created_at timestamp
+  update_at timestamp
+}
+
+Table restaurants {
+  id uuid [pk]
+  name varchar
+  description text
+  owner_id uuid [ref: > users.id]
+  created_at timestamp
+  update_at timestamp
+}
+
+Table menu_items {
+  id uuid [pk]
+  name varchar
+  description text
+  price decimal
+  restaurant_id uuid [ref: > restaurants.id]
+  created_at timestamp
+  update_at timestamp
+}
+
+Table orders {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  address_id uuid [ref: > addresses.id]
+  payment_id uuid [ref: > payments.id]
+  status other_status  // pending, delivered, canceled
+  total decimal
+  created_at timestamp
+  update_at timestamp
+}
+
+Table order_items {
+  id uuid [pk]
+  order_id uuid [ref: > orders.id]
+  menu_item_id uuid [ref: > menu_items.id]
+  quantity int
+  price decimal
+}
+
+Table addresses {
+  id uuid [pk]
+  restaurant_id uuid [ref: > restaurants.id]
+  user_id uuid [ref: > users.id]
+  street varchar
+  city varchar
+  state varchar
+  zip varchar
+  country varchar
+}
+
+Table payments {
+  id uuid [pk]
+  method method_type  // card, cash
+  amount decimal
+  status payment_status  // paid, failed, pending
+  paid_at timestamp
+}
+
+enum method_type {
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+  APPLE_PAY
+  GOOGLE_PAY
+  CASH_APP
+  PAYPAL
+}
+
+enum payment_status {
+  paid
+  failed
+  pending
+}
+
+enum other_status {
+  pending
+  pickup
+  delivered
+  cancelled
+}
+
+https://dbdiagram.io/d/681382231ca52373f51ac4f4
