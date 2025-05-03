@@ -72,6 +72,7 @@ export class AuthService {
       const user = await this.userService.findById(
         payload.sub,
       );
+      console.log('hello refresh: ', user);
       if (!user) throw new UnauthorizedException();
       return this.generateToken(user);
     } catch (error) {

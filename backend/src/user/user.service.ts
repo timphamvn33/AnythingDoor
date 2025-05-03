@@ -7,7 +7,6 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   createUser(data: CreateUserDto) {
-    console.log('hello create user');
     return this.prisma.user.create({ data });
   }
 
