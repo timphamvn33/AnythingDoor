@@ -21,6 +21,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         'isPublic',
         [context.getHandler(), context.getClass()],
       );
+    console.log('check jwt token...');
     if (isPublic) return true;
     return super.canActivate(context);
   }
@@ -28,6 +29,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleRequest(err: any, user: any) {
     if (err || !user) {
+      console.log('error in handler request');
       throw new UnauthorizedException(
         'Invalid or missing JWT token',
       );

@@ -7,11 +7,22 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   createUser(data: CreateUserDto) {
-    console.log('hello create user');
     return this.prisma.user.create({ data });
   }
 
   deleteUserbyId(id: string) {
     return this.prisma.user.delete({ where: { id: id } });
+  }
+
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email: email },
+    });
+  }
+
+  findById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id: id },
+    });
   }
 }
