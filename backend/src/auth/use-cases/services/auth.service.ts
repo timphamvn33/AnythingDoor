@@ -9,6 +9,7 @@ import type { SignupDto } from 'src/auth/dto/signup.dto';
 import * as bcrypt from 'bcrypt';
 import type { LoginDto } from 'src/auth/dto/login.dto';
 import type { RefreshTokenDto } from 'src/auth/dto/refreshToken.dto';
+import { JWT_CONSTANTS } from 'src/auth/constants/jwt.constants';
 @Injectable()
 export class AuthService {
   constructor(
@@ -66,7 +67,9 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(
         dto.refreshToken,
         {
-          secret: process.env.JWT_REFRESH_SECRET,
+          secret:
+            process.env.JWT_REFRESH_SECRET ||
+            JWT_CONSTANTS.REFRESH_TOKEN.SECRET,
         },
       );
       const user = await this.userService.findById(
@@ -93,12 +96,20 @@ export class AuthService {
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_ACCESS_SECRET,
-        expiresIn: '15m',
+        secret:
+          process.env.JWT_ACCESS_SECRET ||
+          JWT_CONSTANTS.ACCESS_TOKEN.SECRET,
+        expiresIn:
+          process.env.JWT_EXPIRES_IN ||
+          JWT_CONSTANTS.ACCESS_TOKEN.EXPIRES_IN,
       }),
       this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: '7d',
+        secret:
+          process.env.JWT_REFRESH_SECRET ||
+          JWT_CONSTANTS.REFRESH_TOKEN.SECRET,
+        expiresIn:
+          process.env.JWT_REFRESH_EXPIRES_IN ||
+          JWT_CONSTANTS.REFRESH_TOKEN.EXPIRES_IN,
       }),
     ]);
 
