@@ -3,7 +3,9 @@ import {
   IsString,
   MinLength,
   MaxLength,
+  IsEnum,
 } from 'class-validator';
+import { Role } from '@db/generated/prisma/client';
 
 export class SignupDto {
   @IsString()
@@ -20,6 +22,9 @@ export class SignupDto {
   @IsString()
   phone: string;
 
-  @IsString()
-  role: string;
+  @IsEnum(Role, {
+    message:
+      'Role must be one of buyer, admin, driver, restaurant_owner',
+  })
+  role: Role[];
 }

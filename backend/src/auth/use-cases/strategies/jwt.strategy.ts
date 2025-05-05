@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { JwtPayload } from '../interfaces/auth.interface';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/user.service';
 import { JWT_CONSTANTS } from 'src/auth/constants/jwt.constants';

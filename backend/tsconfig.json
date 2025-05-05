@@ -13,7 +13,9 @@
     "incremental": true,
     "types": ["node", "jest"],
     "paths": {
-      "@db/*": ["../db/*"]
+      "@db/*": ["../db/*"],
+      "@auth/*": ["src/auth/*"],
+      "@src/*": ["src/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

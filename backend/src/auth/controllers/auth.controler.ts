@@ -8,10 +8,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../use-cases/services/auth.service';
 import { JwtAuthGuard } from '../use-cases/guards/jwt-auth.guard';
-import { LoginDto } from '../dto/login.dto';
+import { LoginDto } from '../use-cases/dto/login.dto';
 import { Public } from '../decorators/public.decorators';
-import type { SignupDto } from '../dto/signup.dto';
-import type { RefreshTokenDto } from '../dto/refreshToken.dto';
+import type { SignupDto } from '../use-cases/dto/signup.dto';
+import type { RefreshTokenDto } from '../use-cases/dto/refreshToken.dto';
+import { Roles } from '../decorators/role.decorators';
+import { RolesGuard } from '../use-cases/guards/roles.guard';
+import { Role } from '@db/generated/prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -32,7 +35,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req) {
-    console.log('user: ', req.user);
     return this.authService.logout(req.user);
   }
 
@@ -48,6 +50,13 @@ export class AuthController {
     @Body() refreshTokenDto: RefreshTokenDto,
   ) {
     return this.authService.refreshToken(refreshTokenDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.admin) // Applying the Roles decorator with Role.admin
+  @Get('admin')
+  async getAdminData() {
+    return { data: 'only for admin' };
   }
 
   //   could have rate limiting

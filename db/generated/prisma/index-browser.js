@@ -202,6 +202,13 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.Role = exports.$Enums.Role = {
+  buyer: 'buyer',
+  admin: 'admin',
+  driver: 'driver',
+  restaurant_owner: 'restaurant_owner'
+};
+
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   pending: 'pending',
   pickup: 'pickup',
