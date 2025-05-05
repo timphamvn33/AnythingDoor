@@ -1,14 +1,14 @@
-import { UserService } from '../../../user/user.service';
+import { UserService } from '@src/user/user.service';
 import {
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import type { SignupDto } from 'src/auth/dto/signup.dto';
+import type { SignupDto } from 'src/auth/use-cases/dto/signup.dto';
 import * as bcrypt from 'bcrypt';
-import type { LoginDto } from 'src/auth/dto/login.dto';
-import type { RefreshTokenDto } from 'src/auth/dto/refreshToken.dto';
+import type { LoginDto } from 'src/auth/use-cases/dto/login.dto';
+import type { RefreshTokenDto } from 'src/auth/use-cases/dto/refreshToken.dto';
 import { JWT_CONSTANTS } from 'src/auth/constants/jwt.constants';
 @Injectable()
 export class AuthService {

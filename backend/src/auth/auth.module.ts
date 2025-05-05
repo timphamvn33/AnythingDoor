@@ -5,12 +5,13 @@ import {
   ConfigModule,
   ConfigService,
 } from '@nestjs/config';
-import { UserModule } from '../user/user.module';
+import { UserModule } from '@src/user/user.module';
 import { AuthController } from './controllers/auth.controler';
 import { AuthService } from './use-cases/services/auth.service';
 import { JwtStrategy } from './use-cases/strategies/jwt.strategy';
 import { JwtAuthGuard } from './use-cases/guards/jwt-auth.guard';
 import { JWT_CONSTANTS } from './constants/jwt.constants';
+import { RolesGuard } from './use-cases/guards/roles.guard';
 
 @Module({
   imports: [
@@ -35,7 +36,12 @@ import { JWT_CONSTANTS } from './constants/jwt.constants';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtAuthGuard,
+    RolesGuard,
+  ],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

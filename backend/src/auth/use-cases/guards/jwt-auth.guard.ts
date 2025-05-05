@@ -6,6 +6,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import type { Observable } from 'rxjs';
+import { IS_PUBLIC_KEY } from '@auth/decorators/public.decorators';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -18,7 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic =
       this.reflector.getAllAndOverride<boolean>(
-        'isPublic',
+        IS_PUBLIC_KEY,
         [context.getHandler(), context.getClass()],
       );
     console.log('check jwt token...');
