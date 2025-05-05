@@ -28,6 +28,7 @@ module.exports = [
           semi: true,
           printWidth: 60,
           tabWidth: 2,
+          endOfLine: 'lf',
         },
       ],
     },
