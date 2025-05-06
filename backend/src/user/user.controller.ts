@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Delete, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '@auth/use-cases/guards/jwt-auth.guard';
 import type { UpdateUserDto } from './dto/update-user.dto';
