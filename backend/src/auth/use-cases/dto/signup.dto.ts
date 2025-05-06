@@ -1,10 +1,4 @@
-import {
-  IsEmail,
-  IsString,
-  MinLength,
-  MaxLength,
-  IsEnum,
-} from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength, IsEnum } from 'class-validator';
 import { Role } from '@db/generated/prisma/client';
 
 export class SignupDto {
@@ -23,8 +17,7 @@ export class SignupDto {
   phone: string;
 
   @IsEnum(Role, {
-    message:
-      'Role must be one of buyer, admin, driver, restaurant_owner',
+    message: 'Role must be one of buyer, admin, driver, restaurant_owner',
   })
   role: Role[];
 }

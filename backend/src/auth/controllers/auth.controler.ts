@@ -1,20 +1,15 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from '../use-cases/services/auth.service';
 import { JwtAuthGuard } from '../use-cases/guards/jwt-auth.guard';
 import { LoginDto } from '../use-cases/dto/login.dto';
 import { Public } from '../decorators/public.decorators';
 import type { SignupDto } from '../use-cases/dto/signup.dto';
-import type { RefreshTokenDto } from '../use-cases/dto/refreshToken.dto';
+import type { RefreshTokenDto } from '../use-cases/dto/refresh-token.dto';
 import { Roles } from '../decorators/role.decorators';
 import { RolesGuard } from '../use-cases/guards/roles.guard';
 import { Role } from '@db/generated/prisma/client';
+import type { UpdatePasswordDto } from '@auth/use-cases/dto/update-password.dto';
+import { User } from '@src/user/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -34,21 +29,19 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Req() req) {
-    return this.authService.logout(req.user);
+  async logout(@User() user) {
+    return this.authService.logout(user);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Req() req) {
-    return req.user;
+  @Post('update')
+  async update(@Body() updatePassword: UpdatePasswordDto) {
+    return this.authService.updatePassword(updatePassword);
   }
 
   @Public()
   @Post('refresh-token')
-  async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
-  ) {
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto);
   }
 
