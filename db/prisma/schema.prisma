@@ -65,7 +65,11 @@ model Restaurant {
   id          String    @id @default(uuid())
   name        String
   description String?
-  ownerId     String    @unique
+  ownerId     String
+  logoUrl     String
+  category   String[]
+  openHrs     String
+  closeHrs    String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   owner       User      @relation(fields: [ownerId], references: [id])

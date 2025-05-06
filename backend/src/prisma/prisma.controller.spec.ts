@@ -5,14 +5,11 @@ describe('PrismaController', () => {
   let controller: PrismaController;
 
   beforeEach(async () => {
-    const module: TestingModule =
-      await Test.createTestingModule({
-        controllers: [PrismaController],
-      }).compile();
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [PrismaController],
+    }).compile();
 
-    controller = module.get<PrismaController>(
-      PrismaController,
-    );
+    controller = module.get<PrismaController>(PrismaController);
   });
 
   it('should be defined', () => {
