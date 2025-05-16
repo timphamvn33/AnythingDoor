@@ -17,9 +17,8 @@ export class RestaurantService {
     });
   }
 
-  async updateRestaurant(data: UpdateRestaurantDto, ownerId: string) {
-    const { id, ...updateData } = data;
-    return this.prisma.restaurant.update({ where: { id }, data: { ...updateData, ownerId } });
+  async updateRestaurant(id: string, ownerId: string, dto: UpdateRestaurantDto) {
+    return this.prisma.restaurant.update({ where: { id }, data: { ...dto, ownerId } });
   }
 
   async deleteRestaurantById(id: string): Promise<void> {

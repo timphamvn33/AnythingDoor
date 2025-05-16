@@ -149,6 +149,9 @@ exports.Prisma.MenuItemScalarFieldEnum = {
   name: 'name',
   description: 'description',
   price: 'price',
+  available: 'available',
+  imgUrl: 'imgUrl',
+  category: 'category',
   restaurantId: 'restaurantId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -192,6 +195,16 @@ exports.Prisma.PaymentScalarFieldEnum = {
   paidAt: 'paidAt'
 };
 
+exports.Prisma.DeliveryScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  driverId: 'driverId',
+  status: 'status',
+  pickupTime: 'pickupTime',
+  deliveryTime: 'deliveryTime',
+  notes: 'notes'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -215,8 +228,8 @@ exports.Role = exports.$Enums.Role = {
 
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   pending: 'pending',
-  pickup: 'pickup',
-  delivered: 'delivered',
+  ready: 'ready',
+  done: 'done',
   cancelled: 'cancelled'
 };
 
@@ -236,6 +249,13 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   pending: 'pending'
 };
 
+exports.DeliverStatus = exports.$Enums.DeliverStatus = {
+  pickup: 'pickup',
+  en_route: 'en_route',
+  delivered: 'delivered',
+  cancelled: 'cancelled'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Restaurant: 'Restaurant',
@@ -243,7 +263,8 @@ exports.Prisma.ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   Address: 'Address',
-  Payment: 'Payment'
+  Payment: 'Payment',
+  Delivery: 'Delivery'
 };
 
 /**
