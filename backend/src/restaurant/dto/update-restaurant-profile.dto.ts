@@ -3,10 +3,6 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 export class UpdateRestaurantDto {
   @IsOptional()
   @IsString()
-  id?: string;
-
-  @IsOptional()
-  @IsString()
   name?: string;
 
   @IsOptional()

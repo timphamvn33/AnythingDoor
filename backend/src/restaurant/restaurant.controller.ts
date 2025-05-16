@@ -26,9 +26,13 @@ export class RestaurantController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.restaurant_owner)
-  @Post('update')
-  updateRestaurant(@User('userId') userId, @Body() body: UpdateRestaurantDto) {
-    return this.restaurantService.updateRestaurant(body, userId);
+  @Post('update/:id')
+  updateRestaurant(
+    @Param('id') id: string,
+    @User('userId') owenerId,
+    @Body() body: UpdateRestaurantDto,
+  ) {
+    return this.restaurantService.updateRestaurant(id, owenerId, body);
   }
 
   // Only admin can delete the restaurant

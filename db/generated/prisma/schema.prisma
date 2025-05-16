@@ -34,8 +34,8 @@ enum PaymentStatus {
 
 enum OrderStatus {
   pending
-  pickup
-  delivered
+  ready
+  done
   cancelled
 }
 
@@ -46,18 +46,25 @@ enum Role {
   restaurant_owner
 }
 
-model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  password  String
-  phone     String?
-  role      Role[]    @default([buyer]) // customer, driver, admin
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  addresses Address[] // Relationship to address
-  orders    Order[] // Relationship to orders
+enum DeliverStatus {
+  pickup
+  en_route
+  delivered
+  cancelled
+}
 
+model User {
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  password   String
+  phone      String?
+  role       Role[]       @default([buyer]) // customer, driver, admin
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  addresses  Address[] // Relationship to address
+  orders     Order[] // Relationship to orders
+  deliveries Delivery[]   @relation("DriverDeliveries")
   Restaurant Restaurant[]
 }
 
@@ -82,6 +89,9 @@ model MenuItem {
   name         String
   description  String?
   price        Float
+  available    Boolean     @default(true)
+  imgUrl       String
+  category     String[]    @default([])
   restaurantId String
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -102,6 +112,7 @@ model Order {
   address    Address     @relation(fields: [addressId], references: [id])
   payment    Payment     @relation(fields: [paymentId], references: [id])
   orderItems OrderItem[]
+  delivery   Delivery?
 }
 
 model OrderItem {
@@ -136,4 +147,17 @@ model Payment {
   status PaymentStatus
   paidAt DateTime      @default(now())
   orders Order[] // One payment can relate to multiple orders
+}
+
+model Delivery {
+  id           String        @id @default(uuid())
+  orderId      String        @unique
+  driverId     String?
+  status       DeliverStatus
+  pickupTime   DateTime?
+  deliveryTime DateTime?
+  notes        String?
+
+  order  Order @relation(fields: [orderId], references: [id])
+  driver User? @relation("DriverDeliveries", fields: [driverId], references: [id])
 }

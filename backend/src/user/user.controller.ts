@@ -18,7 +18,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('update_profile')
+  @Post('update-profile')
   updateProfile(@User('userId') userId, @Body() data: UpdateUserDto) {
     return this.userService.updateUser(data, userId);
   }
