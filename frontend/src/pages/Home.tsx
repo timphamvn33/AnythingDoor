@@ -7,14 +7,26 @@ import Logo from '@/components/shared/Logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast, Toaster } from 'sonner';
 
 export default function Home() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const toastMsg = location.state?.toastMessage;
+    if (toastMsg) {
+      toast.success(toastMsg);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
   return (
     <>
       <PageWrapper>
         <Navbar />
+        <Toaster position="top-center" richColors />
         <main className="min-h-screen flex items-center justify-center px-4">
           <div className="text-center max-w-xl mx-auto">
             {/* Logo */}

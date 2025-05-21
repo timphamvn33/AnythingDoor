@@ -1,4 +1,3 @@
-// src/App.tsx
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
@@ -6,6 +5,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import LandingPage from './pages/Landing';
 import StorePage from './pages/Store';
+import Profile from './pages/Profile';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -16,6 +16,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/landing/store" element={<StorePage />} />
       </Routes>
