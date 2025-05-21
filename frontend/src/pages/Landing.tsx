@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
@@ -8,7 +8,8 @@ import Sidebar from '@/components/layout/SideNavbar';
 import { ArrowLeftRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast, Toaster } from 'sonner';
 
 export default function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -16,8 +17,15 @@ export default function LandingPage() {
   const [distance, setDistance] = useState('');
   const [checkedCategories, setCheckedCategories] = useState<string[]>([]);
   const [price, setPrice] = useState('$');
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const location = useLocation();
+
+  useEffect(() => {
+    const toastMsg = location.state?.toastMessage;
+    if (toastMsg) {
+      toast.success(toastMsg);
+    }
+  });
 
   const resetFilters = () => {
     setDistance('');
@@ -40,7 +48,7 @@ export default function LandingPage() {
   return (
     <PageWrapper>
       <Navbar />
-
+      <Toaster position="top-center" richColors />
       <div className="flex h-[calc(100vh-64px)] relative">
         {/* Toggle Button (mobile only) */}
         <button

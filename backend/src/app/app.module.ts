@@ -21,6 +21,7 @@ import { OrderService } from '@src/orders/order.service';
 import { MenuItemService } from '@src/menu-items/menu-item.service';
 import { OrderItemService } from '@src/order-items/order-item.service';
 import { DeliveryService } from '@src/delivery/delivery.service';
+import { PrismaService } from '@src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { DeliveryService } from '@src/delivery/delivery.service';
     DeliveryController,
   ],
   providers: [
+    PrismaService,
     RestaurantService,
     PaymentService,
     OrderService,
