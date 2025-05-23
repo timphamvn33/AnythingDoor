@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import * as authService from '@/services/auth.service';
 import * as userService from '@/services/user.service';
-import type { LogininPayload, SignupPayload } from '@/schemas/auth.schema';
+import type { LogininPayload, SignupPayload, UserPaswordUpdate } from '@/schemas/auth.schema';
 import type { User } from '@/types/user.types';
 import type { UpdateUserData } from '@/schemas/user.schema';
 
@@ -13,6 +13,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   updateUser: (data: UpdateUserData) => Promise<User>;
+  updateUserPasword: (data: UserPaswordUpdate) => Promise<User>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,8 +45,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return userChange;
   };
 
+  const updateUserPasword = async (data: UserPaswordUpdate) => {
+    const userPasswordUpdate = await authService.updatePassword(data);
+    setUser(userPasswordUpdate);
+    return userPasswordUpdate;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, setUser, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, login, signup, logout, setUser, updateUser, updateUserPasword }}
+    >
       {children}
     </AuthContext.Provider>
   );

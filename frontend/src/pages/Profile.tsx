@@ -4,36 +4,47 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { User, Mail, LogOut, X, Phone, Key, Loader2 } from 'lucide-react';
+import { User as UserIcon, Mail, LogOut, X, Phone, Key, Loader2 } from 'lucide-react';
 import PageWrapper from '../components/layout/PageWrapper';
 import Logo from '@/components/shared/Logo';
 import UserAvatar from '@/components/shared/UserAvtDefault';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
+import { useForm, useWatch } from 'react-hook-form';
+import { fullUserUpdateSchema, type FullUserUpdate } from '@/schemas/auth.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  console.log('useAuth context values:', useAuth());
-  const { user, logout, updateUser } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { user, logout, updateUser, updateUserPasword } = useAuth();
+  const [editPassword, setEditPassword] = useState(false);
 
-  const [userUpdate, setUserUpdate] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    role: [] as ('buyer' | 'admin' | 'driver' | 'restaurant_owner')[],
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<FullUserUpdate>({
+    resolver: zodResolver(fullUserUpdateSchema),
+  });
+
+  const watchedFields = useWatch({ control });
+  const ableUpdate = Object.entries(watchedFields).some(([key, value]) => {
+    return value && value !== (user as any)?.[key];
   });
 
   useEffect(() => {
     if (user) {
-      setUserUpdate({
+      reset({
         name: user.name || '',
         email: user.email || '',
         phone: user.phone || '',
-        role: user.role ? (Array.isArray(user.role) ? user.role : [user.role]) : [],
       });
+      setValue('id', user.id);
     }
-  }, [user]);
+  }, [user, reset, setValue]);
 
   const handleLogout = async () => {
     try {
@@ -44,27 +55,43 @@ export default function ProfilePage() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserUpdate(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-  const handleUpdate = async () => {
-    try {
-      setLoading(true);
-      await updateUser({
-        name: userUpdate.name,
-        email: userUpdate.email,
-        phone: userUpdate.phone,
-        role: userUpdate.role,
-      });
-      toast.success('User profile updated successfully');
-    } catch (error: any) {
-      console.error('Error updating user:', error);
-      toast.error('Failed to update user');
-    } finally {
-      setLoading(false);
+  const handleUpdate = async (userUpdate: FullUserUpdate) => {
+    //Update user info
+    console.log('hello udate start');
+    if (ableUpdate) {
+      try {
+        await updateUser({
+          name: userUpdate.name,
+          email: userUpdate.email,
+          phone: userUpdate.phone,
+          // role: userUpdate.role,
+        });
+        console.log('hello uodate info');
+        toast.success('Profile updated!', { id: 'profile-toast' });
+      } catch (error) {
+        toast.error('Failed to update the profile infos.');
+      }
+    }
+
+    //If password is provided, update it separately
+    const inputPassword = userUpdate.password;
+    if (editPassword && inputPassword?.trim()) {
+      try {
+        if (!user?.id) {
+          toast.error('Unable to find the user ID for password update!');
+        } else {
+          await updateUserPasword({
+            id: user.id,
+            password: inputPassword,
+          });
+          setTimeout(() => {
+            toast.success('Password updated!', { id: 'password-toast' });
+          }, 1000);
+        }
+        setEditPassword(false);
+      } catch (error: any) {
+        toast.error('Failed to update user or password.');
+      }
     }
   };
 
@@ -91,95 +118,125 @@ export default function ProfilePage() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <div>
-              <span className="font-semibold text-sm text-white/80">Your Information:</span>
-            </div>
+            <form onSubmit={handleSubmit(handleUpdate)} className="space-y-6">
+              <div>
+                <span className="font-semibold text-sm text-white/80">Your Information:</span>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name" className="flex items-center gap-2">
-                <User className="w-4 h-4" /> Name
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                value={userUpdate.name}
-                onChange={handleChange}
-                className="bg-zinc-800 border-white/20 text-white"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="w-4 h-4" /> Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                value={userUpdate.email}
-                onChange={handleChange}
-                className="bg-zinc-800 border-white/20 text-white"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="flex items-center gap-2">
-                <Phone className="w-4 h-4" /> Phone Number
-              </Label>
-              <Input
-                id="phone"
-                name="phone"
-                value={userUpdate.phone}
-                onChange={handleChange}
-                className="bg-zinc-800 border-white/20 text-white"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <span className="font-semibold text-sm text-white/80">Login Method:</span>
-
-              <div className="space-y-2 mt-2">
-                <Label htmlFor="password" className="flex items-center gap-2">
-                  <Key className="w-4 h-4" /> Password
+              <div className="space-y-2">
+                <Label htmlFor="name" className="flex items-center gap-2">
+                  <UserIcon className="w-4 h-4" /> Name
                 </Label>
                 <Input
-                  id="password"
-                  type="password"
-                  value={`Using ${user?.loginMethod || 'email/password'}`}
+                  {...register('name')}
+                  id="name"
                   className="bg-zinc-800 border-white/20 text-white"
-                  placeholder="••••••••"
-                  disabled={loading}
+                  disabled={isSubmitting}
                 />
+                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
               </div>
-            </div>
 
-            <div>
-              <span className="font-semibold text-sm text-white/80">Account Management:</span>
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" /> Email
+                </Label>
+                <Input
+                  {...register('email')}
+                  id="email"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+              </div>
 
-            <Button
-              onClick={handleUpdate}
-              disabled={loading}
-              className="w-full bg-white text-black hover:bg-gray-200 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Updating...
-                </>
-              ) : (
-                <span>Update</span>
-              )}
-            </Button>
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" /> Phone Number
+                </Label>
+                <Input
+                  {...register('phone')}
+                  id="phone"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                />
+                {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+              </div>
 
-            <Button
-              variant="destructive"
-              className="w-full border border-red-700 hover:bg-red-700 text-gray-900"
-            >
-              Delete Account
-            </Button>
+              <div>
+                <span className="font-semibold text-sm text-white/80">Login Method:</span>
 
+                {editPassword && (
+                  <div className="space-y-2 mt-2">
+                    <Label htmlFor="password" className="flex items-center gap-2">
+                      <Key className="w-4 h-4" /> New Password
+                    </Label>
+
+                    <Input
+                      {...register('password')}
+                      id="password"
+                      type="password"
+                      className="bg-zinc-800 border-white/20 text-white"
+                      placeholder="••••••••"
+                      disabled={isSubmitting}
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm">{errors.password.message}</p>
+                    )}
+                  </div>
+                )}
+
+                <div className="space-y-2 mt-2">
+                  <input {...register('id')} type="hidden" />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">{errors.password.message}</p>
+                  )}
+                </div>
+
+                <Button
+                  className=" bg-white text-black hover:bg-gray-200 flex items-center justify-center gap-2"
+                  type="button"
+                  onClick={() => setEditPassword(!editPassword)}
+                >
+                  {!editPassword && (
+                    <div className="flex gap-1 p-1">
+                      <Key className="w-4 h-4" />
+                      Change Password
+                    </div>
+                  )}
+                  {editPassword && <span>Cancel</span>}
+                </Button>
+              </div>
+
+              <div>
+                <span className="font-semibold text-sm text-white/80">Account Management:</span>
+              </div>
+              <Button
+                type="submit"
+                disabled={!ableUpdate || isSubmitting}
+                className={`w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 font-medium transition-colors duration-200
+      ${
+        !ableUpdate || isSubmitting
+          ? 'bg-gray-100/55 text-gray-600 cursor-not-allowed opacity-50'
+          : 'bg-white text-black hover:bg-gray-200'
+      }`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <span>Update</span>
+                )}
+              </Button>
+
+              <Button
+                variant="destructive"
+                className="w-full border border-red-700 hover:bg-red-700 text-gray-900"
+              >
+                Delete Account
+              </Button>
+            </form>
             <Button
               onClick={handleLogout}
               className="w-full bg-white text-black hover:bg-gray-200 flex items-center justify-center gap-2"
