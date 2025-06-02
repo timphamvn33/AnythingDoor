@@ -1,19 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/SideNavbar';
-import { ArrowLeftRight, Star } from 'lucide-react';
+import { ArrowLeftRight, Pencil, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import DialogStoreItem from '@/components/dialog/DialogStoreItem';
+import type { ItemPayload } from '@/schemas/item.schema';
+import { useAuth } from '@/context/auth.context';
 
 export default function StorePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pickupMethod, setPickupMethod] = useState('pickup');
   const [checkedCategories, setCheckedCategories] = useState<string[]>([]);
   const [price, setPrice] = useState('$');
+  const [openItemDialog, setItemDialog] = useState(false);
+  const { user } = useAuth();
+  const [isOwner, setIsOwner] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -35,6 +41,14 @@ export default function StorePage() {
     setCheckedCategories([]);
     setPrice('$');
   };
+
+  const handleSaveNewItem = (item: ItemPayload) => {
+    console.log('Saved Item:', item);
+  };
+
+  useEffect(() => {
+    setIsOwner(user?.role.includes('restaurant_owner') ?? false);
+  });
 
   return (
     <PageWrapper>
@@ -73,6 +87,11 @@ export default function StorePage() {
         </div>
 
         {/* Main Content */}
+        <DialogStoreItem
+          open={openItemDialog}
+          onClose={() => setItemDialog(false)}
+          onSave={handleSaveNewItem}
+        />
         <main className="transition-all duration-300 flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
           <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
             <div>
@@ -96,6 +115,12 @@ export default function StorePage() {
                   <Label htmlFor="delivery">Delivery</Label>
                 </div>
               </RadioGroup>
+              {/* Add New Button */}
+              {isOwner && (
+                <Button className="w-28 mt-2" onClick={() => setItemDialog(true)}>
+                  Add New
+                </Button>
+              )}
             </div>
           </div>
 
@@ -116,6 +141,15 @@ export default function StorePage() {
                 key={i}
                 className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition"
               >
+                {/* Edit Button */}
+                {isOwner && (
+                  <div className="w-full flex justify-end mt-4">
+                    <button className="text-gray-500 hover:text-gray-800 transition">
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 <h3 className="text-xl font-semibold mb-2">Menu Item {i + 1}</h3>
                 <p className="text-sm text-gray-500">Delicious description of the item.</p>
                 <div className="mt-2 text-right text-base font-medium text-black">$9.99</div>

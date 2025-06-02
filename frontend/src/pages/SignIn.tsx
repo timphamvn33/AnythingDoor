@@ -34,8 +34,15 @@ export default function SignIn() {
 
   const onSubmit = async (values: LoginPayload) => {
     try {
-      await login(values);
-      navigate('/landing', { state: { toastMessage: 'Login successfully!' } });
+      const res = await login(values);
+      console.log('res: ', res);
+      if (res.role.includes('restaurant_owner')) {
+        console.log('hello owner');
+        navigate('/landing/stores/owner', { state: { toastMessage: 'Login successfully!' } });
+      } else {
+        console.log('hello not owner');
+        navigate('/landing', { state: { toastMessage: 'Login successfully!' } });
+      }
     } catch (err: any) {
       toast.error(err.message || 'Login Failed');
     }

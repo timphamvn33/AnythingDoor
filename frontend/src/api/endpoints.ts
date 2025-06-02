@@ -11,3 +11,8 @@ export const AUTH_ENDPOINTS = {
 export const USERS_ENDPOINTS = {
   USERUPDATE: '/users/update-profile',
 };
+
+export const ITEMS_ENDPOINTS = {
+  CREATE_ITEM: 'menu-items/create',
+  UPDATE_ITEM: 'menu-items/update',
+};

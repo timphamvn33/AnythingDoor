@@ -24,6 +24,12 @@ export const fullUserUpdateSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters').optional(),
 });
 
+export const UserPaswordUpdate = z.object({
+  id: z.string(),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
 export type LogininPayload = z.infer<typeof loginSchema>;
 export type SignupPayload = z.infer<typeof signupSchema>;
 export type FullUserUpdate = z.infer<typeof fullUserUpdateSchema>;
+export type UserPaswordUpdate = z.infer<typeof UserPaswordUpdate>;

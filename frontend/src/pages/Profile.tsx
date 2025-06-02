@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useAsyncError, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/auth.context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,11 +38,11 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       reset({
+        id: user.id,
         name: user.name || '',
         email: user.email || '',
         phone: user.phone || '',
       });
-      setValue('id', user.id);
     }
   }, [user, reset, setValue]);
 
@@ -57,7 +57,7 @@ export default function ProfilePage() {
 
   const handleUpdate = async (userUpdate: FullUserUpdate) => {
     //Update user info
-    console.log('hello udate start');
+    console.log('hello update start');
     if (ableUpdate) {
       try {
         await updateUser({
@@ -95,6 +95,13 @@ export default function ProfilePage() {
     }
   };
 
+  const navigateToPage = () => {
+    if (user?.role.includes('restaurant_owner')) {
+      navigate('/landing/stores/owner');
+    } else {
+      navigate('/landing');
+    }
+  };
   return (
     <PageWrapper>
       <Toaster position="top-center" richColors />
@@ -106,7 +113,7 @@ export default function ProfilePage() {
             variant="ghost"
             size="icon"
             className="absolute top-3 right-3 text-white hover:text-gray-400"
-            onClick={() => navigate('/landing')}
+            onClick={navigateToPage}
           >
             <X className="w-5 h-5" />
           </Button>
