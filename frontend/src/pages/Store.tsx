@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
@@ -11,6 +9,11 @@ import { Label } from '@/components/ui/label';
 import DialogStoreItem from '@/components/dialog/DialogStoreItem';
 import type { ItemPayload } from '@/schemas/item.schema';
 import { useAuth } from '@/context/auth.context';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getStoreById } from '@/services/store.service';
+import type { StorePayload } from '@/schemas/store.schema';
+import StoreInfo from '@/components/shared/StoreInfo';
+import StorePageSkeleton from '@/components/skeletons/StorePageSkeleton';
 
 export default function StorePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -20,8 +23,11 @@ export default function StorePage() {
   const [openItemDialog, setItemDialog] = useState(false);
   const { user } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
-
+  const navigate = useNavigate();
+  const { storeId } = useParams();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const [store, setStore] = useState<StorePayload>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const renderRating = (stars: number) =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -30,6 +36,23 @@ export default function StorePage() {
         className={`w-4 h-4 ${i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
       />
     ));
+
+  useEffect(() => {
+    setLoading(true);
+    console.log('storeId: ', storeId);
+    if (storeId) {
+      const fetchStore = async () => {
+        const res = await getStoreById(storeId);
+        const store = res?.data;
+
+        setStore(store);
+        console.log('store: ', res?.data);
+        setLoading(false);
+      };
+      fetchStore();
+    }
+    setIsOwner(user?.role.includes('restaurant_owner') ?? false);
+  }, [storeId]);
 
   const handleCategoryCheck = (category: string) => {
     setCheckedCategories(prev =>
@@ -46,14 +69,9 @@ export default function StorePage() {
     console.log('Saved Item:', item);
   };
 
-  useEffect(() => {
-    setIsOwner(user?.role.includes('restaurant_owner') ?? false);
-  });
-
   return (
     <PageWrapper>
       <Navbar />
-
       <div className="flex h-[calc(100vh-64px)] relative">
         {/* Toggle Sidebar Button (Mobile Only) */}
         <button
@@ -85,78 +103,98 @@ export default function StorePage() {
             ]}
           />
         </div>
-
+        {/* Render loading skeleton or main content */}
         {/* Main Content */}
-        <DialogStoreItem
-          open={openItemDialog}
-          onClose={() => setItemDialog(false)}
-          onSave={handleSaveNewItem}
-        />
-        <main className="transition-all duration-300 flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
-            <div>
-              <h2 className="text-2xl font-bold">Joe's Deli</h2>
-              <p className="text-sm text-gray-600">123 Main St, San Diego, CA</p>
-              <div className="flex items-center mt-1">{renderRating(4)}</div>
-            </div>
-            <div className="flex flex-col items-end gap-2">
-              <Button className="w-28">Checkout</Button>
-              <RadioGroup
-                defaultValue="pickup"
-                onValueChange={setPickupMethod}
-                className="flex gap-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pickup" id="pickup" />
-                  <Label htmlFor="pickup">Pickup</Label>
+        {loading || !store ? (
+          <StorePageSkeleton />
+        ) : (
+          <>
+            <DialogStoreItem
+              open={openItemDialog}
+              onClose={() => setItemDialog(false)}
+              onSave={handleSaveNewItem}
+            />
+            <main className="transition-all duration-300 flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+              <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
+                <div>
+                  <StoreInfo
+                    name={store?.name}
+                    openHrs={store?.openHrs}
+                    closeHrs={store?.closeHrs}
+                    category={store?.category}
+                  ></StoreInfo>
+                  <p className="text-sm text-gray-600">123 Main St, San Diego, CA</p>
+                  <div className="flex items-center mt-1">{renderRating(4)}</div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="delivery" id="delivery" />
-                  <Label htmlFor="delivery">Delivery</Label>
+                <div className="flex flex-col items-end gap-2">
+                  <Button className="w-28">Checkout</Button>
+                  <RadioGroup
+                    defaultValue="pickup"
+                    onValueChange={setPickupMethod}
+                    className="flex gap-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="pickup" id="pickup" />
+                      <Label htmlFor="pickup">Pickup</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="delivery" id="delivery" />
+                      <Label htmlFor="delivery">Delivery</Label>
+                    </div>
+                  </RadioGroup>
+                  {/* Add New Button and All Stores */}
+                  {isOwner && (
+                    <>
+                      <Button className="w-28 mt-2" onClick={() => setItemDialog(true)}>
+                        Add New
+                      </Button>
+
+                      <Button
+                        className="w-28 mt-2"
+                        onClick={() => navigate('/landing/stores/owner')}
+                      >
+                        All Stores
+                      </Button>
+                    </>
+                  )}
                 </div>
-              </RadioGroup>
-              {/* Add New Button */}
-              {isOwner && (
-                <Button className="w-28 mt-2" onClick={() => setItemDialog(true)}>
-                  Add New
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Reviews or comments placeholder */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
-            <div className="bg-white p-4 rounded-lg border shadow-sm">
-              <p className="text-sm text-gray-700">
-                “Great food and friendly service. Will definitely come again!” – Alice M.
-              </p>
-            </div>
-          </div>
-
-          {/* Menu Items */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(9)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition"
-              >
-                {/* Edit Button */}
-                {isOwner && (
-                  <div className="w-full flex justify-end mt-4">
-                    <button className="text-gray-500 hover:text-gray-800 transition">
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-
-                <h3 className="text-xl font-semibold mb-2">Menu Item {i + 1}</h3>
-                <p className="text-sm text-gray-500">Delicious description of the item.</p>
-                <div className="mt-2 text-right text-base font-medium text-black">$9.99</div>
               </div>
-            ))}
-          </div>
-        </main>
+
+              {/* Reviews or comments placeholder */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">Customer Reviews</h3>
+                <div className="bg-white p-4 rounded-lg border shadow-sm">
+                  <p className="text-sm text-gray-700">
+                    “Great food and friendly service. Will definitely come again!” – Alice M.
+                  </p>
+                </div>
+              </div>
+
+              {/* Menu Items */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(9)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition"
+                  >
+                    {/* Edit Button */}
+                    {isOwner && (
+                      <div className="w-full flex justify-end mt-4">
+                        <button className="text-gray-500 hover:text-gray-800 transition">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+
+                    <h3 className="text-xl font-semibold mb-2">Menu Item {i + 1}</h3>
+                    <p className="text-sm text-gray-500">Delicious description of the item.</p>
+                    <div className="mt-2 text-right text-base font-medium text-black">$9.99</div>
+                  </div>
+                ))}
+              </div>
+            </main>
+          </>
+        )}
       </div>
     </PageWrapper>
   );

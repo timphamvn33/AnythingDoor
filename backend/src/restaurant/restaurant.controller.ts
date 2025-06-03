@@ -24,6 +24,12 @@ export class RestaurantController {
     return this.restaurantService.findRestaurantById(id);
   }
 
+  @Roles(Role.restaurant_owner)
+  @Get('owner/:id')
+  getAllStoresByOwner(@Param('id') id: string) {
+    return this.restaurantService.findRestaurantByOwner(id);
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.restaurant_owner)
   @Post('update/:id')
