@@ -11,3 +11,14 @@ export const AUTH_ENDPOINTS = {
 export const USERS_ENDPOINTS = {
   USERUPDATE: '/users/update-profile',
 };
+
+export const ITEMS_ENDPOINTS = {
+  CREATE_ITEM: 'menu-items/create',
+  UPDATE_ITEM: 'menu-items/update',
+};
+
+export const STORE_ENDPOINTS = {
+  CREATE_STORE: 'restaurant/create',
+  GET_STORES: 'restaurant/owner',
+  GET_STORE: 'restaurant',
+};

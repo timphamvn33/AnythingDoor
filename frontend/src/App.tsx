@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp';
 import LandingPage from './pages/Landing';
 import StorePage from './pages/Store';
 import Profile from './pages/Profile';
+import Stores from './pages/Stores';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -18,7 +19,8 @@ function AnimatedRoutes() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/landing" element={<LandingPage />} />
-        <Route path="/landing/store" element={<StorePage />} />
+        <Route path="/landing/store/:storeId" element={<StorePage />} />
+        <Route path="/landing/stores/owner" element={<Stores />} />
       </Routes>
     </AnimatePresence>
   );

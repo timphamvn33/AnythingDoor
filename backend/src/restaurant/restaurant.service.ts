@@ -36,7 +36,7 @@ export class RestaurantService {
   }
 
   async findRestaurantByOwner(ownerId: string) {
-    return this.prisma.restaurant.findFirst({
+    return this.prisma.restaurant.findMany({
       where: { ownerId: ownerId },
     });
   }
