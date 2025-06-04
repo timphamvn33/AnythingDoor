@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/SideNavbar';
-import { ArrowLeftRight, Pencil, Star } from 'lucide-react';
+import { ArrowLeftRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,7 @@ import { getStoreById } from '@/services/store.service';
 import type { StorePayload } from '@/schemas/store.schema';
 import StoreInfo from '@/components/shared/StoreInfo';
 import StorePageSkeleton from '@/components/skeletons/StorePageSkeleton';
-import { getAllItemByStore } from '@/services/item.service';
+import { deleteItemByItemId, getAllItemByStore } from '@/services/item.service';
 import ItemInfo from '@/components/shared/ItemInfo';
 import type { ItemProps } from '@/types/item.types';
 import ItemInfoSkeleton from '@/components/skeletons/ItemInfoSkeleton';
@@ -28,12 +28,15 @@ export default function StorePage() {
   const [openItemDialog, setItemDialog] = useState(false);
   const { user } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
+  const [isBuyer, setisBuyer] = useState(false);
   const navigate = useNavigate();
   const { storeId } = useParams();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const [store, setStore] = useState<StorePayload>();
   const [items, setItems] = useState<ItemProps[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isViewBy, setIsViewBy] = useState<boolean>(false);
+  const [itemToDelete, setItemToDelete] = useState<ItemProps | null>();
 
   const renderRating = (stars: number) =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -45,10 +48,20 @@ export default function StorePage() {
 
   useEffect(() => {
     setLoading(true);
-    console.log('storeId: ', storeId);
+    console.log('user: ', user);
     fetchStoreandItems(storeId ?? '');
-    setIsOwner(user?.role.includes('restaurant_owner') ?? false);
-  }, [storeId]);
+
+    const owner = user?.role.includes('restaurant_owner') ?? false;
+    const buyer = user?.role.includes('buyer') ?? false;
+
+    setIsOwner(owner);
+    setisBuyer(buyer);
+    setIsViewBy(!buyer && owner);
+
+    console.log('isBuyer: ', buyer);
+    console.log('isOwner: ', owner);
+    console.log('!isBuyer && isOwner: ', !buyer && owner);
+  }, [user?.id, storeId]);
 
   const fetchStoreandItems = async (storeId: string) => {
     if (storeId) {
@@ -77,6 +90,32 @@ export default function StorePage() {
   const handleSaveNewItem = async (item: ItemPayload) => {
     fetchStoreandItems(storeId ?? '');
     console.log('Saved Item:', item);
+  };
+
+  const toggleRoleView = () => {
+    setIsOwner(prev => !prev);
+    setisBuyer(prev => !prev);
+  };
+
+  const onEdit = () => {
+    console.log('edit item ....');
+  };
+
+  const onDelete = (item: ItemProps) => {
+    setItemToDelete(item);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!itemToDelete) return;
+    try {
+      await deleteItemByItemId(itemToDelete?.id ?? '');
+      setItemToDelete(null);
+      const items = await getAllItemByStore(storeId ?? '');
+      setItems(items?.data);
+      toast.success(`delete successfully ${itemToDelete?.name}`);
+    } catch (error: any) {
+      toast.error(error.message || `unable to delete ${itemToDelete?.name}`);
+    }
   };
 
   return (
@@ -139,36 +178,51 @@ export default function StorePage() {
                   <p className="text-sm text-gray-600">123 Main St, San Diego, CA</p>
                   <div className="flex items-center mt-1">{renderRating(4)}</div>
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                  <Button className="w-28">Checkout</Button>
-                  <RadioGroup
-                    defaultValue="pickup"
-                    onValueChange={setPickupMethod}
-                    className="flex gap-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="pickup" id="pickup" />
-                      <Label htmlFor="pickup">Pickup</Label>
+
+                <div className="flex flex-col col-end-1 gap-2">
+                  {/* Static View Toggle Button */}
+                  {isViewBy && (
+                    <div>
+                      <Button variant="secondary" onClick={toggleRoleView}>
+                        View as {isOwner ? 'Buyer' : 'Owner'}
+                      </Button>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="delivery" id="delivery" />
-                      <Label htmlFor="delivery">Delivery</Label>
+                  )}
+
+                  {/* Buyer Controls */}
+                  {isBuyer && (
+                    <div className="flex flex-col items-end gap-2">
+                      <RadioGroup
+                        defaultValue="pickup"
+                        onValueChange={setPickupMethod}
+                        className="flex gap-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="pickup" id="pickup" />
+                          <Label htmlFor="pickup">Pickup</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="delivery" id="delivery" />
+                          <Label htmlFor="delivery">Delivery</Label>
+                        </div>
+                      </RadioGroup>
+                      <Button className="w-28">Checkout</Button>
                     </div>
-                  </RadioGroup>
-                  {/* Add New Button and All Stores */}
+                  )}
+
+                  {/* Owner Controls */}
                   {isOwner && (
-                    <>
+                    <div className="flex gap-2">
                       <Button className="w-28 mt-2" onClick={() => setItemDialog(true)}>
                         Add New
                       </Button>
-
                       <Button
                         className="w-28 mt-2"
                         onClick={() => navigate('/landing/stores/owner')}
                       >
                         All Stores
                       </Button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -188,9 +242,19 @@ export default function StorePage() {
               {loading || !items ? (
                 <ItemInfoSkeleton />
               ) : (
-                <>
-                  <ItemInfo items={items || []} isOwner={isOwner}></ItemInfo>
-                </>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {items.map((item, _) => (
+                    <ItemInfo
+                      item={item}
+                      isOwner={isOwner}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                      itemToDelete={itemToDelete!}
+                      setItemToDelete={setItemToDelete}
+                      handleDeleteConfirmed={handleDeleteConfirmed}
+                    ></ItemInfo>
+                  ))}
+                </div>
               )}
             </main>
           </>

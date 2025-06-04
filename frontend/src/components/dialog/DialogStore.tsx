@@ -111,7 +111,7 @@ export default function DialogStore({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Store</DialogTitle>
+          <DialogTitle>{store?.id ? 'Update' : 'Create'} Store</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>

@@ -20,3 +20,12 @@ export const getAllItemByStore = async (storeId: string) => {
     console.log('unable to get the items by store id');
   }
 };
+
+export const deleteItemByItemId = async (itemId: string) => {
+  try {
+    const res = api.delete(`${ITEMS_ENDPOINTS.DELETE_ITEM}/${itemId}`);
+    return res;
+  } catch (error: any) {
+    console.log('unable to delete the item');
+  }
+};

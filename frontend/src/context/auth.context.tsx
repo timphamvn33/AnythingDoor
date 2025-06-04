@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import * as authService from '@/services/auth.service';
 import * as userService from '@/services/user.service';
@@ -21,33 +21,45 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  //Restore user from localStorage on first render
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const login = async (credentials: LogininPayload) => {
     const userData = await authService.login(credentials);
     setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData)); // Save session
     return userData;
   };
 
   const signup = async (data: SignupPayload) => {
     const userData = await authService.signup(data);
     setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData)); // Save session
     return userData;
   };
 
   const logout = async () => {
     await authService.logout();
     setUser(null);
+    localStorage.removeItem('user'); // Clear session
   };
 
   const updateUser = async (data: UpdateUserData) => {
     const userChange = await userService.updateUser(data);
-    console.log('userChange: ', userChange);
     setUser(userChange.data);
+    localStorage.setItem('user', JSON.stringify(userChange.data)); // Keep updated
     return userChange;
   };
 
   const updateUserPasword = async (data: UserPaswordUpdate) => {
     const userPasswordUpdate = await authService.updatePassword(data);
     setUser(userPasswordUpdate);
+    localStorage.setItem('user', JSON.stringify(userPasswordUpdate)); // optional
     return userPasswordUpdate;
   };
 

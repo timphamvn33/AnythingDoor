@@ -38,8 +38,9 @@ export class MenuItemController {
   // Only admin can delete the restaurant
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
+  @Roles(Role.restaurant_owner)
   @Delete(':id')
-  deleteRestaurant(@Param('id') id: string) {
+  deleteItem(@Param('id') id: string) {
     return this.menuItemService.deleteMenuItemById(id);
   }
 }
