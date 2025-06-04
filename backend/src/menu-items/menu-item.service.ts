@@ -37,6 +37,12 @@ export class MenuItemService {
     });
   }
 
+  async findAllMenuItemByRestaurantId(restaurantId: string) {
+    return this.prisma.menuItem.findMany({
+      where: { restaurantId: restaurantId },
+    });
+  }
+
   async findMenuItemById(id: string) {
     const menuItem = await this.prisma.menuItem.findUnique({
       where: { id },

@@ -140,6 +140,7 @@ exports.Prisma.RestaurantScalarFieldEnum = {
   category: 'category',
   openHrs: 'openHrs',
   closeHrs: 'closeHrs',
+  addressId: 'addressId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -178,7 +179,6 @@ exports.Prisma.OrderItemScalarFieldEnum = {
 
 exports.Prisma.AddressScalarFieldEnum = {
   id: 'id',
-  restaurantId: 'restaurantId',
   userId: 'userId',
   street: 'street',
   city: 'city',

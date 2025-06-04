@@ -23,6 +23,11 @@ export class MenuItemController {
     return this.menuItemService.findMenuItemById(id);
   }
 
+  @Get('getAllItem/:id')
+  getAllMenuItemByID(@Param('id') id: string) {
+    return this.menuItemService.findAllMenuItemByRestaurantId(id);
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.restaurant_owner)
   @Post('update/:id')
