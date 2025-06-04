@@ -1,4 +1,3 @@
-// central place for backend routes
 export const AUTH_ENDPOINTS = {
   LOGIN: '/auth/login',
   SIGNUP: '/auth/signup',
@@ -15,10 +14,13 @@ export const USERS_ENDPOINTS = {
 export const ITEMS_ENDPOINTS = {
   CREATE_ITEM: 'menu-items/create',
   UPDATE_ITEM: 'menu-items/update',
+  GET_ALL_ITEM: 'menu-items/getAllItem',
 };
 
 export const STORE_ENDPOINTS = {
   CREATE_STORE: 'restaurant/create',
   GET_STORES: 'restaurant/owner',
   GET_STORE: 'restaurant',
+  DELETE_STORE: 'restaurant',
+  UPDATE_STORE: 'restaurant/update',
 };

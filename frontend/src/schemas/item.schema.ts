@@ -7,8 +7,9 @@ export const AddItemPayload = z.object({
     .number({ invalid_type_error: 'Price must be a number' })
     .min(0.01, { message: 'Price is required' }),
   available: z.boolean().optional(),
-  category: z.array(z.string()).optional(),
+  category: z.array(z.string()).min(1, { message: 'select at least 1 category' }),
   imgUrl: z.string().optional(),
+  restaurantId: z.string(),
 });
 
 export type ItemPayload = z.infer<typeof AddItemPayload>;

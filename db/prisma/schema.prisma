@@ -72,16 +72,17 @@ model Restaurant {
   id          String    @id @default(uuid())
   name        String
   description String?
-  ownerId     String
+  ownerId     String?
   logoUrl     String
   category   String[]
   openHrs     String
   closeHrs    String
+  addressId   String?   @unique
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  owner       User      @relation(fields: [ownerId], references: [id])
+  owner       User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  address     Address?  @relation(fields: [addressId], references: [id], onDelete: SetNull)
   menuItems   MenuItem[]
-  addresses   Address[]
 }
 
 model MenuItem {
@@ -92,24 +93,24 @@ model MenuItem {
   available    Boolean     @default(true)
   imgUrl       String
   category     String[]    @default([])
-  restaurantId String
+  restaurantId String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant?  @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
   orderItems   OrderItem[]
 }
 model Order {
   id          String    @id @default(uuid())
   userId      String
-  addressId   String
+  addressId   String?
   paymentId   String
   status      OrderStatus
   total       Float
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id])
-  address     Address   @relation(fields: [addressId], references: [id])
-  payment     Payment   @relation(fields: [paymentId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address     Address?   @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  payment     Payment   @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   orderItems  OrderItem[]
   delivery    Delivery?
 }
@@ -117,25 +118,23 @@ model Order {
 model OrderItem {
   id         String    @id @default(uuid())
   orderId    String
-  menuItemId String
+  menuItemId String?
   quantity   Int
   price      Float
-  order      Order     @relation(fields: [orderId], references: [id])
-  menuItem   MenuItem  @relation(fields: [menuItemId], references: [id])
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem   MenuItem?  @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
 }
 
 model Address {
   id          String    @id @default(uuid())
-  restaurantId String?
-  userId      String
+  userId      String?
   street      String
   city        String
   state       String
   zip         String
   country     String
-  user        User      @relation(fields: [userId], references: [id])
-  restaurant  Restaurant? @relation(fields: [restaurantId], references: [id])
-
+  user        User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  restaurant  Restaurant?
   Order Order[]
 }
 
@@ -156,6 +155,6 @@ model Delivery {
   deliveryTime DateTime?
   notes        String?
 
-  order        Order    @relation(fields: [orderId], references: [id])
-  driver       User?    @relation("DriverDeliveries", fields: [driverId], references: [id])
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  driver       User?    @relation("DriverDeliveries", fields: [driverId], references: [id],onDelete: SetNull)
 }

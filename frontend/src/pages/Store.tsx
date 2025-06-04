@@ -14,6 +14,11 @@ import { getStoreById } from '@/services/store.service';
 import type { StorePayload } from '@/schemas/store.schema';
 import StoreInfo from '@/components/shared/StoreInfo';
 import StorePageSkeleton from '@/components/skeletons/StorePageSkeleton';
+import { getAllItemByStore } from '@/services/item.service';
+import ItemInfo from '@/components/shared/ItemInfo';
+import type { ItemProps } from '@/types/item.types';
+import ItemInfoSkeleton from '@/components/skeletons/ItemInfoSkeleton';
+import { toast, Toaster } from 'sonner';
 
 export default function StorePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -27,6 +32,7 @@ export default function StorePage() {
   const { storeId } = useParams();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const [store, setStore] = useState<StorePayload>();
+  const [items, setItems] = useState<ItemProps[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const renderRating = (stars: number) =>
@@ -40,19 +46,22 @@ export default function StorePage() {
   useEffect(() => {
     setLoading(true);
     console.log('storeId: ', storeId);
-    if (storeId) {
-      const fetchStore = async () => {
-        const res = await getStoreById(storeId);
-        const store = res?.data;
-
-        setStore(store);
-        console.log('store: ', res?.data);
-        setLoading(false);
-      };
-      fetchStore();
-    }
+    fetchStoreandItems(storeId ?? '');
     setIsOwner(user?.role.includes('restaurant_owner') ?? false);
   }, [storeId]);
+
+  const fetchStoreandItems = async (storeId: string) => {
+    if (storeId) {
+      const store = await getStoreById(storeId);
+      const items = await getAllItemByStore(storeId);
+      setItems(items?.data);
+      console.log('items: ', items);
+
+      setStore(store?.data);
+      console.log('store: ', store?.data);
+      setLoading(false);
+    }
+  };
 
   const handleCategoryCheck = (category: string) => {
     setCheckedCategories(prev =>
@@ -65,7 +74,8 @@ export default function StorePage() {
     setPrice('$');
   };
 
-  const handleSaveNewItem = (item: ItemPayload) => {
+  const handleSaveNewItem = async (item: ItemPayload) => {
+    fetchStoreandItems(storeId ?? '');
     console.log('Saved Item:', item);
   };
 
@@ -113,6 +123,9 @@ export default function StorePage() {
               open={openItemDialog}
               onClose={() => setItemDialog(false)}
               onSave={handleSaveNewItem}
+              storeId={storeId || ''}
+              onError={msg => toast.error(msg)}
+              onSuccess={msg => toast.success(msg)}
             />
             <main className="transition-all duration-300 flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
               <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
@@ -171,31 +184,19 @@ export default function StorePage() {
               </div>
 
               {/* Menu Items */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(9)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition"
-                  >
-                    {/* Edit Button */}
-                    {isOwner && (
-                      <div className="w-full flex justify-end mt-4">
-                        <button className="text-gray-500 hover:text-gray-800 transition">
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
 
-                    <h3 className="text-xl font-semibold mb-2">Menu Item {i + 1}</h3>
-                    <p className="text-sm text-gray-500">Delicious description of the item.</p>
-                    <div className="mt-2 text-right text-base font-medium text-black">$9.99</div>
-                  </div>
-                ))}
-              </div>
+              {loading || !items ? (
+                <ItemInfoSkeleton />
+              ) : (
+                <>
+                  <ItemInfo items={items || []} isOwner={isOwner}></ItemInfo>
+                </>
+              )}
             </main>
           </>
         )}
       </div>
+      <Toaster richColors position="top-center" />
     </PageWrapper>
   );
 }

@@ -11,3 +11,12 @@ export const createItem = async (data: ItemPayload) => {
     throw new Error(message);
   }
 };
+
+export const getAllItemByStore = async (storeId: string) => {
+  try {
+    const res = api.get(`${ITEMS_ENDPOINTS.GET_ALL_ITEM}/${storeId}`);
+    return res;
+  } catch (error: any) {
+    console.log('unable to get the items by store id');
+  }
+};
