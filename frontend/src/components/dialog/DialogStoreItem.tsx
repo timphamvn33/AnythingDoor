@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import { createItem } from '@/services/item.service';
+import { createItem, updateItem } from '@/services/item.service';
 import { AddItemPayload, type ItemPayload } from '@/schemas/item.schema';
+import { useElementSubmit } from '@/hooks/useElementSubmit';
 
 type AddItemDialogProps = {
   open: boolean;
@@ -19,6 +20,8 @@ type AddItemDialogProps = {
   storeId: string;
   onError: (message: string) => void;
   onSuccess: (message: string) => void;
+  item: ItemPayload;
+  setItem: (item: ItemPayload) => void;
 };
 
 export default function DialogStoreItem({
@@ -28,47 +31,12 @@ export default function DialogStoreItem({
   storeId,
   onError,
   onSuccess,
+  item,
+  setItem,
 }: AddItemDialogProps) {
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    price: '',
-    available: false,
-    imgUrl: '',
-    category: '',
-  });
-
-  const [errors, setErrors] = useState<Partial<Record<keyof ItemPayload, string>>>({});
-
-  const handleSave = async () => {
-    const parsedCategories = form.category
-      .split(',')
-      .map(cat => cat.trim())
-      .filter(cat => cat !== '');
-
-    const checkNewItemInput = AddItemPayload.safeParse({
-      name: form.name,
-      description: form.description,
-      price: Number(form.price),
-      available: form.available,
-      imgUrl: form.imgUrl,
-      restaurantId: storeId,
-      category: parsedCategories,
-    });
-
-    if (!checkNewItemInput.success) {
-      const fieldErrors: typeof errors = {};
-      checkNewItemInput.error.errors.forEach(err => {
-        const field = err.path[0] as keyof ItemPayload;
-        fieldErrors[field] = err.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-
+  const createNewItem = async (newItem: ItemPayload) => {
     try {
-      const newItem = checkNewItemInput.data;
-      const res = await createItem(newItem as ItemPayload);
+      const res = await createItem(newItem);
 
       console.log('new Item: ', res);
       onSave(newItem);
@@ -79,20 +47,48 @@ export default function DialogStoreItem({
     }
   };
 
+  const updateItemFn = async (data: ItemPayload) => {
+    try {
+      const res = await updateItem(item?.id!, data);
+      console.log('Updated store:', res);
+      onSave(data);
+      onSuccess?.('Store updated successfully');
+    } catch (error: any) {
+      onError?.(`Unable to update the store ${data.name}`);
+    }
+  };
+
+  const { handleSave, errors } = useElementSubmit<ItemPayload>({
+    schema: AddItemPayload,
+    onSave: onSave,
+    onSuccess: onSuccess,
+    onError: onError,
+    onClose: onClose,
+    createFn: createNewItem,
+    updateFn: updateItemFn,
+  });
+
   useEffect(() => {
-    if (!open) {
-      setForm({
-        name: '',
-        description: '',
-        price: '',
-        available: false,
-        imgUrl: '',
-        category: '',
-      });
-      setErrors({});
+    if (open) {
+      console.log('hello open');
+      console.log('item: ', item);
+      if (item?.name === '' || !item) {
+        console.log('storeId in opoen: ', storeId);
+        console.log('hello new');
+        setItem({
+          name: '',
+          price: undefined as unknown as number,
+          category: [],
+          restaurantId: storeId,
+        });
+      }
     }
   }, [open]);
 
+  const handleCategory = (value: string) => {
+    const newCategory = value.split(',').map(c => c.trim());
+    setItem({ ...item, category: newCategory });
+  };
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -102,15 +98,15 @@ export default function DialogStoreItem({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Item Name</label>
-            <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+            <Input value={item?.name} onChange={e => setItem({ ...item, name: e.target.value })} />
             {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Description</label>
             <Textarea
-              value={form.description}
-              onChange={e => setForm({ ...form, description: e.target.value })}
+              value={item?.description}
+              onChange={e => setItem({ ...item, description: e.target.value })}
             />
             {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
           </div>
@@ -120,8 +116,8 @@ export default function DialogStoreItem({
             <Input
               type="number"
               step="0.01"
-              value={form.price}
-              onChange={e => setForm({ ...form, price: e.target.value })}
+              value={item?.price ?? ''}
+              onChange={e => setItem({ ...item, price: Number(e.target.value) })}
             />
             {errors.price && <p className="text-sm text-red-500">{errors.price}</p>}
           </div>
@@ -129,8 +125,8 @@ export default function DialogStoreItem({
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={form.available}
-              onChange={e => setForm({ ...form, available: e.target.checked })}
+              checked={item?.available}
+              onChange={e => setItem({ ...item, available: e.target.checked })}
               id="available"
             />
             <label htmlFor="available" className="text-sm font-medium">
@@ -141,17 +137,14 @@ export default function DialogStoreItem({
           <div>
             <label className="block text-sm font-medium mb-1">Image URL</label>
             <Input
-              value={form.imgUrl}
-              onChange={e => setForm({ ...form, imgUrl: e.target.value })}
+              value={item?.imgUrl}
+              onChange={e => setItem({ ...item, imgUrl: e.target.value })}
             />
             {errors.imgUrl && <p className="text-sm text-red-500">{errors.imgUrl}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Categories (comma separated)</label>
-            <Input
-              value={form.category}
-              onChange={e => setForm({ ...form, category: e.target.value })}
-            />
+            <Input value={item?.category} onChange={e => handleCategory(e.target.value)} />
             {errors.category && <p className="text-sm text-red-500">{errors.category}</p>}
           </div>
         </div>
@@ -160,7 +153,7 @@ export default function DialogStoreItem({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={() => handleSave(item)}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

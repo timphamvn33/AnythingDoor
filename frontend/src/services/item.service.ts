@@ -12,6 +12,16 @@ export const createItem = async (data: ItemPayload) => {
   }
 };
 
+export const updateItem = async (itemId: String, data: ItemPayload) => {
+  try {
+    const res = await api.post(`${ITEMS_ENDPOINTS.UPDATE_ITEM}/${itemId}`, data);
+    return res;
+  } catch (error: any) {
+    const message = error.response?.data?.message || `Unable to update item ${data.name}`;
+    throw new Error(message);
+  }
+};
+
 export const getAllItemByStore = async (storeId: string) => {
   try {
     const res = api.get(`${ITEMS_ENDPOINTS.GET_ALL_ITEM}/${storeId}`);

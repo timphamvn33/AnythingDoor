@@ -16,7 +16,6 @@ import StoreInfo from '@/components/shared/StoreInfo';
 import StorePageSkeleton from '@/components/skeletons/StorePageSkeleton';
 import { deleteItemByItemId, getAllItemByStore } from '@/services/item.service';
 import ItemInfo from '@/components/shared/ItemInfo';
-import type { ItemProps } from '@/types/item.types';
 import ItemInfoSkeleton from '@/components/skeletons/ItemInfoSkeleton';
 import { toast, Toaster } from 'sonner';
 
@@ -25,7 +24,7 @@ export default function StorePage() {
   const [pickupMethod, setPickupMethod] = useState('pickup');
   const [checkedCategories, setCheckedCategories] = useState<string[]>([]);
   const [price, setPrice] = useState('$');
-  const [openItemDialog, setItemDialog] = useState(false);
+  const [openItemDialog, setOpenItemDialog] = useState(false);
   const { user } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
   const [isBuyer, setisBuyer] = useState(false);
@@ -33,10 +32,11 @@ export default function StorePage() {
   const { storeId } = useParams();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const [store, setStore] = useState<StorePayload>();
-  const [items, setItems] = useState<ItemProps[]>([]);
+  const [items, setItems] = useState<ItemPayload[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isViewBy, setIsViewBy] = useState<boolean>(false);
-  const [itemToDelete, setItemToDelete] = useState<ItemProps | null>();
+  const [itemToDelete, setItemToDelete] = useState<ItemPayload | null>();
+  const [item, setItem] = useState<ItemPayload | null>(null);
 
   const renderRating = (stars: number) =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -48,12 +48,9 @@ export default function StorePage() {
 
   useEffect(() => {
     setLoading(true);
-    console.log('user: ', user);
     fetchStoreandItems(storeId ?? '');
-
     const owner = user?.role.includes('restaurant_owner') ?? false;
     const buyer = user?.role.includes('buyer') ?? false;
-
     setIsOwner(owner);
     setisBuyer(buyer);
     setIsViewBy(!buyer && owner);
@@ -97,11 +94,13 @@ export default function StorePage() {
     setisBuyer(prev => !prev);
   };
 
-  const onEdit = () => {
+  const onEdit = (item: ItemPayload) => {
+    setOpenItemDialog(true);
+    setItem(item);
     console.log('edit item ....');
   };
 
-  const onDelete = (item: ItemProps) => {
+  const onDelete = (item: ItemPayload) => {
     setItemToDelete(item);
   };
 
@@ -160,11 +159,13 @@ export default function StorePage() {
           <>
             <DialogStoreItem
               open={openItemDialog}
-              onClose={() => setItemDialog(false)}
+              onClose={() => setOpenItemDialog(false)}
               onSave={handleSaveNewItem}
               storeId={storeId || ''}
               onError={msg => toast.error(msg)}
               onSuccess={msg => toast.success(msg)}
+              item={item!}
+              setItem={setItem}
             />
             <main className="transition-all duration-300 flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
               <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
@@ -213,7 +214,7 @@ export default function StorePage() {
                   {/* Owner Controls */}
                   {isOwner && (
                     <div className="flex gap-2">
-                      <Button className="w-28 mt-2" onClick={() => setItemDialog(true)}>
+                      <Button className="w-28 mt-2" onClick={() => setOpenItemDialog(true)}>
                         Add New
                       </Button>
                       <Button

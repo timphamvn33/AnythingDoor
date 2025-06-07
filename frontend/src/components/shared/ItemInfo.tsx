@@ -1,4 +1,4 @@
-import type { ItemProps } from '@/types/item.types';
+import type { ItemPayload } from '@/schemas/item.schema';
 import { MoreVertical } from 'lucide-react';
 import {
   DropdownMenu,
@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import DeleteConfirm from './DeleteConfirm';
 
 type ItemInfoProps = {
-  item: ItemProps;
+  item: ItemPayload;
   isOwner: boolean;
-  onEdit: (item: ItemProps) => void;
-  onDelete: (item: ItemProps) => void;
-  itemToDelete: ItemProps;
-  setItemToDelete: (item: ItemProps) => void;
+  onEdit: (item: ItemPayload) => void;
+  onDelete: (item: ItemPayload) => void;
+  itemToDelete: ItemPayload;
+  setItemToDelete: (item: ItemPayload) => void;
   handleDeleteConfirmed: () => void;
 };
 
