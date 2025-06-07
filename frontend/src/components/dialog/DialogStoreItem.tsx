@@ -49,8 +49,7 @@ export default function DialogStoreItem({
 
   const updateItemFn = async (data: ItemPayload) => {
     try {
-      const res = await updateItem(item?.id!, data);
-      console.log('Updated store:', res);
+      await updateItem(item?.id!, data);
       onSave(data);
       onSuccess?.('Store updated successfully');
     } catch (error: any) {
@@ -70,11 +69,7 @@ export default function DialogStoreItem({
 
   useEffect(() => {
     if (open) {
-      console.log('hello open');
-      console.log('item: ', item);
       if (item?.name === '' || !item) {
-        console.log('storeId in opoen: ', storeId);
-        console.log('hello new');
         setItem({
           name: '',
           price: undefined as unknown as number,

@@ -21,12 +21,9 @@ export function useElementSubmit<T extends { id?: string }>({
 }: UseElemtSubmitProbs<T>) {
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
   const handleSave = async (element: T | null) => {
-    console.log('save in submit');
-    console.log('element startL ', element);
     if (!element) return;
 
     const parsed = validateInput(element);
-    console.log('parse: ', parsed);
     if (!parsed.success) {
       const fieldErrors: Partial<Record<keyof T, string>> = {};
       parsed.error.errors.forEach(err => {
@@ -38,12 +35,10 @@ export function useElementSubmit<T extends { id?: string }>({
     }
 
     try {
-      console.log('element: ', element);
       if (element.id) {
         await updateFn(parsed.data);
         onSuccess?.('Update successfully!');
       } else {
-        console.log('hello create');
         await createFn(parsed.data);
         onSuccess?.('Create successfully!');
       }

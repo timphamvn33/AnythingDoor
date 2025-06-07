@@ -54,10 +54,6 @@ export default function StorePage() {
     setIsOwner(owner);
     setisBuyer(buyer);
     setIsViewBy(!buyer && owner);
-
-    console.log('isBuyer: ', buyer);
-    console.log('isOwner: ', owner);
-    console.log('!isBuyer && isOwner: ', !buyer && owner);
   }, [user?.id, storeId]);
 
   const fetchStoreandItems = async (storeId: string) => {
@@ -65,10 +61,7 @@ export default function StorePage() {
       const store = await getStoreById(storeId);
       const items = await getAllItemByStore(storeId);
       setItems(items?.data);
-      console.log('items: ', items);
-
       setStore(store?.data);
-      console.log('store: ', store?.data);
       setLoading(false);
     }
   };
@@ -86,7 +79,6 @@ export default function StorePage() {
 
   const handleSaveNewItem = async (item: ItemPayload) => {
     fetchStoreandItems(storeId ?? '');
-    console.log('Saved Item:', item);
   };
 
   const toggleRoleView = () => {
@@ -97,7 +89,6 @@ export default function StorePage() {
   const onEdit = (item: ItemPayload) => {
     setOpenItemDialog(true);
     setItem(item);
-    console.log('edit item ....');
   };
 
   const onDelete = (item: ItemPayload) => {

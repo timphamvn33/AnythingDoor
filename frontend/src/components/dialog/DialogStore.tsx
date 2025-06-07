@@ -34,8 +34,7 @@ export default function DialogStore({
 }: DialogStoreProps) {
   const updateExistingStore = async (data: StorePayload) => {
     try {
-      const res = await updateByStoreId(data?.id!, data);
-      console.log('Updated store:', res);
+      await updateByStoreId(data?.id!, data);
       onSave(data);
       onSuccess?.('Store updated successfully');
     } catch (error: any) {
@@ -76,8 +75,6 @@ export default function DialogStore({
           closeHrs: '',
         });
       }
-
-      // setErrors({});
     }
   }, [open]);
 
