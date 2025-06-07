@@ -108,6 +108,11 @@ export default function StorePage() {
     }
   };
 
+  const handleDialogOnclose = () => {
+    setOpenItemDialog(false);
+    setItem(null);
+  };
+
   return (
     <PageWrapper>
       <Navbar />
@@ -150,7 +155,7 @@ export default function StorePage() {
           <>
             <DialogStoreItem
               open={openItemDialog}
-              onClose={() => setOpenItemDialog(false)}
+              onClose={handleDialogOnclose}
               onSave={handleSaveNewItem}
               storeId={storeId || ''}
               onError={msg => toast.error(msg)}

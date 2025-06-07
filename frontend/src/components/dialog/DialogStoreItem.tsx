@@ -52,6 +52,12 @@ export default function DialogStoreItem({
       await updateItem(item?.id!, data);
       onSave(data);
       onSuccess?.('Store updated successfully');
+      setItem({
+        name: '',
+        price: undefined as unknown as number,
+        category: [],
+        restaurantId: storeId,
+      });
     } catch (error: any) {
       onError?.(`Unable to update the store ${data.name}`);
     }
