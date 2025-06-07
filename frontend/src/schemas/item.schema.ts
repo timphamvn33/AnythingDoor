@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CreateStorePayload } from './store.schema';
 
 export const AddItemPayload = z.object({
   id: z.string().optional(),
@@ -11,6 +12,7 @@ export const AddItemPayload = z.object({
   category: z.array(z.string()).min(1, { message: 'select at least 1 category' }),
   imgUrl: z.string().optional(),
   restaurantId: z.string(),
+  restaurant: CreateStorePayload.optional(),
 });
 
 export type ItemPayload = z.infer<typeof AddItemPayload>;

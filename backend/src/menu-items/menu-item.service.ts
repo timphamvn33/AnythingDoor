@@ -51,7 +51,14 @@ export class MenuItemService {
     if (!menuItem) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);
     }
-
     return menuItem;
+  }
+
+  async findAllMenuItem() {
+    return this.prisma.menuItem.findMany({
+      include: {
+        restaurant: true,
+      },
+    });
   }
 }

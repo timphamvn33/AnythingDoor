@@ -11,19 +11,23 @@ import DeleteConfirm from './DeleteConfirm';
 
 type ItemInfoProps = {
   item: ItemPayload;
-  isOwner: boolean;
-  onEdit: (item: ItemPayload) => void;
-  onDelete: (item: ItemPayload) => void;
-  itemToDelete: ItemPayload;
-  setItemToDelete: (item: ItemPayload) => void;
-  handleDeleteConfirmed: () => void;
+  isOwner?: boolean;
+  isReadOnly: boolean;
+  onClick?: () => void;
+  onEdit?: (item: ItemPayload) => void;
+  onDelete?: (item: ItemPayload) => void;
+  itemToDelete?: ItemPayload;
+  setItemToDelete?: (item: ItemPayload) => void;
+  handleDeleteConfirmed?: () => void;
 };
 
 export default function ItemInfo({
   item,
   isOwner,
-  onEdit,
-  onDelete,
+  isReadOnly,
+  onClick = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
   itemToDelete,
   setItemToDelete,
   handleDeleteConfirmed,
@@ -32,13 +36,18 @@ export default function ItemInfo({
     <>
       <DeleteConfirm
         itemToDelete={itemToDelete}
-        setItemToDelete={setItemToDelete}
-        handleDeleteConfirmed={handleDeleteConfirmed}
+        setItemToDelete={setItemToDelete!}
+        handleDeleteConfirmed={handleDeleteConfirmed!}
       ></DeleteConfirm>
 
-      <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition">
+      <div
+        className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition"
+        onClick={() => {
+          if (isReadOnly) onClick();
+        }}
+      >
         {/* Owner Controls */}
-        {isOwner && (
+        {isOwner && !isReadOnly && (
           <div className="w-full flex justify-end mb-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -59,9 +68,23 @@ export default function ItemInfo({
           </div>
         )}
 
-        <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
-        <p className="text-sm text-gray-500">{item.description}</p>
-        <div className="mt-2 text-right text-base font-medium text-black">${item.price}</div>
+        <h3 className="text-2xl font-semibold text-gray-800">{item.name}</h3>
+
+        <div className="text-sm text-gray-600">
+          <span className="font-medium text-gray-700">Description:</span>{' '}
+          {item.description || 'No description provided'}
+        </div>
+
+        {isReadOnly && (
+          <>
+            <div className="text-sm text-gray-600">
+              <span className="font-medium text-gray-700">Store:</span>{' '}
+              {item?.restaurant?.name || 'Unknown'}
+            </div>
+          </>
+        )}
+
+        <div className="pt-2 text-right text-lg font-bold text-black">${item.price.toFixed(2)}</div>
       </div>
     </>
   );

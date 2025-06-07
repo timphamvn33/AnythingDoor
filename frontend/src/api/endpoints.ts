@@ -16,6 +16,7 @@ export const ITEMS_ENDPOINTS = {
   UPDATE_ITEM: 'menu-items/update',
   GET_ALL_ITEM: 'menu-items/getAllItem',
   DELETE_ITEM: 'menu-items',
+  GET_ALL: 'menu-items/all',
 };
 
 export const STORE_ENDPOINTS = {

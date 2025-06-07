@@ -18,6 +18,11 @@ export class MenuItemController {
     return this.menuItemService.createMenuItem(body);
   }
 
+  @Get('all')
+  getAllMenuItem() {
+    return this.menuItemService.findAllMenuItem();
+  }
+
   @Get(':id')
   getMenuItemByID(@Param('id') id: string) {
     return this.menuItemService.findMenuItemById(id);
