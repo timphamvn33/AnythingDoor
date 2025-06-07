@@ -43,6 +43,8 @@ export const updateByStoreId = async (storeId: string, storeUpdatePayload: Store
     const res = api.post(`${STORE_ENDPOINTS.UPDATE_STORE}/${storeId}`, storeUpdatePayload);
     return res;
   } catch (error: any) {
-    console.log('unable to update the store');
+    const message =
+      error.response?.data?.message || `Unable to update store ${storeUpdatePayload.name}`;
+    throw new Error(message);
   }
 };

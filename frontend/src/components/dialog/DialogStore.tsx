@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { CreateStorePayload, type StorePayload } from '@/schemas/store.schema';
 import { Textarea } from '@/components/ui/textarea';
 import { createStore, updateByStoreId } from '@/services/store.service';
+import { useElementSubmit } from '@/hooks/useElementSubmit';
 
 type DialogStoreProps = {
   open: boolean;
@@ -31,42 +32,9 @@ export default function DialogStore({
   store,
   setStore,
 }: DialogStoreProps) {
-  const [errors, setErrors] = useState<Partial<Record<keyof StorePayload, string>>>({});
-
-  const handleSave = async () => {
-    if (!store) return;
-
-    const parsed = validateInput(store);
-    if (!parsed.success) {
-      const fieldErrors: Partial<Record<keyof StorePayload, string>> = {};
-      parsed.error.errors.forEach(err => {
-        const field = err.path[0] as keyof StorePayload;
-        fieldErrors[field] = err.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-
-    if (store.id) {
-      await updateExistingStore(parsed.data);
-    } else {
-      await createNewStore(parsed.data);
-    }
-
-    onClose();
-  };
-
-  const validateInput = (data: StorePayload) => {
-    return CreateStorePayload.safeParse({
-      ...data,
-      category: data.category.map(c => c.trim()),
-    });
-  };
-
   const updateExistingStore = async (data: StorePayload) => {
     try {
-      const res = await updateByStoreId(data?.id!, data);
-      console.log('Updated store:', res);
+      await updateByStoreId(data?.id!, data);
       onSave(data);
       onSuccess?.('Store updated successfully');
     } catch (error: any) {
@@ -85,6 +53,16 @@ export default function DialogStore({
     }
   };
 
+  const { handleSave, errors } = useElementSubmit<StorePayload>({
+    schema: CreateStorePayload,
+    onSave: onSave,
+    onSuccess: onSuccess,
+    onError: onError,
+    onClose,
+    createFn: createNewStore,
+    updateFn: updateExistingStore,
+  });
+
   useEffect(() => {
     if (!open) {
       if (!store) {
@@ -97,8 +75,6 @@ export default function DialogStore({
           closeHrs: '',
         });
       }
-
-      setErrors({});
     }
   }, [open]);
 
@@ -111,7 +87,7 @@ export default function DialogStore({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Store</DialogTitle>
+          <DialogTitle>{store?.id ? 'Update' : 'Create'} Store</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
@@ -172,7 +148,7 @@ export default function DialogStore({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={() => handleSave(store)}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

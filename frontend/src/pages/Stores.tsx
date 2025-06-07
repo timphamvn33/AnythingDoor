@@ -88,8 +88,8 @@ export default function Stores() {
     <PageWrapper>
       <Navbar />
       <DeleteConfirm
-        storeToDelete={storeToDelete}
-        setStoreToDelete={setStoreToDelete}
+        itemToDelete={storeToDelete}
+        setItemToDelete={setStoreToDelete}
         handleDeleteConfirmed={handleDeleteConfirmed}
       ></DeleteConfirm>
 

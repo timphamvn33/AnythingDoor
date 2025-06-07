@@ -11,28 +11,28 @@ import {
 } from '../ui/alert-dialog';
 
 interface DeleteConfirmProps {
-  storeToDelete: Store | null;
-  setStoreToDelete: (store: Store | null) => void;
+  itemToDelete: any | null;
+  setItemToDelete: (item: any | null) => void;
   handleDeleteConfirmed: () => void;
 }
 export default function DeleteConfirm({
-  storeToDelete,
-  setStoreToDelete,
+  itemToDelete,
+  setItemToDelete,
   handleDeleteConfirmed,
 }: DeleteConfirmProps) {
   return (
     <>
-      <AlertDialog open={!!storeToDelete} onOpenChange={() => setStoreToDelete(null)}>
+      <AlertDialog open={!!itemToDelete} onOpenChange={() => setItemToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the store{' '}
-              <strong>{storeToDelete?.name}</strong>.
+              <strong>{itemToDelete?.name}</strong>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setStoreToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setItemToDelete(null)}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirmed}>Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
