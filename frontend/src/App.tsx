@@ -8,6 +8,7 @@ import StorePage from './pages/Store';
 import Profile from './pages/Profile';
 import Stores from './pages/Stores';
 import { Toaster } from 'sonner';
+import CartPage from './pages/Cart';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function AnimatedRoutes() {
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/landing/store/:storeId" element={<StorePage />} />
         <Route path="/landing/stores/owner" element={<Stores />} />
+        <Route path="/landing/cart" element={<CartPage />} />
       </Routes>
       <Toaster richColors position="top-center" />
     </AnimatePresence>

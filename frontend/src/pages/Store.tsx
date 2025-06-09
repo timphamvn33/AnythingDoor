@@ -249,6 +249,7 @@ export default function StorePage() {
                       itemToDelete={itemToDelete!}
                       setItemToDelete={setItemToDelete}
                       handleDeleteConfirmed={handleDeleteConfirmed}
+                      isReadOnly={false}
                     ></ItemInfo>
                   ))}
                 </div>

@@ -1,5 +1,5 @@
 import type { ItemPayload } from '@/schemas/item.schema';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -11,34 +11,40 @@ import DeleteConfirm from './DeleteConfirm';
 
 type ItemInfoProps = {
   item: ItemPayload;
-  isOwner: boolean;
-  onEdit: (item: ItemPayload) => void;
-  onDelete: (item: ItemPayload) => void;
-  itemToDelete: ItemPayload;
-  setItemToDelete: (item: ItemPayload) => void;
-  handleDeleteConfirmed: () => void;
+  isOwner?: boolean;
+  isReadOnly: boolean;
+  onClick?: () => void;
+  onEdit?: (item: ItemPayload) => void;
+  onDelete?: (item: ItemPayload) => void;
+  itemToDelete?: ItemPayload;
+  setItemToDelete?: (item: ItemPayload) => void;
+  handleDeleteConfirmed?: () => void;
+  handleAddItemToCart?: (item: ItemPayload) => void;
 };
 
 export default function ItemInfo({
   item,
   isOwner,
-  onEdit,
-  onDelete,
+  isReadOnly,
+  onClick = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
   itemToDelete,
   setItemToDelete,
   handleDeleteConfirmed,
+  handleAddItemToCart = item => {},
 }: ItemInfoProps) {
   return (
     <>
       <DeleteConfirm
         itemToDelete={itemToDelete}
-        setItemToDelete={setItemToDelete}
-        handleDeleteConfirmed={handleDeleteConfirmed}
-      ></DeleteConfirm>
+        setItemToDelete={setItemToDelete!}
+        handleDeleteConfirmed={handleDeleteConfirmed!}
+      />
 
-      <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition">
+      <div className="relative bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition">
         {/* Owner Controls */}
-        {isOwner && (
+        {isOwner && !isReadOnly && (
           <div className="w-full flex justify-end mb-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -59,9 +65,40 @@ export default function ItemInfo({
           </div>
         )}
 
-        <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
-        <p className="text-sm text-gray-500">{item.description}</p>
-        <div className="mt-2 text-right text-base font-medium text-black">${item.price}</div>
+        <h3 className="text-2xl font-semibold text-gray-800">{item.name}</h3>
+
+        <div className="text-sm text-gray-600">
+          <span className="font-medium text-gray-700">Description:</span>{' '}
+          {item.description || 'No description provided'}
+        </div>
+
+        {isReadOnly && (
+          <>
+            {/* Plus Button (Top Right) */}
+            <Button
+              size="icon"
+              variant="ghost"
+              className="absolute top-2 right-2 w-8 h-8"
+              onClick={() => {
+                handleAddItemToCart(item);
+              }}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (isReadOnly) onClick();
+              }}
+              className="text-sm text-gray-600 mt-1"
+            >
+              <span className="font-medium text-gray-700">Store:</span>{' '}
+              {item?.restaurant?.name || 'Unknown'}
+            </Button>
+          </>
+        )}
+
+        <div className="pt-2 text-right text-lg font-bold text-black">${item.price.toFixed(2)}</div>
       </div>
     </>
   );

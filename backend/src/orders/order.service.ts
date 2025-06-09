@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import type { UpdateOrderDto } from './dto/update-order.dto';
+import type { CreateOrderItemDto } from '@src/order-items/dto/create-order-item.dto';
+import { OrderStatus } from '@db/generated/prisma/client';
 
 @Injectable()
 export class OrderService {
@@ -32,26 +34,57 @@ export class OrderService {
   }
 
   async findOrderByUserId(userId: string) {
-    const Order = await this.prisma.order.findMany({
+    const orders = await this.prisma.order.findMany({
       where: { userId },
+      include: {
+        orderItems: true,
+      },
     });
 
-    if (!Order) {
-      throw new NotFoundException(`Other with userId ${userId} not found`);
-    }
-
-    return Order;
+    return orders;
   }
 
   async findOrderById(id: string) {
-    const Order = await this.prisma.order.findUnique({
+    const order = await this.prisma.order.findUnique({
       where: { id },
     });
+    return order;
+  }
 
-    if (!Order) {
-      throw new NotFoundException(`Other with ID ${id} not found`);
+  async initOrAddItem(userId: string, itemData: CreateOrderItemDto) {
+    let order = await this.prisma.order.findFirst({
+      where: { userId, status: OrderStatus.pending },
+      include: { orderItems: true },
+    });
+
+    if (!order) {
+      const newOrderData: CreateOrderDto = {
+          userId: userId,
+          status: OrderStatus.pending,
+          total: 0,
+          paymentId: null,
+          addressId: null,
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        order = await this.prisma.order.create({
+          data: newOrderData,
+        });
     }
 
-    return Order;
+    const item = await this.prisma.orderItem.create({
+      data: {
+        ...itemData,
+        orderId: order.id,
+      },
+    });
+
+    // Update total
+    const updatedTotal = order.total + item.price * item.quantity;
+    await this.prisma.order.update({
+      where: { id: order.id },
+      data: { total: updatedTotal },
+    });
+
+    return { orderId: order.id, item };
   }
 }

@@ -16,6 +16,7 @@ export const ITEMS_ENDPOINTS = {
   UPDATE_ITEM: 'menu-items/update',
   GET_ALL_ITEM: 'menu-items/getAllItem',
   DELETE_ITEM: 'menu-items',
+  GET_ALL: 'menu-items/all',
 };
 
 export const STORE_ENDPOINTS = {
@@ -24,4 +25,14 @@ export const STORE_ENDPOINTS = {
   GET_STORE: 'restaurant',
   DELETE_STORE: 'restaurant',
   UPDATE_STORE: 'restaurant/update',
+};
+
+export const ORDER_ITEM_ENPOINTS = {
+  CREATE_ORDER_ITEM: 'order-items/create',
+};
+
+export const ORDER_ENDPOINTS = {
+  CREATE_ORDER: 'orders/create',
+  GET_ORDER_BY_USER_ID: 'orders/user',
+  INIT_OR_ADD_ITEM: 'orders/initOrAddItem',
 };

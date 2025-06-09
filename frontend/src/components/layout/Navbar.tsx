@@ -30,7 +30,7 @@ export default function Navbar() {
             <>
               <div className="flex items-center gap-4">
                 <div
-                  onClick={() => navigate('/cart')}
+                  onClick={() => navigate('/landing/cart')}
                   className={cn(
                     'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
                     'hover:bg-accent hover:text-accent-foreground',

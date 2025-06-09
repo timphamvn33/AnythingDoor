@@ -6,4 +6,5 @@ export interface ItemProps {
   available: boolean;
   imgUrl: string;
   category: string[];
+  restaurantId: string;
 }
