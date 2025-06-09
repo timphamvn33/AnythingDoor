@@ -13,6 +13,9 @@ import { toast, Toaster } from 'sonner';
 import { getAllItem } from '@/services/item.service';
 import ItemInfo from '@/components/shared/ItemInfo';
 import type { ItemPayload } from '@/schemas/item.schema';
+import DialogOrderItem from '@/components/dialog/DialogOrderItem';
+import { createOrder, getOrderByUserId, initOrAddItem } from '@/services/order.service';
+import { useAuth } from '@/context/auth.context';
 
 export default function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -23,6 +26,9 @@ export default function LandingPage() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const location = useLocation();
   const [items, setItems] = useState<ItemPayload[]>([]);
+  const [openDialogOrderItem, setOpenDialogOrderItem] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<ItemPayload | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const toastMsg = location.state?.toastMessage;
@@ -63,6 +69,34 @@ export default function LandingPage() {
   const handleClickOnItem = (item: ItemPayload) => {
     if (item.restaurantId) {
       navigate(`/landing/store/${item.restaurantId}`);
+    }
+  };
+
+  const handleAddItemToCart = (item: ItemPayload) => {
+    setOpenDialogOrderItem(true);
+    setSelectedItem(item);
+    console.log('add to cart');
+  };
+
+  const addToCart = async (orderData: {
+    itemId: string;
+    quantity: number;
+    note?: string;
+    totalPrice: number;
+  }) => {
+    const userId = user?.id;
+    const itemAdd = {
+      orderId: '',
+      menuItemId: orderData.itemId,
+      quantity: orderData.quantity,
+      price: orderData.totalPrice,
+    };
+
+    try {
+      const order = await initOrAddItem(userId!, itemAdd);
+      console.log('order: ', order);
+    } catch (error: any) {
+      toast.error('unable to get the order');
     }
   };
 
@@ -129,14 +163,28 @@ export default function LandingPage() {
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {items.map((item, _) => (
-                <ItemInfo
-                  key={item.id}
-                  item={item}
-                  isReadOnly={true}
-                  onClick={() => handleClickOnItem(item)}
-                />
+                <>
+                  <ItemInfo
+                    key={item.id}
+                    item={item}
+                    isReadOnly={true}
+                    onClick={() => handleClickOnItem(item)}
+                    handleAddItemToCart={handleAddItemToCart}
+                  />
+                </>
               ))}
             </div>
+            {selectedItem && (
+              <DialogOrderItem
+                open={openDialogOrderItem}
+                onClose={() => {
+                  setOpenDialogOrderItem(false);
+                  setSelectedItem(null);
+                }}
+                item={selectedItem}
+                onAddtoCart={addToCart}
+              />
+            )}
           </div>
         </main>
       </div>

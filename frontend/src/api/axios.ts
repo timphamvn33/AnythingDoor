@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getAccessToken, clearTokens, saveTokens } from '@/utils/token';
 import { refreshToken } from '@/services/auth.service';
+import { logTheUserout } from '@/services/auto-logout';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/',
@@ -61,6 +62,8 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = 'Bearer ' + accessToken;
         return api(originalRequest);
       } catch (err) {
+        // log the user out when unabale to refresh token
+        logTheUserout();
         processQueue(err, null);
         clearTokens();
         return Promise.reject(err);

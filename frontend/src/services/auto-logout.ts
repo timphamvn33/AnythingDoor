@@ -14,11 +14,15 @@ export const scheduleAutoLogout = () => {
 
   if (timeout > 0) {
     setTimeout(() => {
-      clearTokens();
-      toast.warning('Session expired. You have been logged out.');
-      setTimeout(() => {
-        window.location.href = '/sign-in';
-      }, 1000);
+      logTheUserout();
     }, timeout);
   }
+};
+
+export const logTheUserout = () => {
+  clearTokens();
+  toast.warning('Session expired. You have been logged out.');
+  setTimeout(() => {
+    window.location.href = '/sign-in';
+  }, 1000);
 };

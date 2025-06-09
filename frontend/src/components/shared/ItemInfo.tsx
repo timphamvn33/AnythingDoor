@@ -1,5 +1,5 @@
 import type { ItemPayload } from '@/schemas/item.schema';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,6 +19,7 @@ type ItemInfoProps = {
   itemToDelete?: ItemPayload;
   setItemToDelete?: (item: ItemPayload) => void;
   handleDeleteConfirmed?: () => void;
+  handleAddItemToCart?: (item: ItemPayload) => void;
 };
 
 export default function ItemInfo({
@@ -31,6 +32,7 @@ export default function ItemInfo({
   itemToDelete,
   setItemToDelete,
   handleDeleteConfirmed,
+  handleAddItemToCart = item => {},
 }: ItemInfoProps) {
   return (
     <>
@@ -38,14 +40,9 @@ export default function ItemInfo({
         itemToDelete={itemToDelete}
         setItemToDelete={setItemToDelete!}
         handleDeleteConfirmed={handleDeleteConfirmed!}
-      ></DeleteConfirm>
+      />
 
-      <div
-        className="bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition"
-        onClick={() => {
-          if (isReadOnly) onClick();
-        }}
-      >
+      <div className="relative bg-white rounded-xl p-4 shadow-md border border-gray-200 hover:shadow-lg transition">
         {/* Owner Controls */}
         {isOwner && !isReadOnly && (
           <div className="w-full flex justify-end mb-2">
@@ -77,10 +74,27 @@ export default function ItemInfo({
 
         {isReadOnly && (
           <>
-            <div className="text-sm text-gray-600">
+            {/* Plus Button (Top Right) */}
+            <Button
+              size="icon"
+              variant="ghost"
+              className="absolute top-2 right-2 w-8 h-8"
+              onClick={() => {
+                handleAddItemToCart(item);
+              }}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (isReadOnly) onClick();
+              }}
+              className="text-sm text-gray-600 mt-1"
+            >
               <span className="font-medium text-gray-700">Store:</span>{' '}
               {item?.restaurant?.name || 'Unknown'}
-            </div>
+            </Button>
           </>
         )}
 
