@@ -75,7 +75,6 @@ export default function LandingPage() {
   const handleAddItemToCart = (item: ItemPayload) => {
     setOpenDialogOrderItem(true);
     setSelectedItem(item);
-    console.log('add to cart');
   };
 
   const addToCart = async (orderData: {
@@ -94,7 +93,6 @@ export default function LandingPage() {
 
     try {
       const order = await initOrAddItem(userId!, itemAdd);
-      console.log('order: ', order);
     } catch (error: any) {
       toast.error('unable to get the order');
     }

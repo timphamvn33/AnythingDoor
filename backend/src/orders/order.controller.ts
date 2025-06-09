@@ -18,7 +18,6 @@ export class OrderController {
 
   @Post('initOrAddItem/:userId')
   initOrAddItem(@Param('userId') userId: string, @Body() body: CreateOrderItemDto) {
-    console.log('userId: ', userId);
     return this.orderService.initOrAddItem(userId, body);
   }
 
