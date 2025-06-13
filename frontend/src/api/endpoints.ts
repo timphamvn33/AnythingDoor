@@ -29,10 +29,14 @@ export const STORE_ENDPOINTS = {
 
 export const ORDER_ITEM_ENPOINTS = {
   CREATE_ORDER_ITEM: 'order-items/create',
+  DELETE_ORDER_ITEM: 'order-items',
+  UPDATE_ORDER_ITEM: 'order-items/update',
 };
 
 export const ORDER_ENDPOINTS = {
   CREATE_ORDER: 'orders/create',
   GET_ORDER_BY_USER_ID: 'orders/user',
+  UPDATE_ORDER: 'orders',
   INIT_OR_ADD_ITEM: 'orders/initOrAddItem',
+  DELETE_ORDER: 'orders',
 };

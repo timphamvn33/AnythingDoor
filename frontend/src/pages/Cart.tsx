@@ -3,15 +3,19 @@
 import { useState, useEffect } from 'react';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Home } from 'lucide-react';
+import { Home } from 'lucide-react';
 import { useAuth } from '@/context/auth.context';
-import { formatCurrency } from '@/utils/format';
 import { useNavigate } from 'react-router-dom';
-import { getOrderByUserId } from '@/services/order.service';
+import { deleteOrder, getOrderByUserId, updateOrder } from '@/services/order.service';
 import { toast, Toaster } from 'sonner';
 import type { Order } from '@/types/order.types';
+import OrderSummary from '@/components/cart/OrderSummary';
+import UserInfoCart from '@/components/cart/UserInfoCart';
+import PaymentMethod from '@/components/cart/PaymentMethod';
+import { deleteOrderItem, updateOrderItem } from '@/services/order-items.service';
+import type { OrderItem } from '@db/generated/prisma';
+import { useCart } from '@/context/cart.context';
 
 export default function CartPage() {
   const [openSections, setOpenSections] = useState<string[]>(['order']);
@@ -19,12 +23,14 @@ export default function CartPage() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState<number>(0);
-
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const isOpen = (section: string) => openSections.includes(section);
   const toggleSection = (section: string) => {
     setOpenSections(prev =>
       prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section],
     );
   };
+  const { refreshCount } = useCart();
 
   useEffect(() => {
     if (user?.id) {
@@ -32,6 +38,7 @@ export default function CartPage() {
     }
   }, [user]);
 
+  // get the order item
   const getTheOrderItem = async () => {
     try {
       const res = await getOrderByUserId(user?.id!);
@@ -47,15 +54,90 @@ export default function CartPage() {
 
         // setOrders
         setOrders(orders);
-        console.log('orderItems: ', res.data?.orderItems);
-        console.log('res: ', res);
       }
     } catch (error: any) {
       toast.error('unable to get order-items');
     }
   };
 
-  const isOpen = (section: string) => openSections.includes(section);
+  // delete item
+  const handleDeleteItem = async (order: Order, itemDelete: OrderItem) => {
+    try {
+      await deleteOrderItem(itemDelete.id);
+      const itemPrice = itemDelete.price * itemDelete.quantity;
+      const newTotal = total - itemPrice;
+
+      // set Total order
+      const newOrder = { total: newTotal };
+      await updateOrder(order.id, newOrder);
+      setTotal(newTotal);
+      toast.success('Item removed from cart and updated the total');
+
+      // update the item's number on the navbar
+      refreshCount();
+      // Optimistically update UI
+      setOrders(prev =>
+        prev.map(order =>
+          order.id === order.id
+            ? {
+                ...order,
+                orderItems: order.orderItems.filter(item => item.id !== itemDelete.id),
+              }
+            : order,
+        ),
+      );
+    } catch (err) {
+      toast.error('Failed to delete item or update item');
+    }
+  };
+
+  // delete order
+  const handleDeleteOrder = async () => {
+    try {
+      const orderId = orders[0].id; // hard code to delete the first order, currently has only 1 order, in future will research more
+      await deleteOrder(orderId);
+      setTotal(0);
+      navigate('/landing');
+      refreshCount();
+    } catch (error: any) {
+      toast.error('unable to delete the order by orderId');
+    }
+  };
+
+  // update quantity
+  const handleQuantityChange = async (
+    orderChange: Order,
+    orderItem: OrderItem,
+    quantityChange: number,
+  ) => {
+    const orderChangeId = orderChange.id;
+    const orderItemId = orderItem.id;
+    try {
+      const updateOrderItem1 = { quantity: quantityChange };
+      const res = await updateOrderItem(orderItemId, updateOrderItem1);
+      if (res) {
+        setOrders(prev =>
+          prev.map(order =>
+            order.id === orderChangeId
+              ? {
+                  ...order,
+                  orderItems: order.orderItems.map(item =>
+                    item.id === orderItemId ? { ...item, quantity: Number(quantityChange) } : item,
+                  ),
+                }
+              : order,
+          ),
+        );
+        // update the total's ui
+        const newTotal = total + orderItem.price * (quantityChange - orderItem.quantity);
+        setTotal(newTotal);
+        // update the item'quantity on Navbar
+        refreshCount();
+      }
+    } catch (error: any) {
+      toast.error('unable to update the item quantity');
+    }
+  };
 
   return (
     <PageWrapper>
@@ -75,100 +157,44 @@ export default function CartPage() {
           </Button>
         </div>
 
-        {/* Order Summary Section */}
-        <Card className="shadow-md">
-          <CardHeader
-            onClick={() => toggleSection('order')}
-            className="flex justify-between items-center cursor-pointer hover:bg-gray-100 transition rounded-t-lg"
-          >
-            <CardTitle>Order Summary</CardTitle>
-            {isOpen('order') ? <ChevronUp /> : <ChevronDown />}
-          </CardHeader>
-          {isOpen('order') && (
-            <CardContent className="animate-fadeIn space-y-4">
-              {orders?.map((order, idx) => (
-                <>
-                  <ul className="space-y-2">
-                    <li key={idx} className="flex justify-between">
-                      {order?.orderItems.map((item, _) => (
-                        <span>
-                          {item.menuItem.name} (x{item.quantity})
-                          <span>{formatCurrency(item.price * item.quantity)}</span>
-                        </span>
-                      ))}
-                    </li>
-                  </ul>
-                </>
-              ))}
-              <div className="flex justify-between font-semibold text-lg pt-2 border-t mt-4">
-                <span>Total:</span>
-                <span>{formatCurrency(total)}</span>
-              </div>
-              <Button variant="outline" className="mt-4" onClick={() => {}}>
-                Add More Items
-              </Button>
-            </CardContent>
-          )}
-        </Card>
+        {/* Order Summary */}
+        <OrderSummary
+          orders={orders}
+          isEditing={isEditing}
+          total={total}
+          sectionNm="order"
+          toggleSection={toggleSection}
+          isOpen={isOpen('order')}
+          setIsEditing={setIsEditing}
+          handleQuantityChange={handleQuantityChange}
+          handleDeleteItem={handleDeleteItem}
+        />
 
         {/* User Info Section */}
-        <Card className="shadow-md">
-          <CardHeader
-            onClick={() => toggleSection('user')}
-            className="flex justify-between items-center cursor-pointer hover:bg-gray-100 transition rounded-t-lg"
-          >
-            <CardTitle>User Info</CardTitle>
-            {isOpen('user') ? <ChevronUp /> : <ChevronDown />}
-          </CardHeader>
-          {isOpen('user') && (
-            <CardContent className="animate-fadeIn space-y-2">
-              <p>
-                <strong>Name:</strong> {user?.name || 'N/A'}
-              </p>
-              <p>
-                <strong>Email:</strong> {user?.email || 'N/A'}
-              </p>
-              <p>
-                <strong>Phone:</strong> {user?.phone || 'N/A'}
-              </p>
-              <p>
-                <strong>Address:</strong> {user?.address || 'N/A'}
-              </p>
-            </CardContent>
-          )}
-        </Card>
+        <UserInfoCart
+          sectionNm="user"
+          toggleSection={toggleSection}
+          isOpen={isOpen('user')}
+          user={user!}
+        />
 
         {/* Payment Method Section */}
-        <Card className="shadow-md">
-          <CardHeader
-            onClick={() => toggleSection('payment')}
-            className="flex justify-between items-center cursor-pointer hover:bg-gray-100 transition rounded-t-lg"
-          >
-            <CardTitle>Payment Method</CardTitle>
-            {isOpen('payment') ? <ChevronUp /> : <ChevronDown />}
-          </CardHeader>
-          {isOpen('payment') && (
-            <CardContent className="animate-fadeIn space-y-2">
-              <p>
-                <strong>Payment Type:</strong> Credit Card
-              </p>
-              <p>
-                <strong>Card Holder:</strong> John Doe
-              </p>
-              <p>
-                <strong>Card Number:</strong> **** **** **** 1234
-              </p>
-              <p>
-                <strong>Expiry:</strong> 12/26
-              </p>
-            </CardContent>
-          )}
-        </Card>
+        <PaymentMethod
+          sectionNm="payment"
+          toggleSection={toggleSection}
+          isOpen={isOpen('payment')}
+        />
 
         {/* CTA Buttons */}
         <div className="flex flex-col col-end-1 gap-2 pt-6">
           <Button onClick={() => {}}>Proceed to Checkout</Button>
-          <Button variant="destructive" onClick={() => {}}>
+          <Button
+            variant={orders?.length === 0 ? 'outline' : 'destructive'}
+            disabled={orders?.length === 0}
+            onClick={() => {
+              handleDeleteOrder();
+            }}
+          >
             Cancel
           </Button>
         </div>

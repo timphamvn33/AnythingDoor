@@ -7,12 +7,13 @@ import UserAvatar from '../shared/UserAvtDefault';
 import { useEffect, useState } from 'react';
 import { getOrderByUserId } from '@/services/order.service';
 import { toast, Toaster } from 'sonner';
+import { useCart } from '@/context/cart.context';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
-  const [itemCount, setItemCount] = useState<number>(0);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     getTheOrderItem();
@@ -24,10 +25,8 @@ export default function Navbar() {
 
       if (res && Array.isArray(res.data)) {
         const allItems = res.data.flatMap(order => order.orderItems ?? []);
-        setItemCount(allItems.reduce((acc, item) => acc + item.quantity, 0)); // Total quantity
         setIsCartOpen(allItems.length > 0);
       } else {
-        setItemCount(0);
         setIsCartOpen(false);
       }
     } catch (error: any) {
@@ -58,12 +57,12 @@ export default function Navbar() {
               <div className="flex items-center gap-4">
                 <div
                   className="relative"
-                  onClick={() => (isCartOpen ? navigate('/landing/cart') : '')}
+                  onClick={() => (cartCount > 0 ? navigate('/landing/cart') : '')}
                 >
                   {/* Badge */}
-                  {itemCount > 0 && (
+                  {cartCount > 0 && (
                     <span className="absolute -top-1 -left-1 z-10 inline-flex items-center justify-center rounded-full bg-destructive text-white text-xs font-semibold h-5 w-5">
-                      {itemCount}
+                      {cartCount}
                     </span>
                   )}
                   <div
