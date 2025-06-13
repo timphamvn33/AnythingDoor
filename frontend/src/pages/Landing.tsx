@@ -14,8 +14,9 @@ import { getAllItem } from '@/services/item.service';
 import ItemInfo from '@/components/shared/ItemInfo';
 import type { ItemPayload } from '@/schemas/item.schema';
 import DialogOrderItem from '@/components/dialog/DialogOrderItem';
-import { createOrder, getOrderByUserId, initOrAddItem } from '@/services/order.service';
+import { initOrAddItem } from '@/services/order.service';
 import { useAuth } from '@/context/auth.context';
+import { useCart } from '@/context/cart.context';
 
 export default function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -29,7 +30,7 @@ export default function LandingPage() {
   const [openDialogOrderItem, setOpenDialogOrderItem] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<ItemPayload | null>(null);
   const { user } = useAuth();
-
+  const { refreshCount } = useCart();
   useEffect(() => {
     const toastMsg = location.state?.toastMessage;
     if (toastMsg) {
@@ -92,7 +93,8 @@ export default function LandingPage() {
     };
 
     try {
-      const order = await initOrAddItem(userId!, itemAdd);
+      await initOrAddItem(userId!, itemAdd);
+      refreshCount();
     } catch (error: any) {
       toast.error('unable to get the order');
     }

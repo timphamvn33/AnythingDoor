@@ -1,7 +1,7 @@
 import api from '@/api/axios';
 import { ORDER_ENDPOINTS } from '@/api/endpoints';
 import type { CreateOrderItemPayload } from '@/schemas/order-item.schema';
-import type { CreateOrderPayload } from '@/schemas/order.schema';
+import type { CreateOrderPayload, UpdateOrderItemPayload } from '@/schemas/order.schema';
 
 export const createOrder = async (data: CreateOrderPayload) => {
   try {
@@ -29,6 +29,26 @@ export const getOrderByUserId = async (userId: string) => {
     return res;
   } catch (error: any) {
     const message = error.response?.data?.message || 'Unable to get the order by userId.';
+    throw new Error(message);
+  }
+};
+
+export const updateOrder = async (orderId: string, data: UpdateOrderItemPayload) => {
+  try {
+    const res = await api.post(`${ORDER_ENDPOINTS.UPDATE_ORDER}/${orderId}`, data);
+    return res;
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Unable to update the order.';
+    throw new Error(message);
+  }
+};
+
+export const deleteOrder = async (orderId: string) => {
+  try {
+    const res = await api.delete(`${ORDER_ENDPOINTS.DELETE_ORDER}/${orderId}`);
+    return res;
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Unable to delete the order.';
     throw new Error(message);
   }
 };
