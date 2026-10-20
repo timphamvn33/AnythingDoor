@@ -39,5 +39,50 @@ A full-stack food delivery web application inspired by DoorDash. Built using mod
 
 ```bash
 git clone https://github.com/timphamvn33/AnythingDoor
-cd anythingdoor
+cd AnythingDoor
 ```
+
+### 2. Start PostgreSQL
+
+Make sure Docker Desktop is running, then from the repository root start the database:
+
+```powershell
+docker compose up -d db
+```
+
+### 3. Set up the database
+
+In a PowerShell terminal:
+
+```powershell
+cd db
+npm install
+$env:DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/anythingdoor?schema=public"
+npx prisma migrate deploy
+npx prisma generate
+```
+
+### 4. Start the backend
+
+Open a **second PowerShell terminal** in the repository root:
+
+```powershell
+cd backend
+npm install
+$env:DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/anythingdoor?schema=public"
+npm run start:dev
+```
+
+The backend runs at `http://localhost:3000`. Keep this terminal open.
+
+### 5. Start the frontend
+
+Open a **third PowerShell terminal** in the repository root:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Open the URL printed by Vite (typically `http://localhost:5173`) in your browser. The frontend connects to the backend at `http://localhost:3000` by default. Keep the database, backend, and frontend running while using the app.

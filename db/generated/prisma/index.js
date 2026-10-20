@@ -250,7 +250,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\timph\\OneDrive\\Desktop\\DoorDashClone\\AnythingDoor\\db\\generated\\prisma",
+      "value": "C:\\Users\\timph\\AnythingDoor\\AnythingDoor\\db\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -264,7 +264,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\timph\\OneDrive\\Desktop\\DoorDashClone\\AnythingDoor\\db\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\timph\\AnythingDoor\\AnythingDoor\\db\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -278,11 +278,12 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://postgres:postgres@localhost:5432/anythingdoor"
+        "value": null
       }
     }
   },
