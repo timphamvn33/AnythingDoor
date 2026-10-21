@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import type { UpdateMenuItemDto } from './dto/update-menu-item.dto';
@@ -8,8 +8,33 @@ export class MenuItemService {
   constructor(private prisma: PrismaService) {}
 
   async createMenuItem(data: CreateMenuItemDto) {
+    if (!data.imgUrl?.trim()) {
+      throw new BadRequestException('An image URL is required to create a menu item');
+    }
+
+    if (!data.restaurantId?.trim()) {
+      throw new BadRequestException('A restaurant ID is required to create a menu item');
+    }
+
+    const restaurant = await this.prisma.restaurant.findUnique({
+      where: { id: data.restaurantId },
+      select: { id: true },
+    });
+
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with ID ${data.restaurantId} not found`);
+    }
+
     return this.prisma.menuItem.create({
-      data: data,
+      data: {
+        name: data.name,
+        ...(data.description !== undefined ? { description: data.description } : {}),
+        price: data.price,
+        ...(data.available !== undefined ? { available: data.available } : {}),
+        imgUrl: data.imgUrl,
+        category: data.category,
+        restaurantId: data.restaurantId,
+      },
     });
   }
 

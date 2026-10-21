@@ -32,7 +32,7 @@ export default function ItemInfo({
   itemToDelete,
   setItemToDelete,
   handleDeleteConfirmed,
-  handleAddItemToCart = item => {},
+  handleAddItemToCart = () => {},
 }: ItemInfoProps) {
   return (
     <>

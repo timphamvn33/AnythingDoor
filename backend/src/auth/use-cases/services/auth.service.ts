@@ -1,11 +1,11 @@
 import { UserService } from '@src/user/user.service';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import type { SignupDto } from 'src/auth/use-cases/dto/signup.dto';
+import type { SignupDto } from '@src/auth/use-cases/dto/signup.dto';
 import * as bcrypt from 'bcrypt';
-import type { LoginDto } from 'src/auth/use-cases/dto/login.dto';
+import type { LoginDto } from '@src/auth/use-cases/dto/login.dto';
 import type { RefreshTokenDto } from '@auth/use-cases/dto/refresh-token.dto';
-import { JWT_CONSTANTS } from 'src/auth/constants/jwt.constants';
+import { JWT_CONSTANTS } from '@src/auth/constants/jwt.constants';
 import type { UpdatePasswordDto } from '../dto/update-password.dto';
 @Injectable()
 export class AuthService {
@@ -47,8 +47,7 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async logout(user: unknown) {
-    console.log('user: ', user);
+  async logout() {
     return {
       message: 'Logged out (client should delete token)',
     };
@@ -60,11 +59,9 @@ export class AuthService {
         secret: process.env.JWT_REFRESH_SECRET || JWT_CONSTANTS.REFRESH_TOKEN.SECRET,
       });
       const user = await this.userService.findById(payload.sub);
-      console.log('hello refresh: ', user);
       if (!user) throw new UnauthorizedException();
       return this.generateToken(user);
-    } catch (error) {
-      console.log('refresh token error: ', error);
+    } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }

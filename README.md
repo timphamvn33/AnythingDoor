@@ -86,3 +86,35 @@ npm run dev
 ```
 
 Open the URL printed by Vite (typically `http://localhost:5173`) in your browser. The frontend connects to the backend at `http://localhost:3000` by default. Keep the database, backend, and frontend running while using the app.
+
+## Deploy publicly (Vercel + Render + Neon)
+
+This setup hosts the Vite frontend on Vercel, the NestJS API on Render, and PostgreSQL on Neon. You will need the repository pushed to GitHub.
+
+### 1. Create the hosted database
+
+Create a PostgreSQL project in Neon and copy its connection string. Keep it private; it contains database credentials.
+
+### 2. Deploy the backend
+
+In Render, create a new **Blueprint** from this GitHub repository and use the `render.yaml` configuration. When prompted for `DATABASE_URL`, paste the Neon connection string. The blueprint creates the API service, generates separate JWT secrets, deploys the Prisma migrations at startup, and builds the backend.
+
+Wait for the service to finish deploying and copy its public URL, for example `https://anythingdoor-api.onrender.com`.
+
+### 3. Deploy the frontend
+
+In Vercel, import the same GitHub repository and set the project root directory to `frontend`. Vercel should detect Vite; use `npm run build` as the build command and `dist` as the output directory.
+
+Add this environment variable in Vercel's project settings:
+
+```text
+VITE_API_BASE_URL=https://<your-render-service>.onrender.com/
+```
+
+Deploy the frontend and copy its production origin (for example, `https://anythingdoor.vercel.app`).
+
+### 4. Allow the frontend to call the API
+
+In Render's environment settings, change `CORS_ORIGIN` from the local development origin to the exact Vercel production origin, with no trailing slash. If you use a custom domain, include it too; separate multiple origins with commas. Save the setting and redeploy the API.
+
+The backend uses the Render-provided `PORT`, and the frontend reads its API URL at build time. If you change `VITE_API_BASE_URL`, redeploy the frontend. Never commit `.env` files or share database/JWT secrets. Free hosting plans may sleep when idle, so the first request can take longer.

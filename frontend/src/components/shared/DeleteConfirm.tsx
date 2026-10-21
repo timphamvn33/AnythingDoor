@@ -1,4 +1,3 @@
-import type { Store } from '@/types/store.types';
 import {
   AlertDialogContent,
   AlertDialog,

@@ -8,7 +8,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { createItem, updateItem } from '@/services/item.service';
 import { AddItemPayload, type ItemPayload } from '@/schemas/item.schema';
 import { useElementSubmit } from '@/hooks/useElementSubmit';
@@ -55,6 +55,7 @@ export default function DialogStoreItem({
       setItem({
         name: '',
         price: undefined as unknown as number,
+        imgUrl: '',
         category: [],
         restaurantId: storeId,
       });
@@ -79,6 +80,7 @@ export default function DialogStoreItem({
         setItem({
           name: '',
           price: undefined as unknown as number,
+          imgUrl: '',
           category: [],
           restaurantId: storeId,
         });

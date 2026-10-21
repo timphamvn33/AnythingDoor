@@ -51,10 +51,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    console.log('log out');
-    await authService.logout();
-    setUser(null);
-    localStorage.removeItem('user'); // Clear session
+    try {
+      await authService.logout();
+    } finally {
+      setUser(null);
+      localStorage.removeItem('user');
+    }
   };
 
   const updateUser = async (data: UpdateUserData) => {

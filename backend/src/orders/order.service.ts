@@ -11,7 +11,13 @@ export class OrderService {
 
   async createOrder(userId: string, dto: CreateOrderDto) {
     return this.prisma.order.create({
-      data: { ...dto, userId },
+      data: {
+        ...(dto.addressId !== undefined && { addressId: dto.addressId }),
+        ...(dto.paymentId !== undefined && { paymentId: dto.paymentId }),
+        status: dto.status ?? OrderStatus.pending,
+        total: dto.total ?? 0,
+        userId,
+      },
     });
   }
 
@@ -58,21 +64,16 @@ export class OrderService {
   async initOrAddItem(userId: string, itemData: CreateOrderItemDto) {
     let order = await this.prisma.order.findFirst({
       where: { userId, status: OrderStatus.pending },
-      include: { orderItems: true },
     });
 
     if (!order) {
-      const newOrderData: CreateOrderDto = {
-          userId: userId,
+      order = await this.prisma.order.create({
+        data: {
+          userId,
           status: OrderStatus.pending,
           total: 0,
-          paymentId: null,
-          addressId: null,
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        order = await this.prisma.order.create({
-          data: newOrderData,
-        });
+      });
     }
 
     const item = await this.prisma.orderItem.create({

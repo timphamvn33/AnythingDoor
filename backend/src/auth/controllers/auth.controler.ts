@@ -9,7 +9,6 @@ import { Roles } from '../decorators/role.decorators';
 import { RolesGuard } from '../use-cases/guards/roles.guard';
 import { Role } from '@db/generated/prisma/client';
 import type { UpdatePasswordDto } from '@auth/use-cases/dto/update-password.dto';
-import { User } from '@src/user/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -29,8 +28,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@User() user) {
-    return this.authService.logout(user);
+  async logout() {
+    return this.authService.logout();
   }
 
   @UseGuards(JwtAuthGuard)

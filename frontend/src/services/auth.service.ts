@@ -28,8 +28,11 @@ export const signup = async (data: SignupPayload) => {
 };
 
 export const logout = async () => {
-  await api.post(AUTH_ENDPOINTS.LOGOUT);
-  clearTokens();
+  try {
+    await api.post(AUTH_ENDPOINTS.LOGOUT);
+  } finally {
+    clearTokens();
+  }
 };
 
 export const updatePassword = async (data: { id: string; password: string }) => {
@@ -43,14 +46,12 @@ export const refreshToken = async () => {
   const refresh = localStorage.getItem('refreshToken');
 
   if (!refresh) throw new Error('No refresh token found');
-  console.log('refreshtoken');
 
   const res = await api.post(AUTH_ENDPOINTS.REFRESH_TOKEN, { refreshToken: refresh });
   const { accessToken, refreshToken: newRefresh, user } = res.data;
   saveTokens(accessToken, newRefresh);
   localStorage.setItem('user', JSON.stringify(user));
 
-  console.log('[Token Refreshed]', new Date().toISOString(), accessToken);
   return { accessToken, refreshToken: newRefresh, user };
 };
 

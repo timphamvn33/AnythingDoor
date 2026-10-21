@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { CreateStorePayload, type StorePayload } from '@/schemas/store.schema';
 import { Textarea } from '@/components/ui/textarea';
 import { createStore, updateByStoreId } from '@/services/store.service';

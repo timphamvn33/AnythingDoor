@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node dist/main.js",
     "start:dev": "ts-node-dev --respawn --require tsconfig-paths/register src/main.ts",
-    "build": "tsc",
+    "start:prod": "node dist/main.js",
+    "build": "tsc && tsc-alias",
     "build-watch": "tsc -b --watch",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix"
@@ -41,6 +42,7 @@
     "eslint-plugin-prettier": "^5.2.6",
     "prettier": "^3.5.3",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.9.8",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   }

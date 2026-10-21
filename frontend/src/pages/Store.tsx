@@ -21,7 +21,7 @@ import { toast, Toaster } from 'sonner';
 
 export default function StorePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [pickupMethod, setPickupMethod] = useState('pickup');
+  const [, setPickupMethod] = useState('pickup');
   const [checkedCategories, setCheckedCategories] = useState<string[]>([]);
   const [price, setPrice] = useState('$');
   const [openItemDialog, setOpenItemDialog] = useState(false);
@@ -77,7 +77,7 @@ export default function StorePage() {
     setPrice('$');
   };
 
-  const handleSaveNewItem = async (item: ItemPayload) => {
+  const handleSaveNewItem = async (_item: ItemPayload) => {
     fetchStoreandItems(storeId ?? '');
   };
 

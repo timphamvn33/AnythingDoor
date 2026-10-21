@@ -4,39 +4,15 @@ import { ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/context/auth.context';
 import { cn } from '@/lib/utils';
 import UserAvatar from '../shared/UserAvtDefault';
-import { useEffect, useState } from 'react';
-import { getOrderByUserId } from '@/services/order.service';
-import { toast, Toaster } from 'sonner';
 import { useCart } from '@/context/cart.context';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const { cartCount } = useCart();
-
-  useEffect(() => {
-    getTheOrderItem();
-  }, [user]);
-
-  const getTheOrderItem = async () => {
-    try {
-      const res = await getOrderByUserId(user?.id!);
-
-      if (res && Array.isArray(res.data)) {
-        const allItems = res.data.flatMap(order => order.orderItems ?? []);
-        setIsCartOpen(allItems.length > 0);
-      } else {
-        setIsCartOpen(false);
-      }
-    } catch (error: any) {
-      toast.error('unable to get order-items');
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 bg-gray-400/80 border-b shadow-sm">
-      <Toaster richColors position="top-center" />
       <div className="container mx-auto px-4 py-3 flex items-center justify-between relative">
         {/* Responsive Logo Position */}
         <div className="text-2xl lg:text-3xl font-semibold lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">

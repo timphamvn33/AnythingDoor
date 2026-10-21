@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken, clearTokens, saveTokens } from '@/utils/token';
+import { getAccessToken, clearTokens } from '@/utils/token';
 import { refreshToken } from '@/services/auth.service';
 import { logTheUserout } from '@/services/auto-logout';
 
@@ -39,7 +39,6 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      console.log('error 401');
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -56,7 +55,6 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log('try refresh token');
         const { accessToken } = await refreshToken();
         processQueue(null, accessToken);
         originalRequest.headers.Authorization = 'Bearer ' + accessToken;
