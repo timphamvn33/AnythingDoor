@@ -14,6 +14,7 @@ import { RolesGuard } from './use-cases/guards/roles.guard';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['../.env.local', '.env'],
     }),
     PassportModule,
     JwtModule.registerAsync({

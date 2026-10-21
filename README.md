@@ -97,7 +97,7 @@ Create a PostgreSQL project in Neon and copy its connection string. Keep it priv
 
 ### 2. Deploy the backend
 
-In Render, create a new **Blueprint** from this GitHub repository and use the `render.yaml` configuration. When prompted for `DATABASE_URL`, paste the Neon connection string. The blueprint creates the API service, generates separate JWT secrets, deploys the Prisma migrations at startup, and builds the backend.
+In Render, create a new **Blueprint** from this GitHub repository and use the `render.yaml` configuration. Set `DATABASE_URL` to the pooled value and `DATABASE_URL_UNPOOLED` to the direct value from the root `.env.local`; these are secrets, so enter them only in Render's environment settings. The blueprint generates separate JWT secrets, deploys Prisma migrations over the direct connection at startup, and builds the backend.
 
 Wait for the service to finish deploying and copy its public URL, for example `https://anythingdoor-api.onrender.com`.
 
@@ -117,4 +117,4 @@ Deploy the frontend and copy its production origin (for example, `https://anythi
 
 In Render's environment settings, change `CORS_ORIGIN` from the local development origin to the exact Vercel production origin, with no trailing slash. If you use a custom domain, include it too; separate multiple origins with commas. Save the setting and redeploy the API.
 
-The backend uses the Render-provided `PORT`, and the frontend reads its API URL at build time. If you change `VITE_API_BASE_URL`, redeploy the frontend. Never commit `.env` files or share database/JWT secrets. Free hosting plans may sleep when idle, so the first request can take longer.
+The backend uses the Render-provided `PORT`; the Prisma schema uses the pooled URL for app traffic and the direct URL for migrations. Locally, the NestJS config loads the root `.env.local`. The frontend reads its API URL at build time. If you change `VITE_API_BASE_URL`, redeploy the frontend. Never commit `.env` files or share database/JWT secrets. Free hosting plans may sleep when idle, so the first request can take longer.
