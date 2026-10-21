@@ -17,6 +17,7 @@ import DialogOrderItem from '@/components/dialog/DialogOrderItem';
 import { initOrAddItem } from '@/services/order.service';
 import { useAuth } from '@/context/auth.context';
 import { useCart } from '@/context/cart.context';
+import { DEMO_RESTAURANTS } from '@/data/demo-restaurants';
 
 export default function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -72,6 +73,15 @@ export default function LandingPage() {
       navigate(`/landing/store/${item.restaurantId}`);
     }
   };
+
+  const visibleDemoRestaurants = DEMO_RESTAURANTS.filter(restaurant => {
+    const matchesTab =
+      selectedCategory === 'All' || restaurant.category.includes(selectedCategory);
+    const matchesSidebar =
+      checkedCategories.length === 0 ||
+      checkedCategories.some(category => restaurant.category.includes(category));
+    return matchesTab && matchesSidebar;
+  });
 
   const handleAddItemToCart = (item: ItemPayload) => {
     setOpenDialogOrderItem(true);
@@ -137,7 +147,24 @@ export default function LandingPage() {
             <div className="sticky top-0 bg-white z-10 pb-4">
               <Tabs defaultValue="All" onValueChange={setSelectedCategory}>
                 <TabsList className="mb-4">
-                  {['All', 'Food', 'Groceries', 'Beauty Supply', 'Pets'].map(tab => (
+                  {[
+                    'All',
+                    'Pizza',
+                    'Burgers',
+                    'Sushi',
+                    'Mexican',
+                    'Chinese',
+                    'Vietnamese',
+                    'Indian',
+                    'Thai',
+                    'Healthy',
+                    'Breakfast',
+                    'Chicken',
+                    'Desert',
+                    'Coffe',
+                    'Grocery',
+                    'Alcohol',
+                  ].map(tab => (
                     <TabsTrigger key={tab} value={tab}>
                       {tab}
                     </TabsTrigger>
@@ -161,9 +188,57 @@ export default function LandingPage() {
               </Tabs>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map((item, _) => (
-                <>
+            <section className="mt-6">
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold">Sample restaurants</h2>
+                <p className="text-sm text-gray-600">
+                  Explore demo menus and add sample dishes to your cart.
+                </p>
+              </div>
+              {visibleDemoRestaurants.length ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {visibleDemoRestaurants.map(restaurant => (
+                    <button
+                      key={restaurant.id}
+                      type="button"
+                      onClick={() => navigate(`/landing/store/${restaurant.id}`)}
+                      className="overflow-hidden rounded-xl border bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                    >
+                      <div className="flex h-32 items-center justify-center bg-gradient-to-br from-amber-100 to-orange-200 text-5xl">
+                        {restaurant.category.includes('Pizza')
+                          ? '🍕'
+                          : restaurant.category.includes('Chinese')
+                            ? '🥡'
+                            : '🥗'}
+                      </div>
+                      <div className="space-y-2 p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-lg font-semibold">{restaurant.name}</h3>
+                          <span className="whitespace-nowrap text-sm">★ {restaurant.rating}</span>
+                        </div>
+                        <p className="text-sm text-gray-600">{restaurant.description}</p>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>{restaurant.category.join(' · ')}</span>
+                          <span>{restaurant.deliveryTime}</span>
+                        </div>
+                        <span className="inline-block pt-1 text-sm font-medium text-primary">
+                          View menu →
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
+                  No sample restaurants match these filters. Try another category or reset filters.
+                </p>
+              )}
+            </section>
+
+            <section className="mt-10">
+              <h2 className="mb-4 text-2xl font-semibold">Menu items from restaurants</h2>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map(item => (
                   <ItemInfo
                     key={item.id}
                     item={item}
@@ -171,9 +246,9 @@ export default function LandingPage() {
                     onClick={() => handleClickOnItem(item)}
                     handleAddItemToCart={handleAddItemToCart}
                   />
-                </>
-              ))}
-            </div>
+                ))}
+              </div>
+            </section>
             {selectedItem && (
               <DialogOrderItem
                 open={openDialogOrderItem}

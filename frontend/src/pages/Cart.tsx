@@ -16,6 +16,12 @@ import PaymentMethod from '@/components/cart/PaymentMethod';
 import { deleteOrderItem, updateOrderItem } from '@/services/order-items.service';
 import type { OrderItem } from '@db/generated/prisma';
 import { useCart } from '@/context/cart.context';
+import {
+  clearDemoCart,
+  getDemoCart,
+  updateDemoCartItemQuantity,
+  type DemoCartItem,
+} from '@/data/demo-restaurants';
 
 export default function CartPage() {
   const [openSections, setOpenSections] = useState<string[]>(['order']);
@@ -24,6 +30,7 @@ export default function CartPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [demoCart, setDemoCart] = useState<DemoCartItem[]>(getDemoCart);
   const isOpen = (section: string) => openSections.includes(section);
   const toggleSection = (section: string) => {
     setOpenSections(prev =>
@@ -33,10 +40,19 @@ export default function CartPage() {
   const { refreshCount } = useCart();
 
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id && getDemoCart().length === 0) {
       getTheOrderItem();
     }
   }, [user]);
+
+  const changeDemoQuantity = (itemId: string, quantity: number) => {
+    setDemoCart(updateDemoCartItemQuantity(itemId, quantity));
+  };
+
+  const demoTotal = demoCart.reduce(
+    (sum, cartItem) => sum + cartItem.item.price * cartItem.quantity,
+    0,
+  );
 
   // get the order item
   const getTheOrderItem = async () => {
@@ -139,6 +155,79 @@ export default function CartPage() {
     }
   };
 
+  if (demoCart.length > 0) {
+    return (
+      <PageWrapper>
+        <Navbar />
+        <Toaster richColors position="top-center" />
+        <main className="mx-auto max-w-3xl space-y-5 p-6">
+          <Button variant="outline" onClick={() => navigate('/landing')}>
+            <Home className="mr-2 h-4 w-4" />
+            Continue browsing
+          </Button>
+          <section className="rounded-xl border bg-white p-5 shadow-sm">
+            <h1 className="text-2xl font-semibold">Sample cart</h1>
+            <p className="mt-1 text-sm text-gray-600">
+              Demo cart items are saved in this browser and are not submitted as a real order.
+            </p>
+            <div className="mt-5 space-y-3">
+              {demoCart.map(({ item, quantity }) => (
+                <div
+                  key={item.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-50 p-4"
+                >
+                  <div>
+                    <h2 className="font-medium">{item.name}</h2>
+                    <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm" htmlFor={`demo-quantity-${item.id}`}>
+                      Qty
+                    </label>
+                    <input
+                      id={`demo-quantity-${item.id}`}
+                      type="number"
+                      min={0}
+                      value={quantity}
+                      onChange={event =>
+                        changeDemoQuantity(item.id!, Number(event.target.value))
+                      }
+                      className="w-20 rounded border px-2 py-1"
+                    />
+                    <span className="w-20 text-right font-medium">
+                      ${(item.price * quantity).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex items-center justify-between border-t pt-4 text-lg font-semibold">
+              <span>Sample total</span>
+              <span>${demoTotal.toFixed(2)}</span>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Button onClick={() => toast.info('Sample checkout is for demonstration only.')}>
+                checkout
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  clearDemoCart();
+                  setDemoCart([]);
+                  if (user?.id) {
+                    getTheOrderItem();
+                  }
+                }}
+              >
+                Clear sample cart
+              </Button>
+            </div>
+          </section>
+        </main>
+      </PageWrapper>
+    );
+  }
+
   return (
     <PageWrapper>
       <Navbar />
@@ -187,7 +276,13 @@ export default function CartPage() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col col-end-1 gap-2 pt-6">
-          <Button onClick={() => {}}>Proceed to Checkout</Button>
+          <Button onClick={() => {toast.info('Thank you for choosing us. We have successfully accepted your order, and your items are now ready for repair.');
+            setTimeout(() => {
+              navigate('/landing')
+            }, 1500);
+          }}>
+            Proceed to Checkout
+          </Button>
           <Button
             variant={orders?.length === 0 ? 'outline' : 'destructive'}
             disabled={orders?.length === 0}

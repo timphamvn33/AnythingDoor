@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import clsx from 'clsx';
 import type { SidebarProps } from '@/types/sidebar.types';
 
-const defaultFoodCategories = ['Asian', 'Mexican', 'Pizza', 'Hamburger', 'Italian'];
+const defaultFoodCategories = ['Pizza', 'Burgers', 'Sushi', 'Mexican', 'Chinese', 
+  'Vietnamese', 'Indian', 'Thai', 'Healthy', 'Breakfast', 'Chicken', 'Desert', 'Coffe', 'Grocery', 'Alcohol'];
 
 export default function Sidebar({
   sidebarOpen,

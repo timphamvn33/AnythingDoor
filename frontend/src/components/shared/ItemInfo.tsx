@@ -32,7 +32,7 @@ export default function ItemInfo({
   itemToDelete,
   setItemToDelete,
   handleDeleteConfirmed,
-  handleAddItemToCart = () => {},
+  handleAddItemToCart,
 }: ItemInfoProps) {
   return (
     <>
@@ -72,7 +72,7 @@ export default function ItemInfo({
           {item.description || 'No description provided'}
         </div>
 
-        {isReadOnly && (
+        {isReadOnly && handleAddItemToCart && (
           <>
             {/* Plus Button (Top Right) */}
             <Button
@@ -96,6 +96,16 @@ export default function ItemInfo({
               {item?.restaurant?.name || 'Unknown'}
             </Button>
           </>
+        )}
+
+        {!isReadOnly && handleAddItemToCart && (
+          <Button
+            variant="outline"
+            className="mt-3 w-full"
+            onClick={() => handleAddItemToCart(item)}
+          >
+            Add to cart
+          </Button>
         )}
 
         <div className="pt-2 text-right text-lg font-bold text-black">${item.price.toFixed(2)}</div>

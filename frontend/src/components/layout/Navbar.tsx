@@ -5,11 +5,26 @@ import { useAuth } from '@/context/auth.context';
 import { cn } from '@/lib/utils';
 import UserAvatar from '../shared/UserAvtDefault';
 import { useCart } from '@/context/cart.context';
+import { getDemoCart } from '@/data/demo-restaurants';
+import { useEffect, useState } from 'react';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { cartCount } = useCart();
+  const [demoCartCount, setDemoCartCount] = useState(() =>
+    getDemoCart().reduce((count, cartItem) => count + cartItem.quantity, 0),
+  );
+
+  useEffect(() => {
+    const updateDemoCartCount = () => {
+      setDemoCartCount(
+        getDemoCart().reduce((count, cartItem) => count + cartItem.quantity, 0),
+      );
+    };
+    window.addEventListener('demo-cart-updated', updateDemoCartCount);
+    return () => window.removeEventListener('demo-cart-updated', updateDemoCartCount);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-gray-400/80 border-b shadow-sm">
@@ -27,18 +42,25 @@ export default function Navbar() {
                 Sign In
               </Button>
               <Button onClick={() => navigate('/sign-up')}>Sign Up</Button>
+              {demoCartCount > 0 && (
+                <Button variant="outline" onClick={() => navigate('/landing/cart')}>
+                  Cart ({demoCartCount})
+                </Button>
+              )}
             </>
           ) : (
             <>
               <div className="flex items-center gap-4">
                 <div
                   className="relative"
-                  onClick={() => (cartCount > 0 ? navigate('/landing/cart') : '')}
+                  onClick={() =>
+                    cartCount + demoCartCount > 0 ? navigate('/landing/cart') : undefined
+                  }
                 >
                   {/* Badge */}
-                  {cartCount > 0 && (
+                  {cartCount + demoCartCount > 0 && (
                     <span className="absolute -top-1 -left-1 z-10 inline-flex items-center justify-center rounded-full bg-destructive text-white text-xs font-semibold h-5 w-5">
-                      {cartCount}
+                      {cartCount + demoCartCount}
                     </span>
                   )}
                   <div

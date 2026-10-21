@@ -18,6 +18,12 @@ import { deleteItemByItemId, getAllItemByStore } from '@/services/item.service';
 import ItemInfo from '@/components/shared/ItemInfo';
 import ItemInfoSkeleton from '@/components/skeletons/ItemInfoSkeleton';
 import { toast, Toaster } from 'sonner';
+import DialogOrderItem from '@/components/dialog/DialogOrderItem';
+import {
+  addDemoCartItem,
+  demoRestaurantAsStore,
+  getDemoRestaurant,
+} from '@/data/demo-restaurants';
 
 export default function StorePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -37,6 +43,8 @@ export default function StorePage() {
   const [isViewBy, setIsViewBy] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<ItemPayload | null>();
   const [item, setItem] = useState<ItemPayload | null>(null);
+  const [selectedOrderItem, setSelectedOrderItem] = useState<ItemPayload | null>(null);
+  const demoRestaurant = storeId ? getDemoRestaurant(storeId) : undefined;
 
   const renderRating = (stars: number) =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -49,7 +57,8 @@ export default function StorePage() {
   useEffect(() => {
     setLoading(true);
     fetchStoreandItems(storeId ?? '');
-    const owner = user?.role.includes('restaurant_owner') ?? false;
+    const owner =
+      !getDemoRestaurant(storeId ?? '') && (user?.role.includes('restaurant_owner') ?? false);
     const buyer = user?.role.includes('buyer') ?? false;
     setIsOwner(owner);
     setisBuyer(buyer);
@@ -57,6 +66,14 @@ export default function StorePage() {
   }, [user?.id, storeId]);
 
   const fetchStoreandItems = async (storeId: string) => {
+    const demoStore = getDemoRestaurant(storeId);
+    if (demoStore) {
+      setStore(demoRestaurantAsStore(demoStore));
+      setItems(demoStore.menuItems);
+      setLoading(false);
+      return;
+    }
+
     if (storeId) {
       const store = await getStoreById(storeId);
       const items = await getAllItemByStore(storeId);
@@ -64,6 +81,25 @@ export default function StorePage() {
       setStore(store?.data);
       setLoading(false);
     }
+  };
+
+  const handleAddDemoItem = (item: ItemPayload) => {
+    setSelectedOrderItem(item);
+  };
+
+  const addDemoItemToCart = (orderData: {
+    itemId: string;
+    quantity: number;
+    totalPrice: number;
+  }) => {
+    const selectedItem = items.find(menuItem => menuItem.id === orderData.itemId);
+    if (!selectedItem) {
+      toast.error('That sample menu item could not be found.');
+      return;
+    }
+
+    addDemoCartItem(selectedItem, orderData.quantity);
+    toast.success(`${selectedItem.name} added to your sample cart`);
   };
 
   const handleCategoryCheck = (category: string) => {
@@ -207,6 +243,17 @@ export default function StorePage() {
                     </div>
                   )}
 
+                  {demoRestaurant && (
+                    <div className="mb-6 flex items-center justify-between rounded-lg border bg-amber-50 p-4">
+                      <p className="text-sm text-amber-900">
+                        Demo restaurant: menu and cart are sample data and are not sent as a real order.
+                      </p>
+                      <Button variant="outline" onClick={() => navigate('/landing/cart')}>
+                        View sample cart
+                      </Button>
+                    </div>
+                  )}
+
                   {/* Owner Controls */}
                   {isOwner && (
                     <div className="flex gap-2">
@@ -249,6 +296,7 @@ export default function StorePage() {
                       itemToDelete={itemToDelete!}
                       setItemToDelete={setItemToDelete}
                       handleDeleteConfirmed={handleDeleteConfirmed}
+                      handleAddItemToCart={demoRestaurant ? handleAddDemoItem : undefined}
                       isReadOnly={false}
                     ></ItemInfo>
                   ))}
@@ -258,6 +306,14 @@ export default function StorePage() {
           </>
         )}
       </div>
+      {demoRestaurant && selectedOrderItem && (
+        <DialogOrderItem
+          open={Boolean(selectedOrderItem)}
+          onClose={() => setSelectedOrderItem(null)}
+          item={selectedOrderItem}
+          onAddtoCart={addDemoItemToCart}
+        />
+      )}
       <Toaster richColors position="top-center" />
     </PageWrapper>
   );
