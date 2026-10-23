@@ -8,18 +8,29 @@ function originPatternToRegExp(pattern: string): RegExp {
   return new RegExp(`^${escaped}$`);
 }
 
-async function bootstrap() {
+// Always allow these regardless of CORS_ORIGIN, so the deployed frontend and its
+// Vercel preview deployments keep working even if the env var isn't updated.
+const DEFAULT_ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'https://anything-door.vercel.app',
+  'https://anything-door-*.vercel.app',
+];
+
+interface CorsOriginCallback {
+  (error: Error | null, allow?: boolean): void;
+}
+
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
-  const allowedOrigins = (
-    process.env.CORS_ORIGIN || 'http://localhost:5173,https://anything-door.vercel.app'
-  )
+  const envOrigins = (process.env.CORS_ORIGIN || '')
     .split(',')
     .map(origin => origin.trim())
     .filter(Boolean);
+  const allowedOrigins = Array.from(new Set([...DEFAULT_ALLOWED_ORIGINS, ...envOrigins]));
   const allowedOriginPatterns = allowedOrigins.map(originPatternToRegExp);
 
   app.enableCors({
-    origin: (origin, callback) => {
+    origin: (origin: string | undefined, callback: CorsOriginCallback) => {
       // Allow non-browser requests (no Origin header), e.g. curl/health checks.
       if (!origin) {
         callback(null, true);
