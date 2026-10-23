@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { User as UserIcon, Mail, LogOut, X, Phone, Key, Loader2 } from 'lucide-react';
+import { User as UserIcon, Mail, LogOut, X, Phone, MapPin, Key, Loader2 } from 'lucide-react';
 import PageWrapper from '../components/layout/PageWrapper';
 import Logo from '@/components/shared/Logo';
 import UserAvatar from '@/components/shared/UserAvtDefault';
@@ -31,9 +31,11 @@ export default function ProfilePage() {
   });
 
   const watchedFields = useWatch({ control });
-  const ableUpdate = Object.entries(watchedFields).some(([key, value]) => {
-    return value && value !== (user as any)?.[key];
-  });
+  const ableUpdate = user
+    ? (['name', 'email', 'phone', 'address', 'city', 'state', 'country', 'zip'] as const).some(
+        (field) => watchedFields[field] !== (user[field] ?? ''),
+      )
+    : false;
 
   useEffect(() => {
     if (user) {
@@ -42,6 +44,11 @@ export default function ProfilePage() {
         name: user.name || '',
         email: user.email || '',
         phone: user.phone || '',
+        address: user.address || '',
+        city: user.city || '',
+        state: user.state || '',
+        country: user.country || '',
+        zip: user.zip || '',
       });
     }
   }, [user, reset, setValue]);
@@ -64,6 +71,11 @@ export default function ProfilePage() {
           name: userUpdate.name,
           email: userUpdate.email,
           phone: userUpdate.phone,
+          address: userUpdate.address,
+          city: userUpdate.city,
+          state: userUpdate.state,
+          country: userUpdate.country,
+          zip: userUpdate.zip,
           // role: userUpdate.role,
         });
         console.log('hello uodate info');
@@ -96,11 +108,7 @@ export default function ProfilePage() {
   };
 
   const navigateToPage = () => {
-    if (user?.role.includes('restaurant_owner')) {
-      navigate('/landing/stores/owner');
-    } else {
-      navigate('/landing');
-    }
+    navigate('/landing');
   };
   return (
     <PageWrapper>
@@ -167,6 +175,72 @@ export default function ProfilePage() {
                   disabled={isSubmitting}
                 />
                 {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="address" className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" /> Street Address
+                </Label>
+                <Input
+                  {...register('address')}
+                  id="address"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                  maxLength={255}
+                />
+                {errors.address && (
+                  <p className="text-red-500 text-sm">{errors.address.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  {...register('city')}
+                  id="city"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                  maxLength={100}
+                />
+                {errors.city && <p className="text-red-500 text-sm">{errors.city.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="state">State / Province</Label>
+                <Input
+                  {...register('state')}
+                  id="state"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                  maxLength={100}
+                />
+                {errors.state && <p className="text-red-500 text-sm">{errors.state.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <Input
+                  {...register('country')}
+                  id="country"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                  maxLength={100}
+                />
+                {errors.country && (
+                  <p className="text-red-500 text-sm">{errors.country.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="zip">ZIP / Postal Code</Label>
+                <Input
+                  {...register('zip')}
+                  id="zip"
+                  className="bg-zinc-800 border-white/20 text-white"
+                  disabled={isSubmitting}
+                  maxLength={20}
+                />
+                {errors.zip && <p className="text-red-500 text-sm">{errors.zip.message}</p>}
               </div>
 
               <div>

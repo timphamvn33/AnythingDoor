@@ -60,6 +60,12 @@ model User {
   email     String    @unique
   password  String
   phone     String?
+  address   String?
+  city      String?
+  state     String?
+  country   String?
+  zip       String?
+  currentLocation String?
   role      Role[] @default([buyer])   // customer, driver, admin
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -67,6 +73,18 @@ model User {
   orders    Order[]   // Relationship to orders
   deliveries  Delivery[]  @relation("DriverDeliveries")
   Restaurant Restaurant[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Restaurant {

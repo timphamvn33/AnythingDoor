@@ -4,6 +4,8 @@ export const AUTH_ENDPOINTS = {
   LOGOUT: '/auth/logout',
   UPDATE_PASSWORD: '/auth/update',
   REFRESH_TOKEN: '/auth/refresh-token',
+  FORGOT_PASSWORD: '/auth/forgot-password',
+  RESET_PASSWORD: '/auth/reset-password',
   ADMIN: '/auth/admin',
 };
 

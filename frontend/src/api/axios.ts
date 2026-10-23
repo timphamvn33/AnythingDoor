@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getAccessToken, clearTokens } from '@/utils/token';
 import { refreshToken } from '@/services/auth.service';
 import { logTheUserout } from '@/services/auto-logout';
+import { AUTH_ENDPOINTS } from '@/api/endpoints';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/',
@@ -37,7 +38,14 @@ api.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const requestUrl: string = originalRequest?.url || '';
+    const isPublicAuthRequest = [
+      AUTH_ENDPOINTS.LOGIN,
+      AUTH_ENDPOINTS.SIGNUP,
+      AUTH_ENDPOINTS.REFRESH_TOKEN,
+    ].some(endpoint => requestUrl.includes(endpoint));
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isPublicAuthRequest) {
       originalRequest._retry = true;
 
       if (isRefreshing) {

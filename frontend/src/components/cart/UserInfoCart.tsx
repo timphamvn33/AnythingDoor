@@ -36,7 +36,19 @@ export default function UserInfoCart({
               <strong>Phone:</strong> {user?.phone || 'N/A'}
             </p>
             <p>
-              <strong>Address:</strong> {user?.address || 'N/A'}
+              <strong>Street address:</strong> {user.address || 'N/A'}
+            </p>
+            <p>
+              <strong>City:</strong> {user.city || 'N/A'}
+            </p>
+            <p>
+              <strong>State / Province:</strong> {user.state || 'N/A'}
+            </p>
+            <p>
+              <strong>Country:</strong> {user.country || 'N/A'}
+            </p>
+            <p>
+              <strong>ZIP / Postal Code:</strong> {user.zip || 'N/A'}
             </p>
           </CardContent>
         )}

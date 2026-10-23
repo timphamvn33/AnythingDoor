@@ -8,6 +8,8 @@ import type { RefreshTokenDto } from '../use-cases/dto/refresh-token.dto';
 import { Roles } from '../decorators/role.decorators';
 import { RolesGuard } from '../use-cases/guards/roles.guard';
 import { Role } from '@db/generated/prisma/client';
+import { ForgotPasswordDto } from '../use-cases/dto/forgot-password.dto';
+import { ResetPasswordDto } from '../use-cases/dto/reset-password.dto';
 import type { UpdatePasswordDto } from '@auth/use-cases/dto/update-password.dto';
 
 @Controller('auth')
@@ -36,6 +38,18 @@ export class AuthController {
   @Post('update')
   async update(@Body() updatePassword: UpdatePasswordDto) {
     return this.authService.updatePassword(updatePassword);
+  }
+
+  @Public()
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
+  }
+
+  @Public()
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
   }
 
   @Public()

@@ -21,6 +21,11 @@ export const fullUserUpdateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits'),
+  address: z.string().max(255, 'Address must be at most 255 characters'),
+  city: z.string().max(100, 'City must be at most 100 characters'),
+  state: z.string().max(100, 'State must be at most 100 characters'),
+  country: z.string().max(100, 'Country must be at most 100 characters'),
+  zip: z.string().max(20, 'ZIP/postal code must be at most 20 characters'),
   password: z.string().min(6, 'Password must be at least 6 characters').optional(),
 });
 

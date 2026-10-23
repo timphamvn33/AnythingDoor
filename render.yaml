@@ -24,3 +24,17 @@ services:
         value: 7d
       - key: CORS_ORIGIN
         value: http://localhost:5173
+      - key: FRONTEND_URL
+        value: https://anything-door.vercel.app
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_SECURE
+        value: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false

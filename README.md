@@ -111,7 +111,7 @@ Add this environment variable in Vercel's project settings:
 VITE_API_BASE_URL=https://<your-render-service>.onrender.com/
 ```
 
-Deploy the frontend and copy its production origin (for example, `https://anythingdoor.vercel.app`).
+Deploy the frontend and copy its production origin (for example, `https://anything-door.vercel.app/`).
 
 ### 4. Allow the frontend to call the API
 

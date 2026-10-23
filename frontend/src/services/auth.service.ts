@@ -42,6 +42,24 @@ export const updatePassword = async (data: { id: string; password: string }) => 
   return user;
 };
 
+export const forgotPassword = async (email: string): Promise<string> => {
+  try {
+    const res = await api.post(AUTH_ENDPOINTS.FORGOT_PASSWORD, { email });
+    return res.data.message;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Unable to send the reset email.');
+  }
+};
+
+export const resetPassword = async (token: string, password: string): Promise<string> => {
+  try {
+    const res = await api.post(AUTH_ENDPOINTS.RESET_PASSWORD, { token, password });
+    return res.data.message;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Unable to reset the password.');
+  }
+};
+
 export const refreshToken = async () => {
   const refresh = localStorage.getItem('refreshToken');
 

@@ -126,9 +126,23 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   phone: 'phone',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  country: 'country',
+  zip: 'zip',
+  currentLocation: 'currentLocation',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.RestaurantScalarFieldEnum = {
@@ -258,6 +272,7 @@ exports.DeliverStatus = exports.$Enums.DeliverStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   Restaurant: 'Restaurant',
   MenuItem: 'MenuItem',
   Order: 'Order',

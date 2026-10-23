@@ -7,13 +7,15 @@ import Logo from '@/components/shared/Logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
+import { getCurrentLocation, setCurrentLocation } from '@/services/location.service';
 
 export default function Home() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentLocationInput, setCurrentLocationInput] = useState(() => getCurrentLocation());
 
   useEffect(() => {
     const toastMsg = location.state?.toastMessage;
@@ -22,6 +24,11 @@ export default function Home() {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state]);
+
+  const handleSaveLocation = () => {
+    setCurrentLocation(currentLocationInput);
+    navigate('/landing');
+  };
   return (
     <>
       <PageWrapper>
@@ -49,6 +56,8 @@ export default function Home() {
               <Input
                 type="text"
                 placeholder="Enter your location"
+                value={currentLocationInput}
+                onChange={e => setCurrentLocationInput(e.target.value)}
                 className="bg-white border border-gray-300 focus:border-black focus:ring-0 rounded-xl px-4 py-2 text-base pl-10"
               />
             </div>
@@ -56,7 +65,7 @@ export default function Home() {
             {/* CTA Button */}
             <Button
               className="text-base px-6 py-3 rounded-xl w-full sm:w-auto"
-              onClick={() => navigate('/landing')}
+              onClick={handleSaveLocation}
             >
               Get Started
             </Button>

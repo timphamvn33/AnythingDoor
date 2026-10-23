@@ -13,7 +13,7 @@ export class UserService {
   }
 
   async updateUser(data: UpdateUserDto, id: string) {
-    const { email, ...updateUserData } = data;
+    const { email, address, city, state, country, zip, currentLocation, ...updateUserData } = data;
     console.log('id..........: ', id);
     if (email) {
       const existingUser = await this.prisma.user.findUnique({
@@ -28,7 +28,18 @@ export class UserService {
 
     return this.prisma.user.update({
       where: { id },
-      data: { ...updateUserData, ...(email && { email }) },
+      data: {
+        ...updateUserData,
+        ...(email && { email }),
+        ...(address !== undefined && { address: address?.trim() || null }),
+        ...(city !== undefined && { city: city?.trim() || null }),
+        ...(state !== undefined && { state: state?.trim() || null }),
+        ...(country !== undefined && { country: country?.trim() || null }),
+        ...(zip !== undefined && { zip: zip?.trim() || null }),
+        ...(currentLocation !== undefined && {
+          currentLocation: currentLocation?.trim() || null,
+        }),
+      },
     });
   }
 
