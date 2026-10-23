@@ -23,7 +23,7 @@ services:
       - key: JWT_REFRESH_EXPIRES_IN
         value: 7d
       - key: CORS_ORIGIN
-        value: http://localhost:5173
+        value: https://anything-door.vercel.app,https://anything-door-*.vercel.app,http://localhost:5173
       - key: FRONTEND_URL
         value: https://anything-door.vercel.app
       - key: SMTP_HOST
