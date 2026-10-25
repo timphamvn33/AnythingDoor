@@ -10,6 +10,7 @@ A full-stack food delivery web application inspired by DoorDash. Built using mod
 - 🧾 **User Roles**: Customer, Restaurant Owner, Delivery Driver
 - 🛍️ **Browse & Search Restaurants**
 - 🧑‍🍳 **Restaurant Management Dashboard**
+- 💬 **AI restaurant discovery and owner business assistant** (configure an OpenAI-compatible API)
 - 🛒 **Cart & Order Placement**
 - 🛵 **Real-time Order Tracking**
 - 🔔 **Notifications System**
@@ -86,6 +87,20 @@ npm run dev
 ```
 
 Open the URL printed by Vite (typically `http://localhost:5173`) in your browser. The frontend connects to the backend at `http://localhost:3000` by default. Keep the database, backend, and frontend running while using the app.
+
+### Configure the chatbot (optional)
+
+The chatbot page and buyer/owner workflows are included, but AI replies remain disabled until the backend has an API key. Set these variables in the backend environment (or your private Render environment settings); never add a real key to frontend variables or commit it:
+
+```text
+OPENAI_API_KEY=<your-provider-api-key>
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-4o-mini
+```
+
+`OPENAI_BASE_URL` and `OPENAI_MODEL` are optional; the shown values are the defaults. For another OpenAI-compatible provider, use its API key, base URL ending in `/v1`, and a model name that provider supports. Restart/redeploy the backend after configuring the values. The buyer assistant recommends only matching restaurants and available menu items from the database. The owner assistant drafts a restaurant concept and menu ideas; menu items are not created, and a restaurant is saved only after the owner selects **Approve and create restaurant**.
+
+For Docker Compose, export the variables in PowerShell before starting or rebuilding the backend, for example: `$env:OPENAI_API_KEY = "<your-provider-api-key>"`. Compose forwards these variables to the backend; leave the key unset to keep the chatbot visible but disabled.
 
 ## Deploy publicly (Vercel + Render + Neon)
 

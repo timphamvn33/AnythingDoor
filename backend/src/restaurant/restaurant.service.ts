@@ -8,7 +8,6 @@ export class RestaurantService {
   constructor(private prisma: PrismaService) {}
 
   async createRestaurant(data: CreateRestaurantDto, ownerId: string) {
-    console.log('ownerId: ', ownerId);
     return this.prisma.restaurant.create({
       data: {
         ...data,

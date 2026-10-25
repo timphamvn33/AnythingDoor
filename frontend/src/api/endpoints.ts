@@ -42,3 +42,10 @@ export const ORDER_ENDPOINTS = {
   INIT_OR_ADD_ITEM: 'orders/initOrAddItem',
   DELETE_ORDER: 'orders',
 };
+
+export const CHAT_ENDPOINTS = {
+  STATUS: 'chat/status',
+  BUYER: 'chat/buyer',
+  OWNER_PROPOSE: 'chat/owner/propose',
+  OWNER_APPROVE: 'chat/owner/approve',
+};

@@ -13,13 +13,13 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@User() user) {
+  getProfile(@User() user: string) {
     return user;
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('update-profile')
-  updateProfile(@User('userId') userId, @Body() data: UpdateUserDto) {
+  updateProfile(@User('userId') userId: string, @Body() data: UpdateUserDto) {
     return this.userService.updateUser(data, userId);
   }
 

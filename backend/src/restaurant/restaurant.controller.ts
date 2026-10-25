@@ -15,7 +15,7 @@ export class RestaurantController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.restaurant_owner)
   @Post('create')
-  createRestaurant(@User('userId') userId, @Body() body: CreateRestaurantDto) {
+  createRestaurant(@User('userId') userId: string, @Body() body: CreateRestaurantDto) {
     return this.restaurantService.createRestaurant(body, userId);
   }
 
@@ -35,7 +35,7 @@ export class RestaurantController {
   @Post('update/:id')
   updateRestaurant(
     @Param('id') id: string,
-    @User('userId') owenerId,
+    @User('userId') owenerId: string,
     @Body() body: UpdateRestaurantDto,
   ) {
     return this.restaurantService.updateRestaurant(id, owenerId, body);

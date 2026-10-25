@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, ShoppingCart, Store } from 'lucide-react';
+import { MapPin, MessageCircle, ShoppingCart, Store } from 'lucide-react';
 import { useAuth } from '@/context/auth.context';
 import { cn } from '@/lib/utils';
 import UserAvatar from '../shared/UserAvtDefault';
@@ -20,9 +20,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const updateDemoCartCount = () => {
-      setDemoCartCount(
-        getDemoCart().reduce((count, cartItem) => count + cartItem.quantity, 0),
-      );
+      setDemoCartCount(getDemoCart().reduce((count, cartItem) => count + cartItem.quantity, 0));
     };
     window.addEventListener('demo-cart-updated', updateDemoCartCount);
     return () => window.removeEventListener('demo-cart-updated', updateDemoCartCount);
@@ -65,6 +63,9 @@ export default function Navbar() {
           {!user ? (
             <>
               {locationBadge}
+              <Button variant="outline" onClick={() => navigate('/chat?mode=buyer')}>
+                <MessageCircle className="mr-2 h-4 w-4" /> Chat
+              </Button>
               <Button variant="outline" onClick={() => navigate('/sign-in')}>
                 Sign In
               </Button>
@@ -79,8 +80,18 @@ export default function Navbar() {
             <>
               <div className="flex items-center gap-4">
                 {user?.role.includes('restaurant_owner') && (
-                  <Button variant="outline" onClick={() => navigate('/landing/stores/owner')}>
-                    <Store className="w-4 h-4 mr-2" /> My Restaurant
+                  <>
+                    <Button variant="outline" onClick={() => navigate('/landing/stores/owner')}>
+                      <Store className="w-4 h-4 mr-2" /> My Restaurant
+                    </Button>
+                    <Button variant="outline" onClick={() => navigate('/chat?mode=owner')}>
+                      <MessageCircle className="mr-2 h-4 w-4" /> Business AI
+                    </Button>
+                  </>
+                )}
+                {!user?.role.includes('restaurant_owner') && (
+                  <Button variant="outline" onClick={() => navigate('/chat?mode=buyer')}>
+                    <MessageCircle className="mr-2 h-4 w-4" /> Chat
                   </Button>
                 )}
 

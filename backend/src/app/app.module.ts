@@ -22,6 +22,7 @@ import { MenuItemService } from '@src/menu-items/menu-item.service';
 import { OrderItemService } from '@src/order-items/order-item.service';
 import { DeliveryService } from '@src/delivery/delivery.service';
 import { PrismaService } from '@src/prisma/prisma.service';
+import { ChatModule } from '@src/chat/chat.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PrismaService } from '@src/prisma/prisma.service';
     MenuItemModule,
     DeliveryModule,
     PrismaModule,
+    ChatModule,
   ],
   controllers: [
     AppController,
