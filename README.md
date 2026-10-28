@@ -30,6 +30,7 @@ A full-stack food delivery web application inspired by DoorDash. Built using mod
 | **Real-Time**  | [Socket.IO](https://socket.io/)                                              |
 | **API Docs**   | Swagger/OpenAPI (optional)                                                   |
 | **DevOps**     | Docker, Docker Compose, GitHub Actions (CI/CD), AWS (or local dev)           |
+| **Mail**       | nodemailer                                                                   |
 
 ---
 
