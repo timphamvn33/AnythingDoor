@@ -14,6 +14,8 @@ services:
         sync: false
       - key: DATABASE_URL_UNPOOLED
         sync: false
+      - key: GEOAPIFY_API_KEY
+        sync: false
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET

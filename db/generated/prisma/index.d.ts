@@ -29,6 +29,11 @@ export type PasswordResetToken = $Result.DefaultSelection<Prisma.$PasswordResetT
  */
 export type Restaurant = $Result.DefaultSelection<Prisma.$RestaurantPayload>
 /**
+ * Model DiscoveredRestaurant
+ * 
+ */
+export type DiscoveredRestaurant = $Result.DefaultSelection<Prisma.$DiscoveredRestaurantPayload>
+/**
  * Model MenuItem
  * 
  */
@@ -290,6 +295,16 @@ export class PrismaClient<
     * ```
     */
   get restaurant(): Prisma.RestaurantDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.discoveredRestaurant`: Exposes CRUD operations for the **DiscoveredRestaurant** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DiscoveredRestaurants
+    * const discoveredRestaurants = await prisma.discoveredRestaurant.findMany()
+    * ```
+    */
+  get discoveredRestaurant(): Prisma.DiscoveredRestaurantDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.menuItem`: Exposes CRUD operations for the **MenuItem** model.
@@ -793,6 +808,7 @@ export namespace Prisma {
     User: 'User',
     PasswordResetToken: 'PasswordResetToken',
     Restaurant: 'Restaurant',
+    DiscoveredRestaurant: 'DiscoveredRestaurant',
     MenuItem: 'MenuItem',
     Order: 'Order',
     OrderItem: 'OrderItem',
@@ -817,7 +833,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "passwordResetToken" | "restaurant" | "menuItem" | "order" | "orderItem" | "address" | "payment" | "delivery"
+      modelProps: "user" | "passwordResetToken" | "restaurant" | "discoveredRestaurant" | "menuItem" | "order" | "orderItem" | "address" | "payment" | "delivery"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1040,6 +1056,80 @@ export namespace Prisma {
           count: {
             args: Prisma.RestaurantCountArgs<ExtArgs>
             result: $Utils.Optional<RestaurantCountAggregateOutputType> | number
+          }
+        }
+      }
+      DiscoveredRestaurant: {
+        payload: Prisma.$DiscoveredRestaurantPayload<ExtArgs>
+        fields: Prisma.DiscoveredRestaurantFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DiscoveredRestaurantFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DiscoveredRestaurantFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>
+          }
+          findFirst: {
+            args: Prisma.DiscoveredRestaurantFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DiscoveredRestaurantFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>
+          }
+          findMany: {
+            args: Prisma.DiscoveredRestaurantFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>[]
+          }
+          create: {
+            args: Prisma.DiscoveredRestaurantCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>
+          }
+          createMany: {
+            args: Prisma.DiscoveredRestaurantCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DiscoveredRestaurantCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>[]
+          }
+          delete: {
+            args: Prisma.DiscoveredRestaurantDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>
+          }
+          update: {
+            args: Prisma.DiscoveredRestaurantUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>
+          }
+          deleteMany: {
+            args: Prisma.DiscoveredRestaurantDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DiscoveredRestaurantUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DiscoveredRestaurantUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>[]
+          }
+          upsert: {
+            args: Prisma.DiscoveredRestaurantUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DiscoveredRestaurantPayload>
+          }
+          aggregate: {
+            args: Prisma.DiscoveredRestaurantAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDiscoveredRestaurant>
+          }
+          groupBy: {
+            args: Prisma.DiscoveredRestaurantGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DiscoveredRestaurantGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DiscoveredRestaurantCountArgs<ExtArgs>
+            result: $Utils.Optional<DiscoveredRestaurantCountAggregateOutputType> | number
           }
         }
       }
@@ -1574,6 +1664,7 @@ export namespace Prisma {
     user?: UserOmit
     passwordResetToken?: PasswordResetTokenOmit
     restaurant?: RestaurantOmit
+    discoveredRestaurant?: DiscoveredRestaurantOmit
     menuItem?: MenuItemOmit
     order?: OrderOmit
     orderItem?: OrderItemOmit
@@ -5453,6 +5544,1074 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: RestaurantInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DiscoveredRestaurant
+   */
+
+  export type AggregateDiscoveredRestaurant = {
+    _count: DiscoveredRestaurantCountAggregateOutputType | null
+    _avg: DiscoveredRestaurantAvgAggregateOutputType | null
+    _sum: DiscoveredRestaurantSumAggregateOutputType | null
+    _min: DiscoveredRestaurantMinAggregateOutputType | null
+    _max: DiscoveredRestaurantMaxAggregateOutputType | null
+  }
+
+  export type DiscoveredRestaurantAvgAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type DiscoveredRestaurantSumAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type DiscoveredRestaurantMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    latitude: number | null
+    longitude: number | null
+    address: string | null
+    website: string | null
+    updatedAt: Date | null
+  }
+
+  export type DiscoveredRestaurantMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    latitude: number | null
+    longitude: number | null
+    address: string | null
+    website: string | null
+    updatedAt: Date | null
+  }
+
+  export type DiscoveredRestaurantCountAggregateOutputType = {
+    id: number
+    name: number
+    category: number
+    latitude: number
+    longitude: number
+    address: number
+    website: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DiscoveredRestaurantAvgAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type DiscoveredRestaurantSumAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type DiscoveredRestaurantMinAggregateInputType = {
+    id?: true
+    name?: true
+    latitude?: true
+    longitude?: true
+    address?: true
+    website?: true
+    updatedAt?: true
+  }
+
+  export type DiscoveredRestaurantMaxAggregateInputType = {
+    id?: true
+    name?: true
+    latitude?: true
+    longitude?: true
+    address?: true
+    website?: true
+    updatedAt?: true
+  }
+
+  export type DiscoveredRestaurantCountAggregateInputType = {
+    id?: true
+    name?: true
+    category?: true
+    latitude?: true
+    longitude?: true
+    address?: true
+    website?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DiscoveredRestaurantAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DiscoveredRestaurant to aggregate.
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DiscoveredRestaurants to fetch.
+     */
+    orderBy?: DiscoveredRestaurantOrderByWithRelationInput | DiscoveredRestaurantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DiscoveredRestaurantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DiscoveredRestaurants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DiscoveredRestaurants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DiscoveredRestaurants
+    **/
+    _count?: true | DiscoveredRestaurantCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DiscoveredRestaurantAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DiscoveredRestaurantSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DiscoveredRestaurantMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DiscoveredRestaurantMaxAggregateInputType
+  }
+
+  export type GetDiscoveredRestaurantAggregateType<T extends DiscoveredRestaurantAggregateArgs> = {
+        [P in keyof T & keyof AggregateDiscoveredRestaurant]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDiscoveredRestaurant[P]>
+      : GetScalarType<T[P], AggregateDiscoveredRestaurant[P]>
+  }
+
+
+
+
+  export type DiscoveredRestaurantGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DiscoveredRestaurantWhereInput
+    orderBy?: DiscoveredRestaurantOrderByWithAggregationInput | DiscoveredRestaurantOrderByWithAggregationInput[]
+    by: DiscoveredRestaurantScalarFieldEnum[] | DiscoveredRestaurantScalarFieldEnum
+    having?: DiscoveredRestaurantScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DiscoveredRestaurantCountAggregateInputType | true
+    _avg?: DiscoveredRestaurantAvgAggregateInputType
+    _sum?: DiscoveredRestaurantSumAggregateInputType
+    _min?: DiscoveredRestaurantMinAggregateInputType
+    _max?: DiscoveredRestaurantMaxAggregateInputType
+  }
+
+  export type DiscoveredRestaurantGroupByOutputType = {
+    id: string
+    name: string
+    category: string[]
+    latitude: number
+    longitude: number
+    address: string | null
+    website: string | null
+    updatedAt: Date
+    _count: DiscoveredRestaurantCountAggregateOutputType | null
+    _avg: DiscoveredRestaurantAvgAggregateOutputType | null
+    _sum: DiscoveredRestaurantSumAggregateOutputType | null
+    _min: DiscoveredRestaurantMinAggregateOutputType | null
+    _max: DiscoveredRestaurantMaxAggregateOutputType | null
+  }
+
+  type GetDiscoveredRestaurantGroupByPayload<T extends DiscoveredRestaurantGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DiscoveredRestaurantGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DiscoveredRestaurantGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DiscoveredRestaurantGroupByOutputType[P]>
+            : GetScalarType<T[P], DiscoveredRestaurantGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DiscoveredRestaurantSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    address?: boolean
+    website?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["discoveredRestaurant"]>
+
+  export type DiscoveredRestaurantSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    address?: boolean
+    website?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["discoveredRestaurant"]>
+
+  export type DiscoveredRestaurantSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    address?: boolean
+    website?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["discoveredRestaurant"]>
+
+  export type DiscoveredRestaurantSelectScalar = {
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    address?: boolean
+    website?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DiscoveredRestaurantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "category" | "latitude" | "longitude" | "address" | "website" | "updatedAt", ExtArgs["result"]["discoveredRestaurant"]>
+
+  export type $DiscoveredRestaurantPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DiscoveredRestaurant"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      category: string[]
+      latitude: number
+      longitude: number
+      address: string | null
+      website: string | null
+      updatedAt: Date
+    }, ExtArgs["result"]["discoveredRestaurant"]>
+    composites: {}
+  }
+
+  type DiscoveredRestaurantGetPayload<S extends boolean | null | undefined | DiscoveredRestaurantDefaultArgs> = $Result.GetResult<Prisma.$DiscoveredRestaurantPayload, S>
+
+  type DiscoveredRestaurantCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DiscoveredRestaurantFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DiscoveredRestaurantCountAggregateInputType | true
+    }
+
+  export interface DiscoveredRestaurantDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DiscoveredRestaurant'], meta: { name: 'DiscoveredRestaurant' } }
+    /**
+     * Find zero or one DiscoveredRestaurant that matches the filter.
+     * @param {DiscoveredRestaurantFindUniqueArgs} args - Arguments to find a DiscoveredRestaurant
+     * @example
+     * // Get one DiscoveredRestaurant
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DiscoveredRestaurantFindUniqueArgs>(args: SelectSubset<T, DiscoveredRestaurantFindUniqueArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DiscoveredRestaurant that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DiscoveredRestaurantFindUniqueOrThrowArgs} args - Arguments to find a DiscoveredRestaurant
+     * @example
+     * // Get one DiscoveredRestaurant
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DiscoveredRestaurantFindUniqueOrThrowArgs>(args: SelectSubset<T, DiscoveredRestaurantFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DiscoveredRestaurant that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantFindFirstArgs} args - Arguments to find a DiscoveredRestaurant
+     * @example
+     * // Get one DiscoveredRestaurant
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DiscoveredRestaurantFindFirstArgs>(args?: SelectSubset<T, DiscoveredRestaurantFindFirstArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DiscoveredRestaurant that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantFindFirstOrThrowArgs} args - Arguments to find a DiscoveredRestaurant
+     * @example
+     * // Get one DiscoveredRestaurant
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DiscoveredRestaurantFindFirstOrThrowArgs>(args?: SelectSubset<T, DiscoveredRestaurantFindFirstOrThrowArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DiscoveredRestaurants that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DiscoveredRestaurants
+     * const discoveredRestaurants = await prisma.discoveredRestaurant.findMany()
+     * 
+     * // Get first 10 DiscoveredRestaurants
+     * const discoveredRestaurants = await prisma.discoveredRestaurant.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const discoveredRestaurantWithIdOnly = await prisma.discoveredRestaurant.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DiscoveredRestaurantFindManyArgs>(args?: SelectSubset<T, DiscoveredRestaurantFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DiscoveredRestaurant.
+     * @param {DiscoveredRestaurantCreateArgs} args - Arguments to create a DiscoveredRestaurant.
+     * @example
+     * // Create one DiscoveredRestaurant
+     * const DiscoveredRestaurant = await prisma.discoveredRestaurant.create({
+     *   data: {
+     *     // ... data to create a DiscoveredRestaurant
+     *   }
+     * })
+     * 
+     */
+    create<T extends DiscoveredRestaurantCreateArgs>(args: SelectSubset<T, DiscoveredRestaurantCreateArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DiscoveredRestaurants.
+     * @param {DiscoveredRestaurantCreateManyArgs} args - Arguments to create many DiscoveredRestaurants.
+     * @example
+     * // Create many DiscoveredRestaurants
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DiscoveredRestaurantCreateManyArgs>(args?: SelectSubset<T, DiscoveredRestaurantCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DiscoveredRestaurants and returns the data saved in the database.
+     * @param {DiscoveredRestaurantCreateManyAndReturnArgs} args - Arguments to create many DiscoveredRestaurants.
+     * @example
+     * // Create many DiscoveredRestaurants
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DiscoveredRestaurants and only return the `id`
+     * const discoveredRestaurantWithIdOnly = await prisma.discoveredRestaurant.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DiscoveredRestaurantCreateManyAndReturnArgs>(args?: SelectSubset<T, DiscoveredRestaurantCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DiscoveredRestaurant.
+     * @param {DiscoveredRestaurantDeleteArgs} args - Arguments to delete one DiscoveredRestaurant.
+     * @example
+     * // Delete one DiscoveredRestaurant
+     * const DiscoveredRestaurant = await prisma.discoveredRestaurant.delete({
+     *   where: {
+     *     // ... filter to delete one DiscoveredRestaurant
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DiscoveredRestaurantDeleteArgs>(args: SelectSubset<T, DiscoveredRestaurantDeleteArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DiscoveredRestaurant.
+     * @param {DiscoveredRestaurantUpdateArgs} args - Arguments to update one DiscoveredRestaurant.
+     * @example
+     * // Update one DiscoveredRestaurant
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DiscoveredRestaurantUpdateArgs>(args: SelectSubset<T, DiscoveredRestaurantUpdateArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DiscoveredRestaurants.
+     * @param {DiscoveredRestaurantDeleteManyArgs} args - Arguments to filter DiscoveredRestaurants to delete.
+     * @example
+     * // Delete a few DiscoveredRestaurants
+     * const { count } = await prisma.discoveredRestaurant.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DiscoveredRestaurantDeleteManyArgs>(args?: SelectSubset<T, DiscoveredRestaurantDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DiscoveredRestaurants.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DiscoveredRestaurants
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DiscoveredRestaurantUpdateManyArgs>(args: SelectSubset<T, DiscoveredRestaurantUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DiscoveredRestaurants and returns the data updated in the database.
+     * @param {DiscoveredRestaurantUpdateManyAndReturnArgs} args - Arguments to update many DiscoveredRestaurants.
+     * @example
+     * // Update many DiscoveredRestaurants
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DiscoveredRestaurants and only return the `id`
+     * const discoveredRestaurantWithIdOnly = await prisma.discoveredRestaurant.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DiscoveredRestaurantUpdateManyAndReturnArgs>(args: SelectSubset<T, DiscoveredRestaurantUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DiscoveredRestaurant.
+     * @param {DiscoveredRestaurantUpsertArgs} args - Arguments to update or create a DiscoveredRestaurant.
+     * @example
+     * // Update or create a DiscoveredRestaurant
+     * const discoveredRestaurant = await prisma.discoveredRestaurant.upsert({
+     *   create: {
+     *     // ... data to create a DiscoveredRestaurant
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DiscoveredRestaurant we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DiscoveredRestaurantUpsertArgs>(args: SelectSubset<T, DiscoveredRestaurantUpsertArgs<ExtArgs>>): Prisma__DiscoveredRestaurantClient<$Result.GetResult<Prisma.$DiscoveredRestaurantPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DiscoveredRestaurants.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantCountArgs} args - Arguments to filter DiscoveredRestaurants to count.
+     * @example
+     * // Count the number of DiscoveredRestaurants
+     * const count = await prisma.discoveredRestaurant.count({
+     *   where: {
+     *     // ... the filter for the DiscoveredRestaurants we want to count
+     *   }
+     * })
+    **/
+    count<T extends DiscoveredRestaurantCountArgs>(
+      args?: Subset<T, DiscoveredRestaurantCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DiscoveredRestaurantCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DiscoveredRestaurant.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DiscoveredRestaurantAggregateArgs>(args: Subset<T, DiscoveredRestaurantAggregateArgs>): Prisma.PrismaPromise<GetDiscoveredRestaurantAggregateType<T>>
+
+    /**
+     * Group by DiscoveredRestaurant.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DiscoveredRestaurantGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DiscoveredRestaurantGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DiscoveredRestaurantGroupByArgs['orderBy'] }
+        : { orderBy?: DiscoveredRestaurantGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DiscoveredRestaurantGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDiscoveredRestaurantGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DiscoveredRestaurant model
+   */
+  readonly fields: DiscoveredRestaurantFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DiscoveredRestaurant.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DiscoveredRestaurantClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DiscoveredRestaurant model
+   */
+  interface DiscoveredRestaurantFieldRefs {
+    readonly id: FieldRef<"DiscoveredRestaurant", 'String'>
+    readonly name: FieldRef<"DiscoveredRestaurant", 'String'>
+    readonly category: FieldRef<"DiscoveredRestaurant", 'String[]'>
+    readonly latitude: FieldRef<"DiscoveredRestaurant", 'Float'>
+    readonly longitude: FieldRef<"DiscoveredRestaurant", 'Float'>
+    readonly address: FieldRef<"DiscoveredRestaurant", 'String'>
+    readonly website: FieldRef<"DiscoveredRestaurant", 'String'>
+    readonly updatedAt: FieldRef<"DiscoveredRestaurant", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DiscoveredRestaurant findUnique
+   */
+  export type DiscoveredRestaurantFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * Filter, which DiscoveredRestaurant to fetch.
+     */
+    where: DiscoveredRestaurantWhereUniqueInput
+  }
+
+  /**
+   * DiscoveredRestaurant findUniqueOrThrow
+   */
+  export type DiscoveredRestaurantFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * Filter, which DiscoveredRestaurant to fetch.
+     */
+    where: DiscoveredRestaurantWhereUniqueInput
+  }
+
+  /**
+   * DiscoveredRestaurant findFirst
+   */
+  export type DiscoveredRestaurantFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * Filter, which DiscoveredRestaurant to fetch.
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DiscoveredRestaurants to fetch.
+     */
+    orderBy?: DiscoveredRestaurantOrderByWithRelationInput | DiscoveredRestaurantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DiscoveredRestaurants.
+     */
+    cursor?: DiscoveredRestaurantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DiscoveredRestaurants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DiscoveredRestaurants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DiscoveredRestaurants.
+     */
+    distinct?: DiscoveredRestaurantScalarFieldEnum | DiscoveredRestaurantScalarFieldEnum[]
+  }
+
+  /**
+   * DiscoveredRestaurant findFirstOrThrow
+   */
+  export type DiscoveredRestaurantFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * Filter, which DiscoveredRestaurant to fetch.
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DiscoveredRestaurants to fetch.
+     */
+    orderBy?: DiscoveredRestaurantOrderByWithRelationInput | DiscoveredRestaurantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DiscoveredRestaurants.
+     */
+    cursor?: DiscoveredRestaurantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DiscoveredRestaurants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DiscoveredRestaurants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DiscoveredRestaurants.
+     */
+    distinct?: DiscoveredRestaurantScalarFieldEnum | DiscoveredRestaurantScalarFieldEnum[]
+  }
+
+  /**
+   * DiscoveredRestaurant findMany
+   */
+  export type DiscoveredRestaurantFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * Filter, which DiscoveredRestaurants to fetch.
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DiscoveredRestaurants to fetch.
+     */
+    orderBy?: DiscoveredRestaurantOrderByWithRelationInput | DiscoveredRestaurantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DiscoveredRestaurants.
+     */
+    cursor?: DiscoveredRestaurantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DiscoveredRestaurants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DiscoveredRestaurants.
+     */
+    skip?: number
+    distinct?: DiscoveredRestaurantScalarFieldEnum | DiscoveredRestaurantScalarFieldEnum[]
+  }
+
+  /**
+   * DiscoveredRestaurant create
+   */
+  export type DiscoveredRestaurantCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * The data needed to create a DiscoveredRestaurant.
+     */
+    data: XOR<DiscoveredRestaurantCreateInput, DiscoveredRestaurantUncheckedCreateInput>
+  }
+
+  /**
+   * DiscoveredRestaurant createMany
+   */
+  export type DiscoveredRestaurantCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DiscoveredRestaurants.
+     */
+    data: DiscoveredRestaurantCreateManyInput | DiscoveredRestaurantCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DiscoveredRestaurant createManyAndReturn
+   */
+  export type DiscoveredRestaurantCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * The data used to create many DiscoveredRestaurants.
+     */
+    data: DiscoveredRestaurantCreateManyInput | DiscoveredRestaurantCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DiscoveredRestaurant update
+   */
+  export type DiscoveredRestaurantUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * The data needed to update a DiscoveredRestaurant.
+     */
+    data: XOR<DiscoveredRestaurantUpdateInput, DiscoveredRestaurantUncheckedUpdateInput>
+    /**
+     * Choose, which DiscoveredRestaurant to update.
+     */
+    where: DiscoveredRestaurantWhereUniqueInput
+  }
+
+  /**
+   * DiscoveredRestaurant updateMany
+   */
+  export type DiscoveredRestaurantUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DiscoveredRestaurants.
+     */
+    data: XOR<DiscoveredRestaurantUpdateManyMutationInput, DiscoveredRestaurantUncheckedUpdateManyInput>
+    /**
+     * Filter which DiscoveredRestaurants to update
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * Limit how many DiscoveredRestaurants to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DiscoveredRestaurant updateManyAndReturn
+   */
+  export type DiscoveredRestaurantUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * The data used to update DiscoveredRestaurants.
+     */
+    data: XOR<DiscoveredRestaurantUpdateManyMutationInput, DiscoveredRestaurantUncheckedUpdateManyInput>
+    /**
+     * Filter which DiscoveredRestaurants to update
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * Limit how many DiscoveredRestaurants to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DiscoveredRestaurant upsert
+   */
+  export type DiscoveredRestaurantUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * The filter to search for the DiscoveredRestaurant to update in case it exists.
+     */
+    where: DiscoveredRestaurantWhereUniqueInput
+    /**
+     * In case the DiscoveredRestaurant found by the `where` argument doesn't exist, create a new DiscoveredRestaurant with this data.
+     */
+    create: XOR<DiscoveredRestaurantCreateInput, DiscoveredRestaurantUncheckedCreateInput>
+    /**
+     * In case the DiscoveredRestaurant was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DiscoveredRestaurantUpdateInput, DiscoveredRestaurantUncheckedUpdateInput>
+  }
+
+  /**
+   * DiscoveredRestaurant delete
+   */
+  export type DiscoveredRestaurantDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+    /**
+     * Filter which DiscoveredRestaurant to delete.
+     */
+    where: DiscoveredRestaurantWhereUniqueInput
+  }
+
+  /**
+   * DiscoveredRestaurant deleteMany
+   */
+  export type DiscoveredRestaurantDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DiscoveredRestaurants to delete
+     */
+    where?: DiscoveredRestaurantWhereInput
+    /**
+     * Limit how many DiscoveredRestaurants to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DiscoveredRestaurant without action
+   */
+  export type DiscoveredRestaurantDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DiscoveredRestaurant
+     */
+    select?: DiscoveredRestaurantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DiscoveredRestaurant
+     */
+    omit?: DiscoveredRestaurantOmit<ExtArgs> | null
   }
 
 
@@ -12452,6 +13611,20 @@ export namespace Prisma {
   export type RestaurantScalarFieldEnum = (typeof RestaurantScalarFieldEnum)[keyof typeof RestaurantScalarFieldEnum]
 
 
+  export const DiscoveredRestaurantScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    category: 'category',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    address: 'address',
+    website: 'website',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DiscoveredRestaurantScalarFieldEnum = (typeof DiscoveredRestaurantScalarFieldEnum)[keyof typeof DiscoveredRestaurantScalarFieldEnum]
+
+
   export const MenuItemScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -12951,6 +14124,75 @@ export namespace Prisma {
     addressId?: StringNullableWithAggregatesFilter<"Restaurant"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Restaurant"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Restaurant"> | Date | string
+  }
+
+  export type DiscoveredRestaurantWhereInput = {
+    AND?: DiscoveredRestaurantWhereInput | DiscoveredRestaurantWhereInput[]
+    OR?: DiscoveredRestaurantWhereInput[]
+    NOT?: DiscoveredRestaurantWhereInput | DiscoveredRestaurantWhereInput[]
+    id?: StringFilter<"DiscoveredRestaurant"> | string
+    name?: StringFilter<"DiscoveredRestaurant"> | string
+    category?: StringNullableListFilter<"DiscoveredRestaurant">
+    latitude?: FloatFilter<"DiscoveredRestaurant"> | number
+    longitude?: FloatFilter<"DiscoveredRestaurant"> | number
+    address?: StringNullableFilter<"DiscoveredRestaurant"> | string | null
+    website?: StringNullableFilter<"DiscoveredRestaurant"> | string | null
+    updatedAt?: DateTimeFilter<"DiscoveredRestaurant"> | Date | string
+  }
+
+  export type DiscoveredRestaurantOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    address?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DiscoveredRestaurantWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DiscoveredRestaurantWhereInput | DiscoveredRestaurantWhereInput[]
+    OR?: DiscoveredRestaurantWhereInput[]
+    NOT?: DiscoveredRestaurantWhereInput | DiscoveredRestaurantWhereInput[]
+    name?: StringFilter<"DiscoveredRestaurant"> | string
+    category?: StringNullableListFilter<"DiscoveredRestaurant">
+    latitude?: FloatFilter<"DiscoveredRestaurant"> | number
+    longitude?: FloatFilter<"DiscoveredRestaurant"> | number
+    address?: StringNullableFilter<"DiscoveredRestaurant"> | string | null
+    website?: StringNullableFilter<"DiscoveredRestaurant"> | string | null
+    updatedAt?: DateTimeFilter<"DiscoveredRestaurant"> | Date | string
+  }, "id">
+
+  export type DiscoveredRestaurantOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    address?: SortOrderInput | SortOrder
+    website?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: DiscoveredRestaurantCountOrderByAggregateInput
+    _avg?: DiscoveredRestaurantAvgOrderByAggregateInput
+    _max?: DiscoveredRestaurantMaxOrderByAggregateInput
+    _min?: DiscoveredRestaurantMinOrderByAggregateInput
+    _sum?: DiscoveredRestaurantSumOrderByAggregateInput
+  }
+
+  export type DiscoveredRestaurantScalarWhereWithAggregatesInput = {
+    AND?: DiscoveredRestaurantScalarWhereWithAggregatesInput | DiscoveredRestaurantScalarWhereWithAggregatesInput[]
+    OR?: DiscoveredRestaurantScalarWhereWithAggregatesInput[]
+    NOT?: DiscoveredRestaurantScalarWhereWithAggregatesInput | DiscoveredRestaurantScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DiscoveredRestaurant"> | string
+    name?: StringWithAggregatesFilter<"DiscoveredRestaurant"> | string
+    category?: StringNullableListFilter<"DiscoveredRestaurant">
+    latitude?: FloatWithAggregatesFilter<"DiscoveredRestaurant"> | number
+    longitude?: FloatWithAggregatesFilter<"DiscoveredRestaurant"> | number
+    address?: StringNullableWithAggregatesFilter<"DiscoveredRestaurant"> | string | null
+    website?: StringNullableWithAggregatesFilter<"DiscoveredRestaurant"> | string | null
+    updatedAt?: DateTimeWithAggregatesFilter<"DiscoveredRestaurant"> | Date | string
   }
 
   export type MenuItemWhereInput = {
@@ -13669,6 +14911,83 @@ export namespace Prisma {
     closeHrs?: StringFieldUpdateOperationsInput | string
     addressId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DiscoveredRestaurantCreateInput = {
+    id: string
+    name: string
+    category?: DiscoveredRestaurantCreatecategoryInput | string[]
+    latitude: number
+    longitude: number
+    address?: string | null
+    website?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type DiscoveredRestaurantUncheckedCreateInput = {
+    id: string
+    name: string
+    category?: DiscoveredRestaurantCreatecategoryInput | string[]
+    latitude: number
+    longitude: number
+    address?: string | null
+    website?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type DiscoveredRestaurantUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: DiscoveredRestaurantUpdatecategoryInput | string[]
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DiscoveredRestaurantUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: DiscoveredRestaurantUpdatecategoryInput | string[]
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DiscoveredRestaurantCreateManyInput = {
+    id: string
+    name: string
+    category?: DiscoveredRestaurantCreatecategoryInput | string[]
+    latitude: number
+    longitude: number
+    address?: string | null
+    website?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type DiscoveredRestaurantUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: DiscoveredRestaurantUpdatecategoryInput | string[]
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DiscoveredRestaurantUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: DiscoveredRestaurantUpdatecategoryInput | string[]
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -14418,6 +15737,63 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type DiscoveredRestaurantCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    address?: SortOrder
+    website?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DiscoveredRestaurantAvgOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type DiscoveredRestaurantMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    address?: SortOrder
+    website?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DiscoveredRestaurantMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    address?: SortOrder
+    website?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DiscoveredRestaurantSumOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -14481,22 +15857,6 @@ export namespace Prisma {
 
   export type MenuItemSumOrderByAggregateInput = {
     price?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -15142,6 +16502,23 @@ export namespace Prisma {
     deleteMany?: MenuItemScalarWhereInput | MenuItemScalarWhereInput[]
   }
 
+  export type DiscoveredRestaurantCreatecategoryInput = {
+    set: string[]
+  }
+
+  export type DiscoveredRestaurantUpdatecategoryInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type MenuItemCreatecategoryInput = {
     set: string[]
   }
@@ -15164,14 +16541,6 @@ export namespace Prisma {
     connectOrCreate?: OrderItemCreateOrConnectWithoutMenuItemInput | OrderItemCreateOrConnectWithoutMenuItemInput[]
     createMany?: OrderItemCreateManyMenuItemInputEnvelope
     connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -15681,11 +17050,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -15700,6 +17064,11 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

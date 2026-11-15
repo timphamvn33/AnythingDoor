@@ -104,6 +104,20 @@ model Restaurant {
   menuItems   MenuItem[]
 }
 
+// External listings are discovery-only and cannot be used for orders.
+model DiscoveredRestaurant {
+  id          String   @id
+  name        String
+  category    String[] @default([])
+  latitude    Float
+  longitude   Float
+  address     String?
+  website     String?
+  updatedAt   DateTime @updatedAt
+
+  @@index([latitude, longitude])
+}
+
 model MenuItem {
   id           String      @id @default(uuid())
   name         String

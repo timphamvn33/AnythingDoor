@@ -159,6 +159,17 @@ exports.Prisma.RestaurantScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DiscoveredRestaurantScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  category: 'category',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  address: 'address',
+  website: 'website',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.MenuItemScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -274,6 +285,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
   Restaurant: 'Restaurant',
+  DiscoveredRestaurant: 'DiscoveredRestaurant',
   MenuItem: 'MenuItem',
   Order: 'Order',
   OrderItem: 'OrderItem',

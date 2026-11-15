@@ -6,7 +6,6 @@ import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/SideNavbar';
 import { ArrowLeftRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
@@ -17,11 +16,14 @@ import DialogOrderItem from '@/components/dialog/DialogOrderItem';
 import { initOrAddItem } from '@/services/order.service';
 import { useAuth } from '@/context/auth.context';
 import { useCart } from '@/context/cart.context';
-import { DEMO_RESTAURANTS } from '@/data/demo-restaurants';
+import RestaurantDiscovery from '@/components/shared/RestaurantDiscovery';
 
 export default function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [searchText, setSearchText] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => typeof window === 'undefined' || window.matchMedia('(min-width: 768px)').matches,
+  );
   const [distance, setDistance] = useState('');
   const [checkedCategories, setCheckedCategories] = useState<string[]>([]);
   const [price, setPrice] = useState('$');
@@ -62,10 +64,6 @@ export default function LandingPage() {
     );
   };
 
-  const handleSearch = () => {
-    console.log('Search triggered with:', { selectedCategory, distance, checkedCategories, price });
-  };
-
   const navigate = useNavigate();
 
   const handleClickOnItem = (item: ItemPayload) => {
@@ -73,15 +71,6 @@ export default function LandingPage() {
       navigate(`/landing/store/${item.restaurantId}`);
     }
   };
-
-  const visibleDemoRestaurants = DEMO_RESTAURANTS.filter(restaurant => {
-    const matchesTab =
-      selectedCategory === 'All' || restaurant.category.includes(selectedCategory);
-    const matchesSidebar =
-      checkedCategories.length === 0 ||
-      checkedCategories.some(category => restaurant.category.includes(category));
-    return matchesTab && matchesSidebar;
-  });
 
   const handleAddItemToCart = (item: ItemPayload) => {
     setOpenDialogOrderItem(true);
@@ -118,6 +107,8 @@ export default function LandingPage() {
         {/* Toggle Button (mobile only) */}
         <button
           onClick={toggleSidebar}
+          aria-label={sidebarOpen ? 'Close filters' : 'Open filters'}
+          aria-expanded={sidebarOpen}
           className="absolute top-16 left-5 z-30 bg-white p-1 rounded-full shadow-md hover:bg-gray-200 transition"
         >
           <ArrowLeftRight className="w-4 h-4" />
@@ -126,7 +117,9 @@ export default function LandingPage() {
         {/* Sidebar */}
         <div
           className={`transition-all duration-300 ${
-            sidebarOpen ? 'w-72 block' : 'w-0 hidden'
+            sidebarOpen
+              ? 'absolute inset-y-0 left-0 z-20 w-72 md:relative md:inset-auto'
+              : 'w-0 hidden'
           } md:block`}
         >
           <Sidebar
@@ -174,12 +167,12 @@ export default function LandingPage() {
                 <div className="grid grid-cols-2 gap-2 mb-2">
                   <Input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Filter by restaurant, cuisine, or item"
+                    value={searchText}
+                    onChange={event => setSearchText(event.target.value)}
+                    aria-label="Filter results"
                     className="bg-white border border-gray-300 focus:border-black focus:ring-0 rounded-xl px-4 py-2 text-base pl-10"
                   />
-                  <Button className="w-20" onClick={handleSearch}>
-                    Search
-                  </Button>
                 </div>
 
                 <div className="text-gray-700 text-lg font-medium">
@@ -188,67 +181,47 @@ export default function LandingPage() {
               </Tabs>
             </div>
 
-            <section className="mt-6">
-              <div className="mb-4">
-                <h2 className="text-2xl font-semibold">Sample restaurants</h2>
-                <p className="text-sm text-gray-600">
-                  Explore demo menus and add sample dishes to your cart.
-                </p>
-              </div>
-              {visibleDemoRestaurants.length ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {visibleDemoRestaurants.map(restaurant => (
-                    <button
-                      key={restaurant.id}
-                      type="button"
-                      onClick={() => navigate(`/landing/store/${restaurant.id}`)}
-                      className="overflow-hidden rounded-xl border bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                    >
-                      <div className="flex h-32 items-center justify-center bg-gradient-to-br from-amber-100 to-orange-200 text-5xl">
-                        {restaurant.category.includes('Pizza')
-                          ? '🍕'
-                          : restaurant.category.includes('Chinese')
-                            ? '🥡'
-                            : '🥗'}
-                      </div>
-                      <div className="space-y-2 p-4">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-lg font-semibold">{restaurant.name}</h3>
-                          <span className="whitespace-nowrap text-sm">★ {restaurant.rating}</span>
-                        </div>
-                        <p className="text-sm text-gray-600">{restaurant.description}</p>
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span>{restaurant.category.join(' · ')}</span>
-                          <span>{restaurant.deliveryTime}</span>
-                        </div>
-                        <span className="inline-block pt-1 text-sm font-medium text-primary">
-                          View menu →
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
-                  No sample restaurants match these filters. Try another category or reset filters.
-                </p>
-              )}
-            </section>
+            <RestaurantDiscovery
+              selectedCategory={selectedCategory}
+              checkedCategories={checkedCategories}
+              query={searchText}
+              distance={distance}
+              initialSearchLocation={
+                typeof location.state?.discoveryLocation === 'string'
+                  ? location.state.discoveryLocation
+                  : undefined
+              }
+            />
 
-            <section className="mt-10">
-              <h2 className="mb-4 text-2xl font-semibold">Menu items from restaurants</h2>
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items.map(item => (
-                  <ItemInfo
-                    key={item.id}
-                    item={item}
-                    isReadOnly={true}
-                    onClick={() => handleClickOnItem(item)}
-                    handleAddItemToCart={handleAddItemToCart}
-                  />
-                ))}
-              </div>
-            </section>
+            <details className="mt-10">
+              <summary className="cursor-pointer text-lg font-semibold">
+                Partner menu items (not location-filtered)
+              </summary>
+              <section className="mt-10">
+                <h2 className="mb-4 text-2xl font-semibold">Menu items from restaurants</h2>
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {items
+                    .filter(
+                      item =>
+                        `${item.name} ${item.category.join(' ')}`
+                          .toLowerCase()
+                          .includes(searchText.trim().toLowerCase()) &&
+                        (selectedCategory === 'All' || item.category.includes(selectedCategory)) &&
+                        (checkedCategories.length === 0 ||
+                          checkedCategories.some(category => item.category.includes(category))),
+                    )
+                    .map(item => (
+                      <ItemInfo
+                        key={item.id}
+                        item={item}
+                        isReadOnly={true}
+                        onClick={() => handleClickOnItem(item)}
+                        handleAddItemToCart={handleAddItemToCart}
+                      />
+                    ))}
+                </div>
+              </section>
+            </details>
             {selectedItem && (
               <DialogOrderItem
                 open={openDialogOrderItem}

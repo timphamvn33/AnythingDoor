@@ -23,6 +23,7 @@ import { OrderItemService } from '@src/order-items/order-item.service';
 import { DeliveryService } from '@src/delivery/delivery.service';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { ChatModule } from '@src/chat/chat.module';
+import { DiscoveryModule } from '@src/discovery/discovery.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ChatModule } from '@src/chat/chat.module';
     DeliveryModule,
     PrismaModule,
     ChatModule,
+    DiscoveryModule,
   ],
   controllers: [
     AppController,
