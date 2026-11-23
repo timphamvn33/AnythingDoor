@@ -9,6 +9,7 @@ import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypt
 import { performance } from 'node:perf_hooks';
 import type { DiscoveredRestaurant } from '@db/generated/prisma';
 import { PrismaService } from '@src/prisma/prisma.service';
+import { upsertDiscoveredRestaurants } from './discovery.persistence';
 
 type Point = { latitude: number; longitude: number; radiusMiles: number };
 type SearchResult = {
@@ -383,17 +384,7 @@ export class DiscoveryService {
       .slice(0, MAX_RESULTS)
       .map(listing)
       .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
-    await this.timed('database upsert', () =>
-      this.prisma.$transaction(
-        listings.map(entry =>
-          this.prisma.discoveredRestaurant.upsert({
-            where: { id: entry.id },
-            create: entry,
-            update: entry,
-          }),
-        ),
-      ),
-    );
+    await this.timed('database upsert', () => upsertDiscoveredRestaurants(this.prisma, listings));
     return {
       center,
       restaurants: await this.timed('database nearby', () => this.findNearby(center)),

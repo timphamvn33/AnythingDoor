@@ -130,6 +130,8 @@ Pressing **Search live** may send the entered location to the configured geocode
 
 Backend logs report discovery timings for geocoding, Overpass, database upserts, nearby lookup, and total live search, plus cache hits and geocoder skips. Timings do not include addresses or coordinates. Use these measurements to identify slow stages; first searches still wait for Overpass and database writes.
 
+Discovery imports use a single parameterized PostgreSQL bulk upsert rather than one write per listing. To run the optional database integration test, set `TEST_DATABASE_URL` to a PostgreSQL connection and run `node --test test\discovery-persistence.test.cjs` from `backend` after building. The test uses a temporary table and does not modify persistent listings.
+
 Imported listings are separate from partner restaurants and are **discovery only**: no menu, ordering, delivery availability, or prices are implied. Distance is straight-line, not a delivery-zone check. Partner menu items remain separately accessible and are not location-filtered; changing locations does not change an existing cart.
 
 After pulling this feature, apply the database migration with `npx prisma migrate deploy` from `db` using a direct `DATABASE_URL_UNPOOLED`, and regenerate the Prisma client with `npx prisma generate`. To run the discovery backend tests, build the backend and run `node --test test\discovery.test.cjs` from `backend`.

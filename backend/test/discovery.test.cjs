@@ -7,9 +7,6 @@ function database() {
   return {
     rows,
     discoveredRestaurant: {
-      upsert({ where, create, update }) {
-        return () => rows.set(where.id, { ...(rows.get(where.id) || create), ...update });
-      },
       async findMany({ where }) {
         return [...rows.values()].filter(
           row =>
@@ -20,8 +17,10 @@ function database() {
         );
       },
     },
-    async $transaction(operations) {
-      operations.forEach(operation => operation());
+    async $executeRaw(_query, payload) {
+      for (const entry of JSON.parse(payload)) {
+        rows.set(entry.id, entry);
+      }
     },
   };
 }
@@ -306,6 +305,43 @@ test('bounds the number of cached searches', async t => {
   assert.equal((await service.search({ location: 'Location 100', radiusMiles: 5 })).cached, true);
   assert.equal((await service.search({ location: 'Location 0', radiusMiles: 5 })).cached, false);
   assert.equal(overpassCalls, 102);
+});
+
+test('surfaces database write failures and retries without caching them', async t => {
+  const previousFetch = global.fetch;
+  const previousGeocoder = process.env.OSM_GEOCODER_URL;
+  const previousOverpass = process.env.OSM_OVERPASS_URL;
+  process.env.OSM_GEOCODER_URL = 'https://geocoder.example/search';
+  process.env.OSM_OVERPASS_URL = 'https://overpass.example/interpreter';
+  t.after(() => {
+    global.fetch = previousFetch;
+    if (previousGeocoder === undefined) delete process.env.OSM_GEOCODER_URL;
+    else process.env.OSM_GEOCODER_URL = previousGeocoder;
+    if (previousOverpass === undefined) delete process.env.OSM_OVERPASS_URL;
+    else process.env.OSM_OVERPASS_URL = previousOverpass;
+  });
+  global.fetch = async url =>
+    String(url).startsWith('https://geocoder.example')
+      ? Response.json([{ lat: '42.36', lon: '-71.06', address: { country_code: 'us' } }])
+      : Response.json({
+          elements: [{ type: 'node', id: 1, lat: 42.36, lon: -71.06, tags: { name: 'Cafe' } }],
+        });
+  const db = database();
+  const write = db.$executeRaw;
+  let attempts = 0;
+  db.$executeRaw = async (...args) => {
+    if (++attempts === 1) throw new Error('database unavailable');
+    return write(...args);
+  };
+  const service = new DiscoveryService(db);
+  await assert.rejects(
+    service.search({ location: 'Boston', radiusMiles: 5 }),
+    /database unavailable/,
+  );
+  const result = await service.search({ location: 'Boston', radiusMiles: 5 });
+  assert.equal(result.cached, false);
+  assert.equal(result.restaurants[0].name, 'Cafe');
+  assert.equal(attempts, 2);
 });
 
 test('requires configuration and rejects invalid radius and non-US geocoding', async t => {
