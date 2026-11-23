@@ -29,14 +29,18 @@ test('imports US listings by OSM identity, updates them, and keeps other regions
   const previousFetch = global.fetch;
   const previousGeocoder = process.env.OSM_GEOCODER_URL;
   const previousOverpass = process.env.OSM_OVERPASS_URL;
+  const previousGeoapifyKey = process.env.GEOAPIFY_API_KEY;
   process.env.OSM_GEOCODER_URL = 'https://geocoder.example/search';
   process.env.OSM_OVERPASS_URL = 'https://overpass.example/interpreter';
+  delete process.env.GEOAPIFY_API_KEY;
   t.after(() => {
     global.fetch = previousFetch;
     if (previousGeocoder === undefined) delete process.env.OSM_GEOCODER_URL;
     else process.env.OSM_GEOCODER_URL = previousGeocoder;
     if (previousOverpass === undefined) delete process.env.OSM_OVERPASS_URL;
     else process.env.OSM_OVERPASS_URL = previousOverpass;
+    if (previousGeoapifyKey === undefined) delete process.env.GEOAPIFY_API_KEY;
+    else process.env.GEOAPIFY_API_KEY = previousGeoapifyKey;
   });
   let name = 'Pizza Place';
   let zipSearch;
@@ -118,7 +122,7 @@ test('falls back to an exact US ZIP lookup when the configured geocoder has no m
   global.fetch = async (input, options) => {
     const url = new URL(String(input));
     if (url.hostname === 'geocoder.example') {
-      assert.equal(url.searchParams.get('postalcode'), mode === 'zip4' ? '31005-1234' : '31005');
+      assert.equal(url.searchParams.get('postalcode'), '31005-1234');
       if (mode === 'malformed-primary') return Response.json({ error: 'invalid' });
       if (mode === 'wrong-primary') {
         return Response.json([
@@ -160,7 +164,7 @@ test('falls back to an exact US ZIP lookup when the configured geocoder has no m
   for (const scenario of ['empty', 'wrong-primary', 'zip4']) {
     mode = scenario;
     const result = await new DiscoveryService(database()).search({
-      location: mode === 'zip4' ? '31005-1234' : '31005',
+      location: '31005-1234',
       radiusMiles: 5,
     });
     assert.deepEqual(result.center, { latitude: 32.53348, longitude: -83.59558, radiusMiles: 5 });
@@ -176,17 +180,104 @@ test('falls back to an exact US ZIP lookup when the configured geocoder has no m
   ]) {
     mode = scenario;
     await assert.rejects(
-      new DiscoveryService(database()).search({ location: '31005', radiusMiles: 5 }),
+      new DiscoveryService(database()).search({ location: '31005-1234', radiusMiles: 5 }),
       message,
     );
   }
   delete process.env.GEOAPIFY_API_KEY;
   mode = 'empty';
   await assert.rejects(
-    new DiscoveryService(database()).search({ location: '31005', radiusMiles: 5 }),
+    new DiscoveryService(database()).search({ location: '31005-1234', radiusMiles: 5 }),
     /Set GEOAPIFY_API_KEY/,
   );
   assert.equal(overpassCalls, 3);
+});
+
+test('uses Geoapify first for five-digit ZIPs and falls back safely to the configured geocoder', async t => {
+  const previousFetch = global.fetch;
+  const vars = ['GEOAPIFY_API_KEY', 'OSM_GEOCODER_URL', 'OSM_OVERPASS_URL'];
+  const previous = Object.fromEntries(vars.map(key => [key, process.env[key]]));
+  process.env.GEOAPIFY_API_KEY = 'test-key';
+  process.env.OSM_GEOCODER_URL = 'https://geocoder.example/search';
+  process.env.OSM_OVERPASS_URL = 'https://overpass.example/interpreter';
+  t.after(() => {
+    global.fetch = previousFetch;
+    for (const key of vars) {
+      if (previous[key] === undefined) delete process.env[key];
+      else process.env[key] = previous[key];
+    }
+  });
+  let mode = 'success';
+  const calls = [];
+  global.fetch = async (input, options) => {
+    const url = new URL(String(input));
+    calls.push(url.hostname);
+    if (url.hostname === 'api.geoapify.com') {
+      assert.equal(url.searchParams.get('postcode'), '31005');
+      if (mode === 'error') return new Response('unavailable', { status: 503 });
+      if (mode === 'invalid')
+        return Response.json({
+          results: [{ country_code: 'us', postcode: '31005', lat: null, lon: -83 }],
+        });
+      if (mode === 'not-found') return Response.json({ results: [] });
+      return Response.json({
+        results: [{ country_code: 'us', postcode: '31005', lat: 32.53, lon: -83.59 }],
+      });
+    }
+    if (url.hostname === 'geocoder.example') {
+      assert.equal(url.searchParams.get('postalcode'), '31005');
+      if (mode === 'both-missing') return Response.json([]);
+      return Response.json([
+        { lat: '32.54', lon: '-83.60', address: { country_code: 'us', postcode: '31005' } },
+      ]);
+    }
+    assert.equal(url.hostname, 'overpass.example');
+    assert.ok(
+      options.body.get('data').includes(mode === 'success' ? '32.53,-83.59' : '32.54,-83.6'),
+    );
+    return Response.json({ elements: [] });
+  };
+  const first = await new DiscoveryService(database()).search({
+    location: '31005',
+    radiusMiles: 5,
+  });
+  assert.equal(first.center.latitude, 32.53);
+  assert.deepEqual(calls, ['api.geoapify.com', 'overpass.example']);
+  for (const scenario of ['error', 'invalid', 'not-found']) {
+    mode = scenario;
+    calls.length = 0;
+    const result = await new DiscoveryService(database()).search({
+      location: '31005',
+      radiusMiles: 5,
+    });
+    assert.equal(result.center.latitude, 32.54);
+    assert.deepEqual(calls, ['api.geoapify.com', 'geocoder.example', 'overpass.example']);
+  }
+  mode = 'both-missing';
+  calls.length = 0;
+  global.fetch = async input => {
+    const url = new URL(String(input));
+    calls.push(url.hostname);
+    return Response.json(url.hostname === 'api.geoapify.com' ? { results: [] } : []);
+  };
+  await assert.rejects(
+    new DiscoveryService(database()).search({ location: '31005', radiusMiles: 5 }),
+    /No US location found/,
+  );
+  assert.deepEqual(calls, ['api.geoapify.com', 'geocoder.example']);
+  calls.length = 0;
+  global.fetch = async input => {
+    const url = new URL(String(input));
+    calls.push(url.hostname);
+    return url.hostname === 'api.geoapify.com'
+      ? new Response('unavailable', { status: 503 })
+      : Response.json([]);
+  };
+  await assert.rejects(
+    new DiscoveryService(database()).search({ location: '31005', radiusMiles: 5 }),
+    /could not complete/,
+  );
+  assert.deepEqual(calls, ['api.geoapify.com', 'geocoder.example']);
 });
 
 test('caches identical searches, coalesces concurrent requests, and refreshes after expiry', async t => {

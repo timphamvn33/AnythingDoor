@@ -393,6 +393,19 @@ export class DiscoveryService {
   }
 
   private async geocode(location: string, radiusMiles: number, geocoder: string): Promise<Point> {
+    let zipLookupError: BadRequestException | BadGatewayException | undefined;
+    if (/^\d{5}$/.test(location) && process.env.GEOAPIFY_API_KEY?.trim()) {
+      try {
+        return await this.timed('ZIP Geoapify', () => this.geocodeZip(location, radiusMiles));
+      } catch (error) {
+        if (!(error instanceof BadRequestException) && !(error instanceof BadGatewayException)) {
+          throw error;
+        }
+        zipLookupError = error;
+        this.logger.warn('Geoapify ZIP lookup failed; trying the configured geocoder.');
+      }
+    }
+
     const url = new URL(geocoder);
     const isZip = /^\d{5}(?:-\d{4})?$/.test(location);
     if (isZip) {
@@ -415,6 +428,7 @@ export class DiscoveryService {
         typeof postalCode !== 'string' ||
         !new RegExp(`^${location.slice(0, 5)}(?:-\\d{4})?$`).test(postalCode))
     ) {
+      if (zipLookupError) throw zipLookupError;
       return this.timed('ZIP fallback', () => this.geocodeZip(location, radiusMiles));
     }
     if (!result.length) {
