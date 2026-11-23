@@ -191,6 +191,11 @@ export default function LandingPage() {
                   ? location.state.discoveryLocation
                   : undefined
               }
+              initialSuggestionToken={
+                typeof location.state?.discoverySuggestionToken === 'string'
+                  ? location.state.discoverySuggestionToken
+                  : undefined
+              }
             />
 
             <details className="mt-10">

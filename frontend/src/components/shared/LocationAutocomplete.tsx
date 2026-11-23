@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Input } from '@/components/ui/input';
-import { getLocationSuggestions } from '@/services/discovery.service';
+import { getLocationSuggestions, type LocationSuggestion } from '@/services/discovery.service';
 
 export default function LocationAutocomplete({
   id,
   value,
   onChange,
+  onSelect,
   placeholder,
   inputClassName,
 }: {
   id: string;
   value: string;
   onChange: (value: string) => void;
+  onSelect?: (suggestion: LocationSuggestion) => void;
   placeholder: string;
   inputClassName?: string;
 }) {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
@@ -59,9 +61,10 @@ export default function LocationAutocomplete({
     };
   }, [value, enabled]);
 
-  const selectSuggestion = (suggestion: string) => {
+  const selectSuggestion = (suggestion: LocationSuggestion) => {
     setEnabled(false);
-    onChange(suggestion);
+    onChange(suggestion.label);
+    onSelect?.(suggestion);
     setSuggestions([]);
     setActiveIndex(-1);
     setOpen(false);
@@ -134,14 +137,14 @@ export default function LocationAutocomplete({
             {suggestions.map((suggestion, index) => (
               <button
                 id={`${listId}-${index}`}
-                key={suggestion}
+                key={`${suggestion.label}-${index}`}
                 type="button"
                 role="option"
                 aria-selected={index === activeIndex}
                 className={`block w-full rounded px-3 py-2 text-left text-sm hover:bg-gray-100 ${index === activeIndex ? 'bg-gray-100' : ''}`}
                 onClick={() => selectSuggestion(suggestion)}
               >
-                {suggestion}
+                {suggestion.label}
               </button>
             ))}
           </div>

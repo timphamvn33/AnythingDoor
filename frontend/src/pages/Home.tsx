@@ -11,12 +11,14 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
 import { getCurrentLocation, setCurrentLocation } from '@/services/location.service';
+import type { LocationSuggestion } from '@/services/discovery.service';
 
 export default function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentLocationInput, setCurrentLocationInput] = useState(() => getCurrentLocation());
   const [locationError, setLocationError] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion | null>(null);
 
   useEffect(() => {
     const toastMsg = location.state?.toastMessage;
@@ -33,7 +35,13 @@ export default function Home() {
       return;
     }
     setCurrentLocation(trimmed);
-    navigate('/landing', { state: { discoveryLocation: trimmed } });
+    navigate('/landing', {
+      state: {
+        discoveryLocation: trimmed,
+        discoverySuggestionToken:
+          selectedLocation?.label === trimmed ? selectedLocation.token : undefined,
+      },
+    });
   };
   return (
     <>
@@ -66,8 +74,10 @@ export default function Home() {
                   value={currentLocationInput}
                   onChange={value => {
                     setCurrentLocationInput(value);
+                    setSelectedLocation(null);
                     setLocationError('');
                   }}
+                  onSelect={setSelectedLocation}
                   inputClassName="bg-white border border-gray-300 focus:border-black focus:ring-0 rounded-xl px-4 py-2 text-base pl-10"
                 />
                 <MapPin className="pointer-events-none absolute left-3 top-2 text-gray-400 w-5 h-5" />

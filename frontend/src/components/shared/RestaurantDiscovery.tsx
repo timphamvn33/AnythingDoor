@@ -8,11 +8,12 @@ import {
   getSavedRestaurants,
   type DiscoveryCenter,
   type DiscoveredRestaurant,
+  type LocationSuggestion,
 } from '@/services/discovery.service';
 import { getCurrentLocation, setCurrentLocation } from '@/services/location.service';
 
 const CENTER_KEY = 'anythingdoor-discovery-centers';
-const RESULTS_PER_PAGE = 12;
+const DEFAULT_RESULTS_PER_PAGE = 12;
 
 function readCenters(): Record<string, DiscoveryCenter> {
   try {
@@ -43,12 +44,14 @@ export default function RestaurantDiscovery({
   query,
   distance,
   initialSearchLocation,
+  initialSuggestionToken,
 }: {
   selectedCategory: string;
   checkedCategories: string[];
   query: string;
   distance: string;
   initialSearchLocation?: string;
+  initialSuggestionToken?: string;
 }) {
   const [location, setLocation] = useState(getCurrentLocation);
   const [restaurants, setRestaurants] = useState<DiscoveredRestaurant[]>([]);
@@ -57,12 +60,20 @@ export default function RestaurantDiscovery({
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [resultsPerPage, setResultsPerPage] = useState<number | 'all'>(DEFAULT_RESULTS_PER_PAGE);
+  const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion | null>(null);
   const lastSearch = useRef<{ location: string; radiusMiles: number } | null>(null);
   const radiusRefreshTimer = useRef<number | null>(null);
   const initialSearchStarted = useRef(false);
 
   const search = useCallback(
-    async (savedOnly: boolean, searchLocation = location) => {
+    async (
+      savedOnly: boolean,
+      searchLocation = location,
+      suggestionToken = selectedLocation?.label === searchLocation.trim()
+        ? selectedLocation.token
+        : undefined,
+    ) => {
       if (radiusRefreshTimer.current !== null) {
         window.clearTimeout(radiusRefreshTimer.current);
         radiusRefreshTimer.current = null;
@@ -98,14 +109,16 @@ export default function RestaurantDiscovery({
           setRestaurants(result.restaurants);
           setStatus('Showing previously saved listings. They may be out of date.');
         } else {
-          const result = await discoverRestaurants(trimmed, radiusMiles);
+          const result = await discoverRestaurants(trimmed, radiusMiles, suggestionToken);
           centers[key] = result.center;
           localStorage.setItem(CENTER_KEY, JSON.stringify(centers));
           setRestaurants(result.restaurants);
           setStatus(
-            result.limited
-              ? 'The provider limited this search to 500 mapped places; try a smaller distance for more complete results.'
-              : 'Showing mapped restaurants and previously saved listings. Coverage may be incomplete.',
+            `${result.cached ? 'Showing a recent cached search. ' : ''}${
+              result.limited
+                ? 'The provider limited this search to 500 mapped places; try a smaller distance for more complete results.'
+                : 'Showing mapped restaurants and previously saved listings. Coverage may be incomplete.'
+            }`,
           );
         }
         lastSearch.current = { location: trimmed, radiusMiles };
@@ -121,7 +134,7 @@ export default function RestaurantDiscovery({
         setLoading(false);
       }
     },
-    [distance, location],
+    [distance, location, selectedLocation],
   );
 
   useEffect(() => {
@@ -152,8 +165,11 @@ export default function RestaurantDiscovery({
     if (!initialSearchLocation || initialSearchStarted.current) return;
     initialSearchStarted.current = true;
     setLocation(initialSearchLocation);
-    void search(false, initialSearchLocation);
-  }, [initialSearchLocation, search]);
+    if (initialSuggestionToken) {
+      setSelectedLocation({ label: initialSearchLocation, token: initialSuggestionToken });
+    }
+    void search(false, initialSearchLocation, initialSuggestionToken);
+  }, [initialSearchLocation, initialSuggestionToken, search]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -168,11 +184,12 @@ export default function RestaurantDiscovery({
         .toLowerCase()
         .includes(query.trim().toLowerCase()),
   );
-  const pageCount = Math.ceil(visible.length / RESULTS_PER_PAGE);
-  const pageRestaurants = visible.slice(
-    (currentPage - 1) * RESULTS_PER_PAGE,
-    currentPage * RESULTS_PER_PAGE,
-  );
+  const pageCount = resultsPerPage === 'all' ? 1 : Math.ceil(visible.length / resultsPerPage);
+  const displayedPage = Math.min(currentPage, Math.max(1, pageCount));
+  const pageRestaurants =
+    resultsPerPage === 'all'
+      ? visible
+      : visible.slice((displayedPage - 1) * resultsPerPage, displayedPage * resultsPerPage);
   return (
     <section className="@container mt-6 space-y-4" aria-labelledby="discovery-heading">
       <div>
@@ -181,8 +198,9 @@ export default function RestaurantDiscovery({
         </h2>
         <p className="text-sm text-gray-600">
           Search a US address, city and state, or ZIP. Typing sends your partial input to Geoapify
-          for suggestions; live search sends the selected location to the configured geocoder and
-          restaurant data providers. Use a city or ZIP instead of a street address if you prefer.
+          for suggestions; live search sends coordinates to the restaurant data provider and may
+          send the location to the configured geocoder. Use a city or ZIP instead of a street
+          address if you prefer.
         </p>
       </div>
       <form
@@ -196,7 +214,11 @@ export default function RestaurantDiscovery({
           <LocationAutocomplete
             id="discovery-location"
             value={location}
-            onChange={setLocation}
+            onChange={value => {
+              setLocation(value);
+              setSelectedLocation(null);
+            }}
+            onSelect={setSelectedLocation}
             inputClassName="w-full"
             placeholder="City, state, address, or ZIP"
           />
@@ -229,11 +251,33 @@ export default function RestaurantDiscovery({
         </p>
       )}
       {searchedLocation && (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600" aria-live="polite">
           {visible.length} results near {searchedLocation}
-          {pageCount > 1 && ` · Page ${currentPage} of ${pageCount}`}. Distance is approximate, not
-          a delivery area. Photos are illustrations, not images of these businesses.
+          {pageCount > 1 && ` · Page ${displayedPage} of ${pageCount}`}. Distance is approximate,
+          not a delivery area.
         </p>
+      )}
+      {searchedLocation && (
+        <div className="flex items-center gap-2 text-sm">
+          <label htmlFor="discovery-page-size">Restaurants per page</label>
+          <select
+            id="discovery-page-size"
+            className="rounded-md border bg-white px-2 py-1"
+            value={resultsPerPage}
+            onChange={event => {
+              const value = event.target.value;
+              setResultsPerPage(value === 'all' ? 'all' : Number(value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="all">All</option>
+          </select>
+        </div>
       )}
       {searchedLocation && visible.length === 0 && (
         <p className="rounded-lg bg-gray-50 p-4 text-sm">
@@ -275,24 +319,34 @@ export default function RestaurantDiscovery({
       </div>
       {pageCount > 1 && (
         <nav
-          className="flex items-center justify-center gap-3"
+          className="flex flex-wrap items-center justify-center gap-2"
           aria-label="Restaurant result pages"
         >
           <Button
             type="button"
             variant="outline"
-            disabled={currentPage === 1}
+            disabled={displayedPage === 1}
             onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
           >
             Previous
           </Button>
-          <span aria-live="polite" className="text-sm text-gray-600">
-            Page {currentPage} of {pageCount}
-          </span>
+          {Array.from({ length: pageCount }, (_, index) => index + 1).map(page => (
+            <Button
+              key={page}
+              type="button"
+              size="sm"
+              variant={page === displayedPage ? 'default' : 'outline'}
+              aria-label={`Page ${page}`}
+              aria-current={page === displayedPage ? 'page' : undefined}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Button>
+          ))}
           <Button
             type="button"
             variant="outline"
-            disabled={currentPage === pageCount}
+            disabled={displayedPage === pageCount}
             onClick={() => setCurrentPage(page => Math.min(pageCount, page + 1))}
           >
             Next
