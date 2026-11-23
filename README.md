@@ -146,6 +146,8 @@ Create a PostgreSQL project in Neon and copy its connection string. Keep it priv
 
 In Render, create a new **Blueprint** from this GitHub repository and use the `render.yaml` configuration. Set `DATABASE_URL` to the pooled value and `DATABASE_URL_UNPOOLED` to the direct value from the root `.env.local`; these are secrets, so enter them only in Render's environment settings. The blueprint generates separate JWT secrets, deploys Prisma migrations over the direct connection at startup, and builds the backend.
 
+Keep the Render build command from `render.yaml` configured on the service: `start:prod` runs the compiled `backend/dist/main.js`, so a successful build must run before startup. The backend build performs a non-incremental compile to ensure the output is emitted on clean deployments.
+
 Wait for the service to finish deploying and copy its public URL, for example `https://anythingdoor-api.onrender.com`.
 
 ### 3. Deploy the frontend

@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/main.js",
+    "start": "npm run build && node dist/main.js",
     "start:dev": "ts-node-dev --respawn --require tsconfig-paths/register src/main.ts",
     "start:prod": "node dist/main.js",
-    "build": "tsc && tsc-alias",
+    "build": "tsc --incremental false && tsc-alias",
     "build-watch": "tsc -b --watch",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix"
