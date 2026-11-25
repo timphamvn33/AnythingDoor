@@ -109,7 +109,7 @@ For Docker Compose, export the variables in PowerShell before starting or rebuil
 
 Gettiing overpass key from https://overpass.ch
 
-The landing page can search mapped restaurants near a US address, city and state, or ZIP code. Search live to import listings, then filter by name or cuisine. The default radius is 5 miles; the sidebar accepts 1–25 miles. The search is limited to 500 mapped objects per live request, so use a smaller radius if the page reports that limit. Coverage and cuisine tags depend on OpenStreetMap and may be incomplete.
+The landing page can search mapped restaurants near a US address, city and state, or ZIP code. Search live to import listings, then filter by name or cuisine using the category navigation on the left. On narrow screens the navigation shows icons; its labels remain available to assistive technology. The distance setting in the discovery section accepts 1–25 miles and defaults to 5 miles. The search is limited to 500 mapped objects per live request, so use a smaller radius if the page reports that limit. Coverage and cuisine tags depend on OpenStreetMap and may be incomplete.
 
 Live discovery is disabled until you configure **both** of these backend environment variables with services you operate or are licensed to use:
 
@@ -133,6 +133,24 @@ Backend logs report discovery timings for geocoding, Overpass, database upserts,
 Discovery imports use a single parameterized PostgreSQL bulk upsert rather than one write per listing. To run the optional database integration test, set `TEST_DATABASE_URL` to a PostgreSQL connection and run `node --test test\discovery-persistence.test.cjs` from `backend` after building. The test uses a temporary table and does not modify persistent listings.
 
 Imported listings are separate from partner restaurants and are **discovery only**: no menu, ordering, delivery availability, or prices are implied. Distance is straight-line, not a delivery-zone check. Partner menu items remain separately accessible and are not location-filtered; changing locations does not change an existing cart.
+
+### SousLab menu browsing (optional)
+
+Create an account at [SousLab](https://souslab.site/signin), obtain an API key, and configure `SOUSLAB_API_KEY` in the backend environment, Docker Compose, or Render. Keep the key server-side and never commit or share it. Restart the backend after changing it. The free plan is for evaluation, prototyping and personal non-commercial use; check [pricing](https://souslab.site/pricing) and [terms](https://souslab.site/legal/terms) before displaying data in a product.
+
+On the landing page, search by exact US ZIP code (five digits or ZIP+4) and optionally restaurant name, then select the exact location. SousLab matches the stored ZIP exactly, so a five-digit search may not include a listing stored with ZIP+4, and results are not a radius search. The ZIP and name are sent to SousLab. Results are separate from OpenStreetMap listings and can be paged with **Load more restaurants**. SousLab charges by records returned, including one record per distinct menu item; the listed item count indicates the expected menu cost when available. API access has request-rate and record limits, and quota errors are shown in the app.
+
+The category tabs and filter box apply to loaded SousLab restaurants using their names, reported cuisines, and addresses, not their menu items. Listings without cuisine information appear under **All** only. Matching restaurants may still be on pages that have not been loaded. The filter box also searches loaded discovery listings and partner menu items without making additional provider requests.
+
+**View menu** opens a restaurant page with its available SousLab details and menu. The page can be refreshed or opened directly; loading details costs one additional SousLab record when not cached. Returning to the search restores the results from browser history.
+
+SousLab reports weekly refreshes, not real-time menus. Coverage, prices, and availability may be missing or outdated; verify them with the restaurant. Zero prices are treated as unavailable, as SousLab documents that they usually mean no listed price. Options and modifiers are not supported. Only priced USD items not marked out of stock can be added to the browser's sample cart. Checkout does not place or pay for an order, and these listings are not sent to the real cart. Clear stored sample items if your right to use SousLab data ends.
+
+Successful requests are cached in backend-process memory for five minutes (up to 100 entries); simultaneous identical requests share one call. Each backend process spaces provider requests at least 1.1 seconds apart and accepts at most 60 uncached requests per minute. These safeguards are not distributed or per-user and do not enforce an account-wide quota across instances. Configure appropriate access controls, shared rate limiting and provider-side usage limits before public deployment.
+
+To show the SousLab record-usage bar only to designated signed-in accounts, set `SOUSLAB_USAGE_USER_IDS` on the backend to a comma-separated list of trusted user IDs and restart the backend. Find your account ID in the database, or while signed in inspect the `id` property of the `user` entry in your browser's local storage. An empty or unset list grants nobody access; the server checks the signed-in user ID, not the user-selected role. Forward the variable in Docker Compose or set it in Render as needed. Keep JWT signing secrets secure and use a strong unique production secret.
+
+The bar shows the last valid quota headers observed by the current backend process, including headers on provider errors. It appears after a provider response includes those headers, does not make an extra SousLab request, and is not updated by cached responses. It can be out of date if other processes or applications use the same SousLab account, after a quota reset, or if responses arrive out of order. Restarting the process clears it; use the SousLab dashboard for the authoritative balance. The record quota is not a count of API calls.
 
 After pulling this feature, apply the database migration with `npx prisma migrate deploy` from `db` using a direct `DATABASE_URL_UNPOOLED`, and regenerate the Prisma client with `npx prisma generate`. To run the discovery backend tests, build the backend and run `node --test test\discovery.test.cjs` from `backend`.
 

@@ -68,6 +68,7 @@ export const DEMO_RESTAURANTS: DemoRestaurant[] = [
 export interface DemoCartItem {
   item: ItemPayload;
   quantity: number;
+  sourceLabel?: string;
 }
 
 const DEMO_CART_KEY = 'anythingdoor-demo-cart';
@@ -85,14 +86,14 @@ export const getDemoCart = (): DemoCartItem[] => {
   }
 };
 
-export const addDemoCartItem = (item: ItemPayload, quantity: number) => {
+export const addDemoCartItem = (item: ItemPayload, quantity: number, sourceLabel?: string) => {
   const cart = getDemoCart();
   const existingItem = cart.find(cartItem => cartItem.item.id === item.id);
 
   if (existingItem) {
     existingItem.quantity += quantity;
   } else {
-    cart.push({ item, quantity });
+    cart.push({ item, quantity, ...(sourceLabel ? { sourceLabel } : {}) });
   }
 
   localStorage.setItem(DEMO_CART_KEY, JSON.stringify(cart));

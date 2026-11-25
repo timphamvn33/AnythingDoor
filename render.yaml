@@ -16,6 +16,10 @@ services:
         sync: false
       - key: GEOAPIFY_API_KEY
         sync: false
+      - key: SOUSLAB_API_KEY
+        sync: false
+      - key: SOUSLAB_USAGE_USER_IDS
+        sync: false
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET

@@ -168,16 +168,18 @@ export default function CartPage() {
           <section className="rounded-xl border bg-white p-5 shadow-sm">
             <h1 className="text-2xl font-semibold">Sample cart</h1>
             <p className="mt-1 text-sm text-gray-600">
-              Demo cart items are saved in this browser and are not submitted as a real order.
+              Sample cart items are saved in this browser and are not submitted as a real order.
+              Menu prices and availability may be outdated.
             </p>
             <div className="mt-5 space-y-3">
-              {demoCart.map(({ item, quantity }) => (
+              {demoCart.map(({ item, quantity, sourceLabel }) => (
                 <div
                   key={item.id}
                   className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-50 p-4"
                 >
                   <div>
                     <h2 className="font-medium">{item.name}</h2>
+                    {sourceLabel && <p className="text-sm text-gray-600">{sourceLabel}</p>}
                     <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
                   </div>
                   <div className="flex items-center gap-3">

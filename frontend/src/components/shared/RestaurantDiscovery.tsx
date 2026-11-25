@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import LocationAutocomplete from '@/components/shared/LocationAutocomplete';
 import RestaurantThumbnail from '@/components/shared/RestaurantThumbnail';
 import {
@@ -11,6 +12,7 @@ import {
   type LocationSuggestion,
 } from '@/services/discovery.service';
 import { getCurrentLocation, setCurrentLocation } from '@/services/location.service';
+import { categoryMatches } from '@/utils/category';
 
 const CENTER_KEY = 'anythingdoor-discovery-centers';
 const DEFAULT_RESULTS_PER_PAGE = 12;
@@ -26,34 +28,19 @@ function readCenters(): Record<string, DiscoveryCenter> {
   }
 }
 
-function categoryMatches(categories: string[], selected: string) {
-  if (selected === 'All') return true;
-  const aliases: Record<string, string[]> = {
-    Burgers: ['burger'],
-    Coffe: ['coffee'],
-    Desert: ['dessert', 'ice cream'],
-    Healthy: ['healthy', 'vegetarian', 'vegan'],
-  };
-  const terms = aliases[selected] ?? [selected.toLowerCase()];
-  return categories.some(category => terms.some(term => category.toLowerCase().includes(term)));
-}
-
 export default function RestaurantDiscovery({
   selectedCategory,
-  checkedCategories,
   query,
-  distance,
   initialSearchLocation,
   initialSuggestionToken,
 }: {
   selectedCategory: string;
-  checkedCategories: string[];
   query: string;
-  distance: string;
   initialSearchLocation?: string;
   initialSuggestionToken?: string;
 }) {
   const [location, setLocation] = useState(getCurrentLocation);
+  const [distance, setDistance] = useState('');
   const [restaurants, setRestaurants] = useState<DiscoveredRestaurant[]>([]);
   const [searchedLocation, setSearchedLocation] = useState('');
   const [status, setStatus] = useState('');
@@ -173,13 +160,11 @@ export default function RestaurantDiscovery({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, checkedCategories, query, restaurants, searchedLocation]);
+  }, [selectedCategory, query, restaurants, searchedLocation]);
 
   const visible = restaurants.filter(
     restaurant =>
       categoryMatches(restaurant.category, selectedCategory) &&
-      (checkedCategories.length === 0 ||
-        checkedCategories.some(category => categoryMatches(restaurant.category, category))) &&
       `${restaurant.name} ${restaurant.category.join(' ')} ${restaurant.address ?? ''}`
         .toLowerCase()
         .includes(query.trim().toLowerCase()),
@@ -204,7 +189,8 @@ export default function RestaurantDiscovery({
         </p>
       </div>
       <form
-        className="flex flex-wrap gap-2"
+        className="flex flex-wrap items-end gap-2"
+        noValidate
         onSubmit={event => {
           event.preventDefault();
           void search(false);
@@ -223,6 +209,21 @@ export default function RestaurantDiscovery({
             placeholder="City, state, address, or ZIP"
           />
         </div>
+        <div className="w-36">
+          <label htmlFor="discovery-distance" className="mb-1 block text-sm font-medium">
+            Distance (miles)
+          </label>
+          <Input
+            id="discovery-distance"
+            type="number"
+            min={1}
+            max={25}
+            step="any"
+            value={distance}
+            onChange={event => setDistance(event.target.value)}
+            placeholder="5"
+          />
+        </div>
         <Button type="submit" disabled={loading}>
           Search live
         </Button>
@@ -237,7 +238,7 @@ export default function RestaurantDiscovery({
       </form>
       <p className="text-sm text-gray-600">
         Distance defaults to 5 miles. Changing the 1–25 mile radius automatically refreshes the last
-        search and may contact the live providers. Price filters do not apply to discovery listings.
+        search and may contact the live providers.
       </p>
       {loading && <p role="status">Searching restaurants…</p>}
       {error && (

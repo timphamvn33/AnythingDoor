@@ -12,6 +12,7 @@ import Stores from './pages/Stores';
 import { Toaster } from 'sonner';
 import CartPage from './pages/Cart';
 import Chatbot from './pages/Chatbot';
+import SousLabRestaurantPage from './pages/SousLabRestaurant';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -27,6 +28,7 @@ function AnimatedRoutes() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/landing/store/:storeId" element={<StorePage />} />
+        <Route path="/landing/souslab/:restaurantId" element={<SousLabRestaurantPage />} />
         <Route path="/landing/stores/owner" element={<Stores />} />
         <Route path="/landing/cart" element={<CartPage />} />
         <Route path="/chat" element={<Chatbot />} />

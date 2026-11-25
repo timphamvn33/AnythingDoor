@@ -24,6 +24,7 @@ import { DeliveryService } from '@src/delivery/delivery.service';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { ChatModule } from '@src/chat/chat.module';
 import { DiscoveryModule } from '@src/discovery/discovery.module';
+import { SousLabModule } from '@src/souslab/souslab.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DiscoveryModule } from '@src/discovery/discovery.module';
     PrismaModule,
     ChatModule,
     DiscoveryModule,
+    SousLabModule,
   ],
   controllers: [
     AppController,
