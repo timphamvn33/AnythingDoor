@@ -35,7 +35,7 @@ export default function RestaurantThumbnail({ categories }: { categories: string
 
   return (
     <div
-      className="relative flex h-40 items-center justify-center bg-gradient-to-br from-amber-100 to-orange-200 text-orange-800"
+      className="relative flex h-40 items-center justify-center bg-gray-200 text-gray-500"
       aria-hidden="true"
     >
       <Icon className="h-16 w-16" strokeWidth={1.5} />
