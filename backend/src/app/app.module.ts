@@ -25,6 +25,7 @@ import { PrismaService } from '@src/prisma/prisma.service';
 import { ChatModule } from '@src/chat/chat.module';
 import { DiscoveryModule } from '@src/discovery/discovery.module';
 import { SousLabModule } from '@src/souslab/souslab.module';
+import { PlacePhotosModule } from '@src/place-photos/place-photos.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SousLabModule } from '@src/souslab/souslab.module';
     ChatModule,
     DiscoveryModule,
     SousLabModule,
+    PlacePhotosModule,
   ],
   controllers: [
     AppController,

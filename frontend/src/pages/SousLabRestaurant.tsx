@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ArrowLeft } from 'lucide-react';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
-import RestaurantThumbnail from '@/components/shared/RestaurantThumbnail';
+import RestaurantPhoto from '@/components/shared/RestaurantPhoto';
 import SousLabUsage from '@/components/shared/SousLabUsage';
 import { Button } from '@/components/ui/button';
 import { addDemoCartItem } from '@/data/demo-restaurants';
@@ -123,7 +123,12 @@ export default function SousLabRestaurantPage() {
         )}
         {restaurant && (
           <section className="overflow-hidden rounded-xl border bg-white shadow-sm">
-            <RestaurantThumbnail categories={restaurant.cuisines} />
+            <RestaurantPhoto
+              source="souslab"
+              id={restaurant.id}
+              name={restaurant.name}
+              categories={restaurant.cuisines}
+            />
             <div className="space-y-2 p-5">
               <h1 className="text-3xl font-semibold">
                 {restaurant.name || 'Restaurant name unavailable'}

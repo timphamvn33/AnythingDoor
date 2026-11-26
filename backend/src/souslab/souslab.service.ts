@@ -152,9 +152,14 @@ export class SousLabService {
         'SousLab rejected the request. Start a new search and try again.',
       );
     }
-    if (response.status === 401 || response.status === 403) {
+    if (response.status === 401) {
       throw new ServiceUnavailableException(
-        'SousLab credentials or plan do not allow this request.',
+        'SousLab rejected the API key. Check that the backend uses an active SousLab API key.',
+      );
+    }
+    if (response.status === 403) {
+      throw new ServiceUnavailableException(
+        'SousLab denied access to this request. Check the account and plan permissions.',
       );
     }
     if (!response.ok) throw new BadGatewayException('SousLab could not complete the request.');

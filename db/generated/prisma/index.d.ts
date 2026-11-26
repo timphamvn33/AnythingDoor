@@ -34,6 +34,11 @@ export type Restaurant = $Result.DefaultSelection<Prisma.$RestaurantPayload>
  */
 export type DiscoveredRestaurant = $Result.DefaultSelection<Prisma.$DiscoveredRestaurantPayload>
 /**
+ * Model GooglePlacesMonthlyUsage
+ * 
+ */
+export type GooglePlacesMonthlyUsage = $Result.DefaultSelection<Prisma.$GooglePlacesMonthlyUsagePayload>
+/**
  * Model MenuItem
  * 
  */
@@ -305,6 +310,16 @@ export class PrismaClient<
     * ```
     */
   get discoveredRestaurant(): Prisma.DiscoveredRestaurantDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.googlePlacesMonthlyUsage`: Exposes CRUD operations for the **GooglePlacesMonthlyUsage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GooglePlacesMonthlyUsages
+    * const googlePlacesMonthlyUsages = await prisma.googlePlacesMonthlyUsage.findMany()
+    * ```
+    */
+  get googlePlacesMonthlyUsage(): Prisma.GooglePlacesMonthlyUsageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.menuItem`: Exposes CRUD operations for the **MenuItem** model.
@@ -809,6 +824,7 @@ export namespace Prisma {
     PasswordResetToken: 'PasswordResetToken',
     Restaurant: 'Restaurant',
     DiscoveredRestaurant: 'DiscoveredRestaurant',
+    GooglePlacesMonthlyUsage: 'GooglePlacesMonthlyUsage',
     MenuItem: 'MenuItem',
     Order: 'Order',
     OrderItem: 'OrderItem',
@@ -833,7 +849,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "passwordResetToken" | "restaurant" | "discoveredRestaurant" | "menuItem" | "order" | "orderItem" | "address" | "payment" | "delivery"
+      modelProps: "user" | "passwordResetToken" | "restaurant" | "discoveredRestaurant" | "googlePlacesMonthlyUsage" | "menuItem" | "order" | "orderItem" | "address" | "payment" | "delivery"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1130,6 +1146,80 @@ export namespace Prisma {
           count: {
             args: Prisma.DiscoveredRestaurantCountArgs<ExtArgs>
             result: $Utils.Optional<DiscoveredRestaurantCountAggregateOutputType> | number
+          }
+        }
+      }
+      GooglePlacesMonthlyUsage: {
+        payload: Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>
+        fields: Prisma.GooglePlacesMonthlyUsageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GooglePlacesMonthlyUsageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GooglePlacesMonthlyUsageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>
+          }
+          findFirst: {
+            args: Prisma.GooglePlacesMonthlyUsageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GooglePlacesMonthlyUsageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>
+          }
+          findMany: {
+            args: Prisma.GooglePlacesMonthlyUsageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>[]
+          }
+          create: {
+            args: Prisma.GooglePlacesMonthlyUsageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>
+          }
+          createMany: {
+            args: Prisma.GooglePlacesMonthlyUsageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GooglePlacesMonthlyUsageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>[]
+          }
+          delete: {
+            args: Prisma.GooglePlacesMonthlyUsageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>
+          }
+          update: {
+            args: Prisma.GooglePlacesMonthlyUsageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>
+          }
+          deleteMany: {
+            args: Prisma.GooglePlacesMonthlyUsageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GooglePlacesMonthlyUsageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GooglePlacesMonthlyUsageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>[]
+          }
+          upsert: {
+            args: Prisma.GooglePlacesMonthlyUsageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePlacesMonthlyUsagePayload>
+          }
+          aggregate: {
+            args: Prisma.GooglePlacesMonthlyUsageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGooglePlacesMonthlyUsage>
+          }
+          groupBy: {
+            args: Prisma.GooglePlacesMonthlyUsageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GooglePlacesMonthlyUsageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GooglePlacesMonthlyUsageCountArgs<ExtArgs>
+            result: $Utils.Optional<GooglePlacesMonthlyUsageCountAggregateOutputType> | number
           }
         }
       }
@@ -1665,6 +1755,7 @@ export namespace Prisma {
     passwordResetToken?: PasswordResetTokenOmit
     restaurant?: RestaurantOmit
     discoveredRestaurant?: DiscoveredRestaurantOmit
+    googlePlacesMonthlyUsage?: GooglePlacesMonthlyUsageOmit
     menuItem?: MenuItemOmit
     order?: OrderOmit
     orderItem?: OrderItemOmit
@@ -6612,6 +6703,996 @@ export namespace Prisma {
      * Omit specific fields from the DiscoveredRestaurant
      */
     omit?: DiscoveredRestaurantOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GooglePlacesMonthlyUsage
+   */
+
+  export type AggregateGooglePlacesMonthlyUsage = {
+    _count: GooglePlacesMonthlyUsageCountAggregateOutputType | null
+    _avg: GooglePlacesMonthlyUsageAvgAggregateOutputType | null
+    _sum: GooglePlacesMonthlyUsageSumAggregateOutputType | null
+    _min: GooglePlacesMonthlyUsageMinAggregateOutputType | null
+    _max: GooglePlacesMonthlyUsageMaxAggregateOutputType | null
+  }
+
+  export type GooglePlacesMonthlyUsageAvgAggregateOutputType = {
+    requests: number | null
+  }
+
+  export type GooglePlacesMonthlyUsageSumAggregateOutputType = {
+    requests: number | null
+  }
+
+  export type GooglePlacesMonthlyUsageMinAggregateOutputType = {
+    month: string | null
+    requests: number | null
+  }
+
+  export type GooglePlacesMonthlyUsageMaxAggregateOutputType = {
+    month: string | null
+    requests: number | null
+  }
+
+  export type GooglePlacesMonthlyUsageCountAggregateOutputType = {
+    month: number
+    requests: number
+    _all: number
+  }
+
+
+  export type GooglePlacesMonthlyUsageAvgAggregateInputType = {
+    requests?: true
+  }
+
+  export type GooglePlacesMonthlyUsageSumAggregateInputType = {
+    requests?: true
+  }
+
+  export type GooglePlacesMonthlyUsageMinAggregateInputType = {
+    month?: true
+    requests?: true
+  }
+
+  export type GooglePlacesMonthlyUsageMaxAggregateInputType = {
+    month?: true
+    requests?: true
+  }
+
+  export type GooglePlacesMonthlyUsageCountAggregateInputType = {
+    month?: true
+    requests?: true
+    _all?: true
+  }
+
+  export type GooglePlacesMonthlyUsageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GooglePlacesMonthlyUsage to aggregate.
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GooglePlacesMonthlyUsages to fetch.
+     */
+    orderBy?: GooglePlacesMonthlyUsageOrderByWithRelationInput | GooglePlacesMonthlyUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GooglePlacesMonthlyUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GooglePlacesMonthlyUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GooglePlacesMonthlyUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GooglePlacesMonthlyUsages
+    **/
+    _count?: true | GooglePlacesMonthlyUsageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GooglePlacesMonthlyUsageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GooglePlacesMonthlyUsageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GooglePlacesMonthlyUsageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GooglePlacesMonthlyUsageMaxAggregateInputType
+  }
+
+  export type GetGooglePlacesMonthlyUsageAggregateType<T extends GooglePlacesMonthlyUsageAggregateArgs> = {
+        [P in keyof T & keyof AggregateGooglePlacesMonthlyUsage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGooglePlacesMonthlyUsage[P]>
+      : GetScalarType<T[P], AggregateGooglePlacesMonthlyUsage[P]>
+  }
+
+
+
+
+  export type GooglePlacesMonthlyUsageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GooglePlacesMonthlyUsageWhereInput
+    orderBy?: GooglePlacesMonthlyUsageOrderByWithAggregationInput | GooglePlacesMonthlyUsageOrderByWithAggregationInput[]
+    by: GooglePlacesMonthlyUsageScalarFieldEnum[] | GooglePlacesMonthlyUsageScalarFieldEnum
+    having?: GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GooglePlacesMonthlyUsageCountAggregateInputType | true
+    _avg?: GooglePlacesMonthlyUsageAvgAggregateInputType
+    _sum?: GooglePlacesMonthlyUsageSumAggregateInputType
+    _min?: GooglePlacesMonthlyUsageMinAggregateInputType
+    _max?: GooglePlacesMonthlyUsageMaxAggregateInputType
+  }
+
+  export type GooglePlacesMonthlyUsageGroupByOutputType = {
+    month: string
+    requests: number
+    _count: GooglePlacesMonthlyUsageCountAggregateOutputType | null
+    _avg: GooglePlacesMonthlyUsageAvgAggregateOutputType | null
+    _sum: GooglePlacesMonthlyUsageSumAggregateOutputType | null
+    _min: GooglePlacesMonthlyUsageMinAggregateOutputType | null
+    _max: GooglePlacesMonthlyUsageMaxAggregateOutputType | null
+  }
+
+  type GetGooglePlacesMonthlyUsageGroupByPayload<T extends GooglePlacesMonthlyUsageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GooglePlacesMonthlyUsageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GooglePlacesMonthlyUsageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GooglePlacesMonthlyUsageGroupByOutputType[P]>
+            : GetScalarType<T[P], GooglePlacesMonthlyUsageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GooglePlacesMonthlyUsageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    month?: boolean
+    requests?: boolean
+  }, ExtArgs["result"]["googlePlacesMonthlyUsage"]>
+
+  export type GooglePlacesMonthlyUsageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    month?: boolean
+    requests?: boolean
+  }, ExtArgs["result"]["googlePlacesMonthlyUsage"]>
+
+  export type GooglePlacesMonthlyUsageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    month?: boolean
+    requests?: boolean
+  }, ExtArgs["result"]["googlePlacesMonthlyUsage"]>
+
+  export type GooglePlacesMonthlyUsageSelectScalar = {
+    month?: boolean
+    requests?: boolean
+  }
+
+  export type GooglePlacesMonthlyUsageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"month" | "requests", ExtArgs["result"]["googlePlacesMonthlyUsage"]>
+
+  export type $GooglePlacesMonthlyUsagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GooglePlacesMonthlyUsage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      month: string
+      requests: number
+    }, ExtArgs["result"]["googlePlacesMonthlyUsage"]>
+    composites: {}
+  }
+
+  type GooglePlacesMonthlyUsageGetPayload<S extends boolean | null | undefined | GooglePlacesMonthlyUsageDefaultArgs> = $Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload, S>
+
+  type GooglePlacesMonthlyUsageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GooglePlacesMonthlyUsageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GooglePlacesMonthlyUsageCountAggregateInputType | true
+    }
+
+  export interface GooglePlacesMonthlyUsageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GooglePlacesMonthlyUsage'], meta: { name: 'GooglePlacesMonthlyUsage' } }
+    /**
+     * Find zero or one GooglePlacesMonthlyUsage that matches the filter.
+     * @param {GooglePlacesMonthlyUsageFindUniqueArgs} args - Arguments to find a GooglePlacesMonthlyUsage
+     * @example
+     * // Get one GooglePlacesMonthlyUsage
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GooglePlacesMonthlyUsageFindUniqueArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageFindUniqueArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GooglePlacesMonthlyUsage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GooglePlacesMonthlyUsageFindUniqueOrThrowArgs} args - Arguments to find a GooglePlacesMonthlyUsage
+     * @example
+     * // Get one GooglePlacesMonthlyUsage
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GooglePlacesMonthlyUsageFindUniqueOrThrowArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GooglePlacesMonthlyUsage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageFindFirstArgs} args - Arguments to find a GooglePlacesMonthlyUsage
+     * @example
+     * // Get one GooglePlacesMonthlyUsage
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GooglePlacesMonthlyUsageFindFirstArgs>(args?: SelectSubset<T, GooglePlacesMonthlyUsageFindFirstArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GooglePlacesMonthlyUsage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageFindFirstOrThrowArgs} args - Arguments to find a GooglePlacesMonthlyUsage
+     * @example
+     * // Get one GooglePlacesMonthlyUsage
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GooglePlacesMonthlyUsageFindFirstOrThrowArgs>(args?: SelectSubset<T, GooglePlacesMonthlyUsageFindFirstOrThrowArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GooglePlacesMonthlyUsages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GooglePlacesMonthlyUsages
+     * const googlePlacesMonthlyUsages = await prisma.googlePlacesMonthlyUsage.findMany()
+     * 
+     * // Get first 10 GooglePlacesMonthlyUsages
+     * const googlePlacesMonthlyUsages = await prisma.googlePlacesMonthlyUsage.findMany({ take: 10 })
+     * 
+     * // Only select the `month`
+     * const googlePlacesMonthlyUsageWithMonthOnly = await prisma.googlePlacesMonthlyUsage.findMany({ select: { month: true } })
+     * 
+     */
+    findMany<T extends GooglePlacesMonthlyUsageFindManyArgs>(args?: SelectSubset<T, GooglePlacesMonthlyUsageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GooglePlacesMonthlyUsage.
+     * @param {GooglePlacesMonthlyUsageCreateArgs} args - Arguments to create a GooglePlacesMonthlyUsage.
+     * @example
+     * // Create one GooglePlacesMonthlyUsage
+     * const GooglePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.create({
+     *   data: {
+     *     // ... data to create a GooglePlacesMonthlyUsage
+     *   }
+     * })
+     * 
+     */
+    create<T extends GooglePlacesMonthlyUsageCreateArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageCreateArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GooglePlacesMonthlyUsages.
+     * @param {GooglePlacesMonthlyUsageCreateManyArgs} args - Arguments to create many GooglePlacesMonthlyUsages.
+     * @example
+     * // Create many GooglePlacesMonthlyUsages
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GooglePlacesMonthlyUsageCreateManyArgs>(args?: SelectSubset<T, GooglePlacesMonthlyUsageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GooglePlacesMonthlyUsages and returns the data saved in the database.
+     * @param {GooglePlacesMonthlyUsageCreateManyAndReturnArgs} args - Arguments to create many GooglePlacesMonthlyUsages.
+     * @example
+     * // Create many GooglePlacesMonthlyUsages
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GooglePlacesMonthlyUsages and only return the `month`
+     * const googlePlacesMonthlyUsageWithMonthOnly = await prisma.googlePlacesMonthlyUsage.createManyAndReturn({
+     *   select: { month: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GooglePlacesMonthlyUsageCreateManyAndReturnArgs>(args?: SelectSubset<T, GooglePlacesMonthlyUsageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GooglePlacesMonthlyUsage.
+     * @param {GooglePlacesMonthlyUsageDeleteArgs} args - Arguments to delete one GooglePlacesMonthlyUsage.
+     * @example
+     * // Delete one GooglePlacesMonthlyUsage
+     * const GooglePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.delete({
+     *   where: {
+     *     // ... filter to delete one GooglePlacesMonthlyUsage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GooglePlacesMonthlyUsageDeleteArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageDeleteArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GooglePlacesMonthlyUsage.
+     * @param {GooglePlacesMonthlyUsageUpdateArgs} args - Arguments to update one GooglePlacesMonthlyUsage.
+     * @example
+     * // Update one GooglePlacesMonthlyUsage
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GooglePlacesMonthlyUsageUpdateArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageUpdateArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GooglePlacesMonthlyUsages.
+     * @param {GooglePlacesMonthlyUsageDeleteManyArgs} args - Arguments to filter GooglePlacesMonthlyUsages to delete.
+     * @example
+     * // Delete a few GooglePlacesMonthlyUsages
+     * const { count } = await prisma.googlePlacesMonthlyUsage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GooglePlacesMonthlyUsageDeleteManyArgs>(args?: SelectSubset<T, GooglePlacesMonthlyUsageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GooglePlacesMonthlyUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GooglePlacesMonthlyUsages
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GooglePlacesMonthlyUsageUpdateManyArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GooglePlacesMonthlyUsages and returns the data updated in the database.
+     * @param {GooglePlacesMonthlyUsageUpdateManyAndReturnArgs} args - Arguments to update many GooglePlacesMonthlyUsages.
+     * @example
+     * // Update many GooglePlacesMonthlyUsages
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GooglePlacesMonthlyUsages and only return the `month`
+     * const googlePlacesMonthlyUsageWithMonthOnly = await prisma.googlePlacesMonthlyUsage.updateManyAndReturn({
+     *   select: { month: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GooglePlacesMonthlyUsageUpdateManyAndReturnArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GooglePlacesMonthlyUsage.
+     * @param {GooglePlacesMonthlyUsageUpsertArgs} args - Arguments to update or create a GooglePlacesMonthlyUsage.
+     * @example
+     * // Update or create a GooglePlacesMonthlyUsage
+     * const googlePlacesMonthlyUsage = await prisma.googlePlacesMonthlyUsage.upsert({
+     *   create: {
+     *     // ... data to create a GooglePlacesMonthlyUsage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GooglePlacesMonthlyUsage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GooglePlacesMonthlyUsageUpsertArgs>(args: SelectSubset<T, GooglePlacesMonthlyUsageUpsertArgs<ExtArgs>>): Prisma__GooglePlacesMonthlyUsageClient<$Result.GetResult<Prisma.$GooglePlacesMonthlyUsagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GooglePlacesMonthlyUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageCountArgs} args - Arguments to filter GooglePlacesMonthlyUsages to count.
+     * @example
+     * // Count the number of GooglePlacesMonthlyUsages
+     * const count = await prisma.googlePlacesMonthlyUsage.count({
+     *   where: {
+     *     // ... the filter for the GooglePlacesMonthlyUsages we want to count
+     *   }
+     * })
+    **/
+    count<T extends GooglePlacesMonthlyUsageCountArgs>(
+      args?: Subset<T, GooglePlacesMonthlyUsageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GooglePlacesMonthlyUsageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GooglePlacesMonthlyUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GooglePlacesMonthlyUsageAggregateArgs>(args: Subset<T, GooglePlacesMonthlyUsageAggregateArgs>): Prisma.PrismaPromise<GetGooglePlacesMonthlyUsageAggregateType<T>>
+
+    /**
+     * Group by GooglePlacesMonthlyUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GooglePlacesMonthlyUsageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GooglePlacesMonthlyUsageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GooglePlacesMonthlyUsageGroupByArgs['orderBy'] }
+        : { orderBy?: GooglePlacesMonthlyUsageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GooglePlacesMonthlyUsageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGooglePlacesMonthlyUsageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GooglePlacesMonthlyUsage model
+   */
+  readonly fields: GooglePlacesMonthlyUsageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GooglePlacesMonthlyUsage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GooglePlacesMonthlyUsageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GooglePlacesMonthlyUsage model
+   */
+  interface GooglePlacesMonthlyUsageFieldRefs {
+    readonly month: FieldRef<"GooglePlacesMonthlyUsage", 'String'>
+    readonly requests: FieldRef<"GooglePlacesMonthlyUsage", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GooglePlacesMonthlyUsage findUnique
+   */
+  export type GooglePlacesMonthlyUsageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * Filter, which GooglePlacesMonthlyUsage to fetch.
+     */
+    where: GooglePlacesMonthlyUsageWhereUniqueInput
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage findUniqueOrThrow
+   */
+  export type GooglePlacesMonthlyUsageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * Filter, which GooglePlacesMonthlyUsage to fetch.
+     */
+    where: GooglePlacesMonthlyUsageWhereUniqueInput
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage findFirst
+   */
+  export type GooglePlacesMonthlyUsageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * Filter, which GooglePlacesMonthlyUsage to fetch.
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GooglePlacesMonthlyUsages to fetch.
+     */
+    orderBy?: GooglePlacesMonthlyUsageOrderByWithRelationInput | GooglePlacesMonthlyUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GooglePlacesMonthlyUsages.
+     */
+    cursor?: GooglePlacesMonthlyUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GooglePlacesMonthlyUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GooglePlacesMonthlyUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GooglePlacesMonthlyUsages.
+     */
+    distinct?: GooglePlacesMonthlyUsageScalarFieldEnum | GooglePlacesMonthlyUsageScalarFieldEnum[]
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage findFirstOrThrow
+   */
+  export type GooglePlacesMonthlyUsageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * Filter, which GooglePlacesMonthlyUsage to fetch.
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GooglePlacesMonthlyUsages to fetch.
+     */
+    orderBy?: GooglePlacesMonthlyUsageOrderByWithRelationInput | GooglePlacesMonthlyUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GooglePlacesMonthlyUsages.
+     */
+    cursor?: GooglePlacesMonthlyUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GooglePlacesMonthlyUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GooglePlacesMonthlyUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GooglePlacesMonthlyUsages.
+     */
+    distinct?: GooglePlacesMonthlyUsageScalarFieldEnum | GooglePlacesMonthlyUsageScalarFieldEnum[]
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage findMany
+   */
+  export type GooglePlacesMonthlyUsageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * Filter, which GooglePlacesMonthlyUsages to fetch.
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GooglePlacesMonthlyUsages to fetch.
+     */
+    orderBy?: GooglePlacesMonthlyUsageOrderByWithRelationInput | GooglePlacesMonthlyUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GooglePlacesMonthlyUsages.
+     */
+    cursor?: GooglePlacesMonthlyUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GooglePlacesMonthlyUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GooglePlacesMonthlyUsages.
+     */
+    skip?: number
+    distinct?: GooglePlacesMonthlyUsageScalarFieldEnum | GooglePlacesMonthlyUsageScalarFieldEnum[]
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage create
+   */
+  export type GooglePlacesMonthlyUsageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GooglePlacesMonthlyUsage.
+     */
+    data: XOR<GooglePlacesMonthlyUsageCreateInput, GooglePlacesMonthlyUsageUncheckedCreateInput>
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage createMany
+   */
+  export type GooglePlacesMonthlyUsageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GooglePlacesMonthlyUsages.
+     */
+    data: GooglePlacesMonthlyUsageCreateManyInput | GooglePlacesMonthlyUsageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage createManyAndReturn
+   */
+  export type GooglePlacesMonthlyUsageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * The data used to create many GooglePlacesMonthlyUsages.
+     */
+    data: GooglePlacesMonthlyUsageCreateManyInput | GooglePlacesMonthlyUsageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage update
+   */
+  export type GooglePlacesMonthlyUsageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GooglePlacesMonthlyUsage.
+     */
+    data: XOR<GooglePlacesMonthlyUsageUpdateInput, GooglePlacesMonthlyUsageUncheckedUpdateInput>
+    /**
+     * Choose, which GooglePlacesMonthlyUsage to update.
+     */
+    where: GooglePlacesMonthlyUsageWhereUniqueInput
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage updateMany
+   */
+  export type GooglePlacesMonthlyUsageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GooglePlacesMonthlyUsages.
+     */
+    data: XOR<GooglePlacesMonthlyUsageUpdateManyMutationInput, GooglePlacesMonthlyUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which GooglePlacesMonthlyUsages to update
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * Limit how many GooglePlacesMonthlyUsages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage updateManyAndReturn
+   */
+  export type GooglePlacesMonthlyUsageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * The data used to update GooglePlacesMonthlyUsages.
+     */
+    data: XOR<GooglePlacesMonthlyUsageUpdateManyMutationInput, GooglePlacesMonthlyUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which GooglePlacesMonthlyUsages to update
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * Limit how many GooglePlacesMonthlyUsages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage upsert
+   */
+  export type GooglePlacesMonthlyUsageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GooglePlacesMonthlyUsage to update in case it exists.
+     */
+    where: GooglePlacesMonthlyUsageWhereUniqueInput
+    /**
+     * In case the GooglePlacesMonthlyUsage found by the `where` argument doesn't exist, create a new GooglePlacesMonthlyUsage with this data.
+     */
+    create: XOR<GooglePlacesMonthlyUsageCreateInput, GooglePlacesMonthlyUsageUncheckedCreateInput>
+    /**
+     * In case the GooglePlacesMonthlyUsage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GooglePlacesMonthlyUsageUpdateInput, GooglePlacesMonthlyUsageUncheckedUpdateInput>
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage delete
+   */
+  export type GooglePlacesMonthlyUsageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
+    /**
+     * Filter which GooglePlacesMonthlyUsage to delete.
+     */
+    where: GooglePlacesMonthlyUsageWhereUniqueInput
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage deleteMany
+   */
+  export type GooglePlacesMonthlyUsageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GooglePlacesMonthlyUsages to delete
+     */
+    where?: GooglePlacesMonthlyUsageWhereInput
+    /**
+     * Limit how many GooglePlacesMonthlyUsages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GooglePlacesMonthlyUsage without action
+   */
+  export type GooglePlacesMonthlyUsageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GooglePlacesMonthlyUsage
+     */
+    select?: GooglePlacesMonthlyUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GooglePlacesMonthlyUsage
+     */
+    omit?: GooglePlacesMonthlyUsageOmit<ExtArgs> | null
   }
 
 
@@ -13625,6 +14706,14 @@ export namespace Prisma {
   export type DiscoveredRestaurantScalarFieldEnum = (typeof DiscoveredRestaurantScalarFieldEnum)[keyof typeof DiscoveredRestaurantScalarFieldEnum]
 
 
+  export const GooglePlacesMonthlyUsageScalarFieldEnum: {
+    month: 'month',
+    requests: 'requests'
+  };
+
+  export type GooglePlacesMonthlyUsageScalarFieldEnum = (typeof GooglePlacesMonthlyUsageScalarFieldEnum)[keyof typeof GooglePlacesMonthlyUsageScalarFieldEnum]
+
+
   export const MenuItemScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -13789,6 +14878,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -13806,20 +14909,6 @@ export namespace Prisma {
    * Reference to a field of type 'OrderStatus[]'
    */
   export type ListEnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -14193,6 +15282,45 @@ export namespace Prisma {
     address?: StringNullableWithAggregatesFilter<"DiscoveredRestaurant"> | string | null
     website?: StringNullableWithAggregatesFilter<"DiscoveredRestaurant"> | string | null
     updatedAt?: DateTimeWithAggregatesFilter<"DiscoveredRestaurant"> | Date | string
+  }
+
+  export type GooglePlacesMonthlyUsageWhereInput = {
+    AND?: GooglePlacesMonthlyUsageWhereInput | GooglePlacesMonthlyUsageWhereInput[]
+    OR?: GooglePlacesMonthlyUsageWhereInput[]
+    NOT?: GooglePlacesMonthlyUsageWhereInput | GooglePlacesMonthlyUsageWhereInput[]
+    month?: StringFilter<"GooglePlacesMonthlyUsage"> | string
+    requests?: IntFilter<"GooglePlacesMonthlyUsage"> | number
+  }
+
+  export type GooglePlacesMonthlyUsageOrderByWithRelationInput = {
+    month?: SortOrder
+    requests?: SortOrder
+  }
+
+  export type GooglePlacesMonthlyUsageWhereUniqueInput = Prisma.AtLeast<{
+    month?: string
+    AND?: GooglePlacesMonthlyUsageWhereInput | GooglePlacesMonthlyUsageWhereInput[]
+    OR?: GooglePlacesMonthlyUsageWhereInput[]
+    NOT?: GooglePlacesMonthlyUsageWhereInput | GooglePlacesMonthlyUsageWhereInput[]
+    requests?: IntFilter<"GooglePlacesMonthlyUsage"> | number
+  }, "month">
+
+  export type GooglePlacesMonthlyUsageOrderByWithAggregationInput = {
+    month?: SortOrder
+    requests?: SortOrder
+    _count?: GooglePlacesMonthlyUsageCountOrderByAggregateInput
+    _avg?: GooglePlacesMonthlyUsageAvgOrderByAggregateInput
+    _max?: GooglePlacesMonthlyUsageMaxOrderByAggregateInput
+    _min?: GooglePlacesMonthlyUsageMinOrderByAggregateInput
+    _sum?: GooglePlacesMonthlyUsageSumOrderByAggregateInput
+  }
+
+  export type GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput = {
+    AND?: GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput | GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput[]
+    OR?: GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput[]
+    NOT?: GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput | GooglePlacesMonthlyUsageScalarWhereWithAggregatesInput[]
+    month?: StringWithAggregatesFilter<"GooglePlacesMonthlyUsage"> | string
+    requests?: IntWithAggregatesFilter<"GooglePlacesMonthlyUsage"> | number
   }
 
   export type MenuItemWhereInput = {
@@ -14989,6 +16117,41 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GooglePlacesMonthlyUsageCreateInput = {
+    month: string
+    requests: number
+  }
+
+  export type GooglePlacesMonthlyUsageUncheckedCreateInput = {
+    month: string
+    requests: number
+  }
+
+  export type GooglePlacesMonthlyUsageUpdateInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    requests?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type GooglePlacesMonthlyUsageUncheckedUpdateInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    requests?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type GooglePlacesMonthlyUsageCreateManyInput = {
+    month: string
+    requests: number
+  }
+
+  export type GooglePlacesMonthlyUsageUpdateManyMutationInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    requests?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type GooglePlacesMonthlyUsageUncheckedUpdateManyInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    requests?: IntFieldUpdateOperationsInput | number
   }
 
   export type MenuItemCreateInput = {
@@ -15794,6 +16957,56 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type GooglePlacesMonthlyUsageCountOrderByAggregateInput = {
+    month?: SortOrder
+    requests?: SortOrder
+  }
+
+  export type GooglePlacesMonthlyUsageAvgOrderByAggregateInput = {
+    requests?: SortOrder
+  }
+
+  export type GooglePlacesMonthlyUsageMaxOrderByAggregateInput = {
+    month?: SortOrder
+    requests?: SortOrder
+  }
+
+  export type GooglePlacesMonthlyUsageMinOrderByAggregateInput = {
+    month?: SortOrder
+    requests?: SortOrder
+  }
+
+  export type GooglePlacesMonthlyUsageSumOrderByAggregateInput = {
+    requests?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -15935,17 +17148,6 @@ export namespace Prisma {
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type OrderScalarRelationFilter = {
     is?: OrderWhereInput
     isNot?: OrderWhereInput
@@ -15988,22 +17190,6 @@ export namespace Prisma {
   export type OrderItemSumOrderByAggregateInput = {
     quantity?: SortOrder
     price?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type AddressCountOrderByAggregateInput = {
@@ -16519,6 +17705,14 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type MenuItemCreatecategoryInput = {
     set: string[]
   }
@@ -16724,14 +17918,6 @@ export namespace Prisma {
     create?: XOR<MenuItemCreateWithoutOrderItemsInput, MenuItemUncheckedCreateWithoutOrderItemsInput>
     connectOrCreate?: MenuItemCreateOrConnectWithoutOrderItemsInput
     connect?: MenuItemWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type OrderUpdateOneRequiredWithoutOrderItemsNestedInput = {
@@ -17066,6 +18252,22 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -17094,22 +18296,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrderStatusFilter<$PrismaModel>
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type NestedEnumMethodTypeFilter<$PrismaModel = never> = {

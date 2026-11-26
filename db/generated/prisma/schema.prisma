@@ -118,6 +118,11 @@ model DiscoveredRestaurant {
   @@index([latitude, longitude])
 }
 
+model GooglePlacesMonthlyUsage {
+  month    String @id
+  requests Int
+}
+
 model MenuItem {
   id           String      @id @default(uuid())
   name         String

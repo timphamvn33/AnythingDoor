@@ -170,6 +170,11 @@ exports.Prisma.DiscoveredRestaurantScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GooglePlacesMonthlyUsageScalarFieldEnum = {
+  month: 'month',
+  requests: 'requests'
+};
+
 exports.Prisma.MenuItemScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -286,6 +291,7 @@ exports.Prisma.ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   Restaurant: 'Restaurant',
   DiscoveredRestaurant: 'DiscoveredRestaurant',
+  GooglePlacesMonthlyUsage: 'GooglePlacesMonthlyUsage',
   MenuItem: 'MenuItem',
   Order: 'Order',
   OrderItem: 'OrderItem',

@@ -16,6 +16,8 @@ services:
         sync: false
       - key: GEOAPIFY_API_KEY
         sync: false
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
       - key: SOUSLAB_API_KEY
         sync: false
       - key: SOUSLAB_USAGE_USER_IDS

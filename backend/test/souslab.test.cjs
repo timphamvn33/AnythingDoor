@@ -272,6 +272,23 @@ test('ignores malformed quota headers without reporting a false balance', async 
   assert.deepEqual(service.getUsage('owner-id'), { usage: null });
 });
 
+test('distinguishes rejected credentials from denied plan access', async t => {
+  const service = setup(t, async url =>
+    Response.json(
+      { error: { code: 'not_shown' } },
+      { status: url.pathname.endsWith('/menu') ? 403 : 401 },
+    ),
+  );
+  await assert.rejects(() => service.search('29204', '', undefined), {
+    status: 503,
+    message: 'SousLab rejected the API key. Check that the backend uses an active SousLab API key.',
+  });
+  await assert.rejects(() => service.menu('store-1'), {
+    status: 503,
+    message: 'SousLab denied access to this request. Check the account and plan permissions.',
+  });
+});
+
 test('usage endpoint requires a valid token and an allowed user ID', async t => {
   const { Test } = require('@nestjs/testing');
   const { PassportModule } = require('@nestjs/passport');

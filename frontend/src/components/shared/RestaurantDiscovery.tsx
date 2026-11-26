@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import LocationAutocomplete from '@/components/shared/LocationAutocomplete';
-import RestaurantThumbnail from '@/components/shared/RestaurantThumbnail';
+import RestaurantPhoto from '@/components/shared/RestaurantPhoto';
 import {
   discoverRestaurants,
   getSavedRestaurants,
@@ -291,7 +291,12 @@ export default function RestaurantDiscovery({
             key={restaurant.id}
             className="min-w-0 overflow-hidden rounded-xl border bg-white shadow-sm [overflow-wrap:anywhere]"
           >
-            <RestaurantThumbnail categories={restaurant.category} />
+            <RestaurantPhoto
+              source="discovery"
+              id={restaurant.id}
+              name={restaurant.name}
+              categories={restaurant.category}
+            />
             <div className="p-3">
               <h3 className="text-lg font-semibold">{restaurant.name}</h3>
               <p className="text-sm text-gray-600">
