@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
 import PageWrapper from '@/components/layout/PageWrapper';
 import Navbar from '@/components/layout/Navbar';
-import Sidebar from '@/components/layout/SideNavbar';
-import { ArrowLeftRight, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import DialogStoreItem from '@/components/dialog/DialogStoreItem';
 import type { ItemPayload } from '@/schemas/item.schema';
 import { useAuth } from '@/context/auth.context';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getStoreById } from '@/services/store.service';
+import { deleteStoreById, getStoreById } from '@/services/store.service';
+import DialogStore from '@/components/dialog/DialogStore';
+import DeleteConfirm from '@/components/shared/DeleteConfirm';
+import { Settings } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
 import type { StorePayload } from '@/schemas/store.schema';
 import StoreInfo from '@/components/shared/StoreInfo';
 import StorePageSkeleton from '@/components/skeletons/StorePageSkeleton';
@@ -19,24 +25,27 @@ import ItemInfo from '@/components/shared/ItemInfo';
 import ItemInfoSkeleton from '@/components/skeletons/ItemInfoSkeleton';
 import { toast, Toaster } from 'sonner';
 import DialogOrderItem from '@/components/dialog/DialogOrderItem';
+import { addDemoCartItem, demoRestaurantAsStore, getDemoRestaurant } from '@/data/demo-restaurants';
 import {
-  addDemoCartItem,
-  demoRestaurantAsStore,
-  getDemoRestaurant,
-} from '@/data/demo-restaurants';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+
+type DuplicateDraft = { key: string; originalName: string; item: ItemPayload };
 
 export default function StorePage() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [, setPickupMethod] = useState('pickup');
-  const [checkedCategories, setCheckedCategories] = useState<string[]>([]);
-  const [price, setPrice] = useState('$');
   const [openItemDialog, setOpenItemDialog] = useState(false);
+  const [openStoreDialog, setOpenStoreDialog] = useState(false);
+  const [storeToDelete, setStoreToDelete] = useState<StorePayload | null>(null);
   const { user } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
-  const [isBuyer, setisBuyer] = useState(false);
+  const [, setisBuyer] = useState(false);
   const navigate = useNavigate();
   const { storeId } = useParams();
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const [store, setStore] = useState<StorePayload>();
   const [items, setItems] = useState<ItemPayload[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,6 +54,63 @@ export default function StorePage() {
   const [item, setItem] = useState<ItemPayload | null>(null);
   const [selectedOrderItem, setSelectedOrderItem] = useState<ItemPayload | null>(null);
   const demoRestaurant = storeId ? getDemoRestaurant(storeId) : undefined;
+  const [drafts, setDrafts] = useState<DuplicateDraft[]>([]);
+  const [editingDraft, setEditingDraft] = useState<string | null>(null);
+  const [duplicateItem, setDuplicateItem] = useState<ItemPayload | null>(null);
+  const [duplicateCount, setDuplicateCount] = useState('1');
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem(`menu-drafts:${storeId}`);
+    if (!saved) {
+      setDrafts([]);
+      return;
+    }
+    try {
+      setDrafts(JSON.parse(saved) as DuplicateDraft[]);
+    } catch (error) {
+      console.error('Unable to read duplicate drafts', error);
+      toast.error('Unable to read duplicate drafts in this browser session.');
+    }
+  }, [storeId]);
+
+  useEffect(() => {
+    if (!drafts.length) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [drafts.length]);
+
+  const saveDrafts = (next: DuplicateDraft[]) => {
+    setDrafts(next);
+    try {
+      sessionStorage.setItem(`menu-drafts:${storeId}`, JSON.stringify(next));
+    } catch (error) {
+      console.error('Unable to persist duplicate drafts', error);
+      toast.error(
+        'Duplicate drafts could not be saved in this browser session. Keep this page open.',
+      );
+    }
+  };
+
+  const duplicate = () => {
+    const count = Number(duplicateCount);
+    if (!duplicateItem || !Number.isInteger(count) || count < 1 || count > 50) {
+      toast.error('Enter a number between 1 and 50.');
+      return;
+    }
+    const { id: _id, restaurant: _restaurant, ...copy } = duplicateItem;
+    const next = Array.from({ length: count }, () => ({
+      key: crypto.randomUUID(),
+      originalName: copy.name,
+      item: copy,
+    }));
+    saveDrafts([...drafts, ...next]);
+    setDuplicateItem(null);
+    toast.info('Rename and save each duplicate draft.');
+  };
 
   const renderRating = (stars: number) =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -75,11 +141,19 @@ export default function StorePage() {
     }
 
     if (storeId) {
-      const store = await getStoreById(storeId);
-      const items = await getAllItemByStore(storeId);
-      setItems(items?.data);
-      setStore(store?.data);
-      setLoading(false);
+      try {
+        const [store, items] = await Promise.all([
+          getStoreById(storeId),
+          getAllItemByStore(storeId),
+        ]);
+        setItems(items?.data);
+        setStore(store?.data);
+      } catch (error) {
+        console.error('Unable to load store and menu', error);
+        toast.error('Unable to load the store and menu.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -102,18 +176,8 @@ export default function StorePage() {
     toast.success(`${selectedItem.name} added to your sample cart`);
   };
 
-  const handleCategoryCheck = (category: string) => {
-    setCheckedCategories(prev =>
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category],
-    );
-  };
-
-  const resetFilters = () => {
-    setCheckedCategories([]);
-    setPrice('$');
-  };
-
   const handleSaveNewItem = async (_item: ItemPayload) => {
+    if (editingDraft) saveDrafts(drafts.filter(draft => draft.key !== editingDraft));
     fetchStoreandItems(storeId ?? '');
   };
 
@@ -144,9 +208,24 @@ export default function StorePage() {
     }
   };
 
+  const handleDeleteStoreConfirmed = async () => {
+    if (!storeToDelete?.id) return;
+    const name = storeToDelete.name;
+    try {
+      await deleteStoreById(storeToDelete.id);
+      toast.success(`delete successfully ${name}`);
+      navigate('/landing/stores/owner');
+    } catch (error: any) {
+      toast.error(error.message || `unable to delete ${name}`);
+    } finally {
+      setStoreToDelete(null);
+    }
+  };
+
   const handleDialogOnclose = () => {
     setOpenItemDialog(false);
     setItem(null);
+    setEditingDraft(null);
   };
 
   return (
@@ -154,15 +233,15 @@ export default function StorePage() {
       <Navbar />
       <div className="flex h-[calc(100vh-64px)] relative">
         {/* Toggle Sidebar Button (Mobile Only) */}
-        <button
+        {/* <button
           onClick={toggleSidebar}
           className="absolute top-16 left-5 z-30 bg-white p-1 rounded-full shadow-md hover:bg-gray-200 transition"
         >
           <ArrowLeftRight className="w-4 h-4" />
-        </button>
+        </button> */}
 
         {/* Sidebar */}
-        <div
+        {/* <div
           className={`transition-all duration-300 ${
             sidebarOpen ? 'w-72 block' : 'w-0 hidden'
           } md:block`}
@@ -182,13 +261,26 @@ export default function StorePage() {
               { title: 'Beverages', items: ['Soda', 'Iced Tea'] },
             ]}
           />
-        </div>
+        </div> */}
         {/* Render loading skeleton or main content */}
         {/* Main Content */}
         {loading || !store ? (
           <StorePageSkeleton />
         ) : (
           <>
+            <DialogStore
+              open={openStoreDialog}
+              onClose={() => setOpenStoreDialog(false)}
+              onSave={() => fetchStoreandItems(storeId ?? '')}
+              onError={msg => toast.error(msg)}
+              onSuccess={msg => toast.success(msg)}
+              store={store}
+            />
+            <DeleteConfirm
+              itemToDelete={storeToDelete}
+              setItemToDelete={setStoreToDelete}
+              handleDeleteConfirmed={handleDeleteStoreConfirmed}
+            />
             <DialogStoreItem
               open={openItemDialog}
               onClose={handleDialogOnclose}
@@ -196,9 +288,35 @@ export default function StorePage() {
               storeId={storeId || ''}
               onError={msg => toast.error(msg)}
               onSuccess={msg => toast.success(msg)}
-              item={item!}
-              setItem={setItem}
+              item={item}
+              duplicateName={drafts.find(draft => draft.key === editingDraft)?.originalName}
             />
+            <Dialog
+              open={Boolean(duplicateItem)}
+              onOpenChange={open => !open && setDuplicateItem(null)}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Duplicate menu item</DialogTitle>
+                </DialogHeader>
+                <label className="text-sm">
+                  Number of copies (1–50)
+                  <Input
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={duplicateCount}
+                    onChange={e => setDuplicateCount(e.target.value)}
+                  />
+                </label>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setDuplicateItem(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={duplicate}>Create drafts</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <main className="transition-all duration-300 flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
               <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
                 <div>
@@ -207,8 +325,47 @@ export default function StorePage() {
                     openHrs={store?.openHrs}
                     closeHrs={store?.closeHrs}
                     category={store?.category}
+                    actions={
+                      isOwner && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="w-8 h-8 p-0"
+                              aria-label="Store settings"
+                            >
+                              <Settings className="w-5 h-5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => setOpenStoreDialog(true)}>
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setStoreToDelete(store)}
+                              className="text-red-500"
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )
+                    }
                   ></StoreInfo>
-                  <p className="text-sm text-gray-600">123 Main St, San Diego, CA</p>
+                  {store.address && (
+                    <p className="text-sm text-gray-600">
+                      {[
+                        store.address.street,
+                        store.address.city,
+                        store.address.state,
+                        store.address.zip,
+                        store.address.country,
+                      ]
+                        .filter(Boolean)
+                        .join(', ')}
+                    </p>
+                  )}
                   <div className="flex items-center mt-1">{renderRating(4)}</div>
                 </div>
 
@@ -223,7 +380,7 @@ export default function StorePage() {
                   )}
 
                   {/* Buyer Controls */}
-                  {isBuyer && (
+                  {/* {isBuyer && (
                     <div className="flex flex-col items-end gap-2">
                       <RadioGroup
                         defaultValue="pickup"
@@ -241,12 +398,13 @@ export default function StorePage() {
                       </RadioGroup>
                       <Button className="w-28">Checkout</Button>
                     </div>
-                  )}
+                  )} */}
 
                   {demoRestaurant && (
                     <div className="mb-6 flex items-center justify-between rounded-lg border bg-amber-50 p-4">
                       <p className="text-sm text-amber-900">
-                        Demo restaurant: menu and cart are sample data and are not sent as a real order.
+                        Demo restaurant: menu and cart are sample data and are not sent as a real
+                        order.
                       </p>
                       <Button variant="outline" onClick={() => navigate('/landing/cart')}>
                         View sample cart
@@ -256,15 +414,15 @@ export default function StorePage() {
 
                   {/* Owner Controls */}
                   {isOwner && (
-                    <div className="flex gap-2">
-                      <Button className="w-28 mt-2" onClick={() => setOpenItemDialog(true)}>
-                        Add New
+                    <div className="flex items-center gap-2">
+                      <Button className="w-40 mt-2" onClick={() => setOpenItemDialog(true)}>
+                        Add a New Menu Item
                       </Button>
                       <Button
-                        className="w-28 mt-2"
+                        className="w-40 mt-2"
                         onClick={() => navigate('/landing/stores/owner')}
                       >
-                        All Stores
+                        Your All Stores
                       </Button>
                     </div>
                   )}
@@ -283,16 +441,28 @@ export default function StorePage() {
 
               {/* Menu Items */}
 
+              {isOwner && drafts.length > 0 && (
+                <p role="status" className="mb-4 text-red-600">
+                  You have {drafts.length} duplicate draft{drafts.length === 1 ? '' : 's'} to rename
+                  and save. Drafts remain in this browser session.
+                </p>
+              )}
+
               {loading || !items ? (
                 <ItemInfoSkeleton />
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {items.map((item, _) => (
+                  {items.map(item => (
                     <ItemInfo
+                      key={item.id}
                       item={item}
                       isOwner={isOwner}
                       onEdit={onEdit}
                       onDelete={onDelete}
+                      onDuplicate={selected => {
+                        setDuplicateCount('1');
+                        setDuplicateItem(selected);
+                      }}
                       itemToDelete={itemToDelete!}
                       setItemToDelete={setItemToDelete}
                       handleDeleteConfirmed={handleDeleteConfirmed}
@@ -300,6 +470,25 @@ export default function StorePage() {
                       isReadOnly={false}
                     ></ItemInfo>
                   ))}
+                  {isOwner &&
+                    drafts.map(draft => (
+                      <ItemInfo
+                        key={draft.key}
+                        item={draft.item}
+                        isOwner
+                        isReadOnly={false}
+                        isDuplicate
+                        onEdit={() => {
+                          setEditingDraft(draft.key);
+                          setItem(draft.item);
+                          setOpenItemDialog(true);
+                        }}
+                        onDelete={() => {
+                          if (window.confirm('Discard this duplicate draft?'))
+                            saveDrafts(drafts.filter(d => d.key !== draft.key));
+                        }}
+                      />
+                    ))}
                 </div>
               )}
             </main>

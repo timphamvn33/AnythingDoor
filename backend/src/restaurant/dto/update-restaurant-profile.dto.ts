@@ -1,4 +1,5 @@
 import { IsArray, IsOptional, IsString } from 'class-validator';
+import type { RestaurantAddress, RestaurantSchedule } from './create-restaurant.dto';
 
 export class UpdateRestaurantDto {
   @IsOptional()
@@ -16,7 +17,7 @@ export class UpdateRestaurantDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  categorry?: string[];
+  category?: string[];
 
   @IsOptional()
   @IsString()
@@ -25,4 +26,8 @@ export class UpdateRestaurantDto {
   @IsOptional()
   @IsString()
   closeHrs?: string;
+
+  phoneNumber?: string;
+  address?: RestaurantAddress;
+  hours?: RestaurantSchedule[];
 }

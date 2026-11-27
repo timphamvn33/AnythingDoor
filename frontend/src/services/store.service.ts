@@ -3,12 +3,7 @@ import { STORE_ENDPOINTS } from '@/api/endpoints';
 import type { StorePayload } from '@/schemas/store.schema';
 
 export const createStore = async (data: StorePayload) => {
-  try {
-    const res = api.post(STORE_ENDPOINTS.CREATE_STORE, data);
-    return res;
-  } catch (error: any) {
-    console.log('unable to create a new store: ', error);
-  }
+  return api.post(STORE_ENDPOINTS.CREATE_STORE, data);
 };
 
 export const getStores = async (ownerId: string) => {

@@ -8,10 +8,6 @@ export class MenuItemService {
   constructor(private prisma: PrismaService) {}
 
   async createMenuItem(data: CreateMenuItemDto) {
-    if (!data.imgUrl?.trim()) {
-      throw new BadRequestException('An image URL is required to create a menu item');
-    }
-
     if (!data.restaurantId?.trim()) {
       throw new BadRequestException('A restaurant ID is required to create a menu item');
     }
@@ -31,7 +27,8 @@ export class MenuItemService {
         ...(data.description !== undefined ? { description: data.description } : {}),
         price: data.price,
         ...(data.available !== undefined ? { available: data.available } : {}),
-        imgUrl: data.imgUrl,
+        imgUrl: data.imgUrl?.trim() || '',
+        ...(data.ingredients !== undefined ? { ingredients: data.ingredients } : {}),
         category: data.category,
         restaurantId: data.restaurantId,
       },

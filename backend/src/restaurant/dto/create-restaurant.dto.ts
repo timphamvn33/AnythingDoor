@@ -1,4 +1,14 @@
+import { Weekday } from '@db/generated/prisma';
 import { IsArray, IsOptional, IsString } from 'class-validator';
+
+export type RestaurantSchedule = { day: Weekday; opensAt: string; closesAt: string };
+export type RestaurantAddress = {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+};
 
 export class CreateRestaurantDto {
   @IsString()
@@ -9,7 +19,7 @@ export class CreateRestaurantDto {
   description: string;
 
   @IsString()
-  logoUrl: string;
+  logoUrl?: string;
 
   @IsArray()
   @IsString({ each: true })
@@ -20,4 +30,8 @@ export class CreateRestaurantDto {
 
   @IsString()
   closeHrs: string;
+
+  phoneNumber?: string;
+  address?: RestaurantAddress;
+  hours?: RestaurantSchedule[];
 }

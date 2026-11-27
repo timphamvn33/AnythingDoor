@@ -93,6 +93,12 @@ Open the URL printed by Vite (typically `http://localhost:5173`) in your browser
 
 ### Owner database foundation
 
+Owners can add store contact information, addresses, and opening days with shared or
+per-day hours. Menu items can include ingredients and an optional image. Duplicated
+menu items are browser-session drafts: rename and save each red-bordered draft to
+publish it. Drafts are not shared across browsers and are lost when the browser
+session ends.
+
 The owner migration adds restaurant hours and exceptions, order status history, expenses,
 supplies, employees, shifts and breaks, leave requests, and payroll records. Payroll accounts
 store a provider reference and optional last four digits, not routing or account numbers.

@@ -2,25 +2,30 @@ import { IsArray, IsBoolean, IsOptional, IsString, IsNumber } from 'class-valida
 
 export class CreateMenuItemDto {
   @IsString()
-  name: string;
+  name: string | undefined;
 
   @IsOptional()
   @IsString()
   description?: string;
 
   @IsNumber()
-  price: number;
+  price: number | undefined;
 
   @IsBoolean()
-  available: boolean;
+  available: boolean | undefined;
 
   @IsString()
-  imgUrl: string;
+  @IsOptional()
+  imgUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  ingredients?: string;
 
   @IsString()
-  restaurantId: string;
+  restaurantId: string | undefined;
 
   @IsArray()
   @IsString({ each: true })
-  category: string[];
+  category: string[] | undefined;
 }

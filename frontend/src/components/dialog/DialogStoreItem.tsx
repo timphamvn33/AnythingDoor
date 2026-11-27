@@ -1,164 +1,79 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useEffect } from 'react';
 import { createItem, updateItem } from '@/services/item.service';
 import { AddItemPayload, type ItemPayload } from '@/schemas/item.schema';
-import { useElementSubmit } from '@/hooks/useElementSubmit';
 
-type AddItemDialogProps = {
+type Props = {
   open: boolean;
   onClose: () => void;
   onSave: (item: ItemPayload) => void;
   storeId: string;
   onError: (message: string) => void;
   onSuccess: (message: string) => void;
-  item: ItemPayload;
-  setItem: (item: ItemPayload) => void;
+  item: ItemPayload | null;
+  duplicateName?: string;
 };
 
-export default function DialogStoreItem({
-  open,
-  onClose,
-  onSave,
-  storeId,
-  onError,
-  onSuccess,
-  item,
-  setItem,
-}: AddItemDialogProps) {
-  const createNewItem = async (newItem: ItemPayload) => {
-    try {
-      const res = await createItem(newItem);
-
-      console.log('new Item: ', res);
-      onSave(newItem);
-      onClose();
-      onSuccess?.(' Create a new item successfully');
-    } catch (error: any) {
-      onError?.('Unable to create a new item');
-    }
-  };
-
-  const updateItemFn = async (data: ItemPayload) => {
-    try {
-      await updateItem(item?.id!, data);
-      onSave(data);
-      onSuccess?.('Store updated successfully');
-      setItem({
-        name: '',
-        price: undefined as unknown as number,
-        imgUrl: '',
-        category: [],
-        restaurantId: storeId,
-      });
-    } catch (error: any) {
-      onError?.(`Unable to update the store ${data.name}`);
-    }
-  };
-
-  const { handleSave, errors } = useElementSubmit<ItemPayload>({
-    schema: AddItemPayload,
-    onSave: onSave,
-    onSuccess: onSuccess,
-    onError: onError,
-    onClose: onClose,
-    createFn: createNewItem,
-    updateFn: updateItemFn,
-  });
+export default function DialogStoreItem({ open, onClose, onSave, storeId, onError, onSuccess, item, duplicateName }: Props) {
+  const [form, setForm] = useState<ItemPayload>({ name: '', price: 0, imgUrl: '', category: [], restaurantId: storeId, available: true });
+  const [categories, setCategories] = useState('');
+  const [price, setPrice] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      if (item?.name === '' || !item) {
-        setItem({
-          name: '',
-          price: undefined as unknown as number,
-          imgUrl: '',
-          category: [],
-          restaurantId: storeId,
-        });
-      }
+    if (!open) return;
+    setForm(item ? { ...item, description: item.description || '', ingredients: item.ingredients || '', imgUrl: item.imgUrl || '' } :
+      { name: '', price: 0, imgUrl: '', category: [], restaurantId: storeId, available: true });
+    setPrice(item ? String(item.price) : '');
+    setCategories(item?.category.join(', ') || '');
+    setError('');
+  }, [open, item, storeId]);
+
+  const save = async () => {
+    const parsed = AddItemPayload.safeParse({
+      ...form, price: price.trim() ? Number(price) : 0,
+      category: categories.split(',').map(c => c.trim()).filter(Boolean),
+    });
+    if (!parsed.success) {
+      setError(parsed.error.errors[0]?.message || 'Check the menu item details.');
+      return;
     }
-  }, [open]);
-
-  const handleCategory = (value: string) => {
-    const newCategory = value.split(',').map(c => c.trim());
-    setItem({ ...item, category: newCategory });
+    if (duplicateName && parsed.data.name.trim().toLowerCase() === duplicateName.trim().toLowerCase()) {
+      setError('Rename this duplicate before saving.');
+      return;
+    }
+    setSaving(true);
+    try {
+      if (parsed.data.id) await updateItem(parsed.data.id, parsed.data);
+      else await createItem(parsed.data);
+      onSave(parsed.data);
+      onClose();
+      onSuccess(parsed.data.id ? 'Item updated successfully' : 'Item created successfully');
+    } catch (e) {
+      onError(e instanceof Error ? e.message : 'Unable to save the item');
+    } finally {
+      setSaving(false);
+    }
   };
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Item Name</label>
-            <Input value={item?.name} onChange={e => setItem({ ...item, name: e.target.value })} />
-            {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <Textarea
-              value={item?.description}
-              onChange={e => setItem({ ...item, description: e.target.value })}
-            />
-            {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Price</label>
-            <Input
-              type="number"
-              step="0.01"
-              value={item?.price ?? ''}
-              onChange={e => setItem({ ...item, price: Number(e.target.value) })}
-            />
-            {errors.price && <p className="text-sm text-red-500">{errors.price}</p>}
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={item?.available}
-              onChange={e => setItem({ ...item, available: e.target.checked })}
-              id="available"
-            />
-            <label htmlFor="available" className="text-sm font-medium">
-              Available
-            </label>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Image URL</label>
-            <Input
-              value={item?.imgUrl}
-              onChange={e => setItem({ ...item, imgUrl: e.target.value })}
-            />
-            {errors.imgUrl && <p className="text-sm text-red-500">{errors.imgUrl}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Categories (comma separated)</label>
-            <Input value={item?.category} onChange={e => handleCategory(e.target.value)} />
-            {errors.category && <p className="text-sm text-red-500">{errors.category}</p>}
-          </div>
-        </div>
-
-        <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={() => handleSave(item)}>Save</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
+  return <Dialog open={open} onOpenChange={value => !value && onClose()}>
+    <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogHeader><DialogTitle>{item?.id ? 'Edit' : 'Add'} Menu Item</DialogTitle></DialogHeader>
+      <div className="space-y-4">
+        <label className="block text-sm">Name <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></label>
+        <label className="block text-sm">Description (optional) <Textarea value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })} /></label>
+        <label className="block text-sm">Price <Input type="number" min="0.01" step="0.01" value={price} onChange={e => setPrice(e.target.value)} /></label>
+        <label className="block text-sm"><input type="checkbox" checked={form.available ?? true} onChange={e => setForm({ ...form, available: e.target.checked })} /> Available</label>
+        <label className="block text-sm">Image URL (optional) <Input value={form.imgUrl} onChange={e => setForm({ ...form, imgUrl: e.target.value })} /></label>
+        <label className="block text-sm">Categories (comma-separated) <Input value={categories} onChange={e => setCategories(e.target.value)} /></label>
+        <label className="block text-sm">Ingredients <Textarea value={form.ingredients || ''} onChange={e => setForm({ ...form, ingredients: e.target.value })} /></label>
+        {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+      </div>
+      <DialogFooter><Button variant="outline" onClick={onClose}>Cancel</Button><Button disabled={saving} onClick={save}>Save</Button></DialogFooter>
+    </DialogContent>
+  </Dialog>;
 }

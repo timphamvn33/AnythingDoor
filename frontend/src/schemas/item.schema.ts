@@ -10,7 +10,8 @@ export const AddItemPayload = z.object({
     .min(0.01, { message: 'Price is required' }),
   available: z.boolean().optional(),
   category: z.array(z.string()).min(1, { message: 'select at least 1 category' }),
-  imgUrl: z.string().min(1, { message: 'Image URL is required' }),
+  imgUrl: z.string(),
+  ingredients: z.string().optional(),
   restaurantId: z.string(),
   restaurant: CreateStorePayload.optional(),
 });
