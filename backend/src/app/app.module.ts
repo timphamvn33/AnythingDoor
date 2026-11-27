@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { UserModule } from '@src/user/user.module';
 import { AuthModule } from '@src/auth/auth.module';
@@ -26,6 +27,7 @@ import { ChatModule } from '@src/chat/chat.module';
 import { DiscoveryModule } from '@src/discovery/discovery.module';
 import { SousLabModule } from '@src/souslab/souslab.module';
 import { PlacePhotosModule } from '@src/place-photos/place-photos.module';
+import { DecimalResponseInterceptor } from '@src/prisma/decimal-response.interceptor';
 
 @Module({
   imports: [
@@ -53,6 +55,7 @@ import { PlacePhotosModule } from '@src/place-photos/place-photos.module';
     DeliveryController,
   ],
   providers: [
+    { provide: APP_INTERCEPTOR, useClass: DecimalResponseInterceptor },
     PrismaService,
     RestaurantService,
     PaymentService,

@@ -9,12 +9,11 @@ import { useAuth } from '@/context/auth.context';
 import { useNavigate } from 'react-router-dom';
 import { deleteOrder, getOrderByUserId, updateOrder } from '@/services/order.service';
 import { toast, Toaster } from 'sonner';
-import type { Order } from '@/types/order.types';
+import type { Order, OrderItem } from '@/types/order.types';
 import OrderSummary from '@/components/cart/OrderSummary';
 import UserInfoCart from '@/components/cart/UserInfoCart';
 import PaymentMethod from '@/components/cart/PaymentMethod';
 import { deleteOrderItem, updateOrderItem } from '@/services/order-items.service';
-import type { OrderItem } from '@db/generated/prisma';
 import { useCart } from '@/context/cart.context';
 import {
   clearDemoCart,

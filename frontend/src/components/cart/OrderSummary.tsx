@@ -1,9 +1,8 @@
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Order } from '@/types/order.types';
+import type { Order, OrderItem } from '@/types/order.types';
 import { formatCurrency } from '@/utils/format';
-import type { OrderItem } from '@db/generated/prisma';
 
 interface OrderSummaryProps {
   orders: Order[];

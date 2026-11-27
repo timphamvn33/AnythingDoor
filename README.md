@@ -91,6 +91,44 @@ npm run dev
 
 Open the URL printed by Vite (typically `http://localhost:5173`) in your browser. The frontend connects to the backend at `http://localhost:3000` by default. Keep the database, backend, and frontend running while using the app.
 
+### Owner database foundation
+
+The owner migration adds restaurant hours and exceptions, order status history, expenses,
+supplies, employees, shifts and breaks, leave requests, and payroll records. Payroll accounts
+store a provider reference and optional last four digits, not routing or account numbers.
+These tables are a database foundation: owner APIs, authorization, payroll integration,
+profit calculations, and status-transition validation are not implemented by this migration.
+
+Restaurant hours use local wall-clock times; set the restaurant's IANA timezone before using
+them. A closing time earlier than an opening time represents an overnight interval. Hours
+exceptions replace regular hours for their date; a closed exception has no times, and multiple
+open intervals can represent a split day. The legacy `openHrs` and `closeHrs` fields remain in
+use by existing APIs and are not automatically synchronized with these tables.
+
+Menu availability is represented by `available` and `comingSoon`: true/false is available,
+false/false is out of stock, and false/true is coming soon. Both cannot be true. Existing APIs
+still use `available`; `comingSoon`, ingredients, and archiving need owner API support.
+
+Orders now have optional `restaurantId`, `submittedAt`, and item-name snapshots. The migration
+infers a restaurant only where every existing item still belongs to the same restaurant;
+mixed, empty, or orphaned orders remain unassigned. Historical names and submission times are
+not guessed. A submitted order must have a restaurant, but item ownership is not enforced by
+the database. The current cart/order APIs do not populate snapshots or submission times, split
+multi-restaurant carts, enforce restaurant ownership, or maintain status history. Implement
+these before using the new fields for owner order processing.
+
+Prices, order totals, and payment amounts migrate from floating point to `Decimal(12,2)`.
+PostgreSQL rounds existing values to cents, and values outside the supported range cause the
+migration to fail. Back up the database and review existing values and the rounding impact
+before deploying. The existing HTTP API continues returning numeric values for compatibility;
+new financial calculations should use decimals rather than JavaScript floating-point arithmetic.
+The current application assumes USD; currency conversion and accounting are not implemented.
+
+The schema keeps employee pay rates, payroll records, and provider references, but it does not
+provide access controls or secure a payroll workflow by itself. Protect these records with
+restaurant-scoped authorization and audit logging before exposing them. Hourly rates are per
+hour and salary rates are annual; leave and payroll period end timestamps are exclusive.
+
 ### Configure the chatbot (optional)
 
 The chatbot page and buyer/owner workflows are included, but AI replies remain disabled until the backend has an API key. Set these variables in the backend environment (or your private Render environment settings); never add a real key to frontend variables or commit it:

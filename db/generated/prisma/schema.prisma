@@ -35,8 +35,57 @@ enum PaymentStatus {
 
 enum OrderStatus {
   pending
+  accepted
+  preparing
   ready
   done
+  cancelled
+  rejected
+}
+
+enum Weekday {
+  monday
+  tuesday
+  wednesday
+  thursday
+  friday
+  saturday
+  sunday
+}
+
+enum ExpenseCategory {
+  supply
+  rent
+  utilities
+  employees
+  insurance
+  certifications
+  tax
+  legal
+  other
+}
+
+enum PayType {
+  hourly
+  salary
+}
+
+enum LeaveType {
+  pto
+  sick
+}
+
+enum LeaveStatus {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+enum PayrollStatus {
+  pending
+  paid
+  failed
   cancelled
 }
 
@@ -74,6 +123,8 @@ model User {
   deliveries          Delivery[]           @relation("DriverDeliveries")
   Restaurant          Restaurant[]
   passwordResetTokens PasswordResetToken[]
+  employment          Employee[]
+  orderStatusChanges  OrderStatusHistory[]
 }
 
 model PasswordResetToken {
@@ -88,20 +139,54 @@ model PasswordResetToken {
 }
 
 model Restaurant {
-  id          String     @id @default(uuid())
-  name        String
-  description String?
-  ownerId     String?
-  logoUrl     String
-  category    String[]
-  openHrs     String
-  closeHrs    String
-  addressId   String?    @unique
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  owner       User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
-  address     Address?   @relation(fields: [addressId], references: [id], onDelete: SetNull)
-  menuItems   MenuItem[]
+  id              String                     @id @default(uuid())
+  name            String
+  description     String?
+  ownerId         String?
+  phoneNumber     String?
+  timezone        String?
+  establishedAt   DateTime?                  @db.Date
+  logoUrl         String
+  category        String[]
+  openHrs         String
+  closeHrs        String
+  addressId       String?                    @unique
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+  owner           User?                      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  address         Address?                   @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  menuItems       MenuItem[]
+  hours           RestaurantHours[]
+  hoursExceptions RestaurantHoursException[]
+  orders          Order[]
+  expenses        Expense[]
+  supplies        Supply[]
+  employees       Employee[]
+
+  @@index([ownerId])
+}
+
+model RestaurantHours {
+  id           String     @id @default(uuid())
+  restaurantId String
+  day          Weekday
+  opensAt      DateTime   @db.Time(0)
+  closesAt     DateTime   @db.Time(0)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, day])
+}
+
+model RestaurantHoursException {
+  id           String     @id @default(uuid())
+  restaurantId String
+  date         DateTime   @db.Date
+  isClosed     Boolean    @default(false)
+  opensAt      DateTime?  @db.Time(0)
+  closesAt     DateTime?  @db.Time(0)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, date])
 }
 
 // External listings are discovery-only and cannot be used for orders.
@@ -127,8 +212,11 @@ model MenuItem {
   id           String      @id @default(uuid())
   name         String
   description  String?
-  price        Float
+  price        Decimal     @db.Decimal(12, 2)
   available    Boolean     @default(true)
+  comingSoon   Boolean     @default(false)
+  ingredients  String?
+  archivedAt   DateTime?
   imgUrl       String
   category     String[]    @default([])
   restaurantId String?
@@ -136,22 +224,30 @@ model MenuItem {
   updatedAt    DateTime    @updatedAt
   restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
   orderItems   OrderItem[]
+
+  @@index([restaurantId])
 }
 
 model Order {
-  id         String      @id @default(uuid())
-  userId     String
-  addressId  String?
-  paymentId  String?
-  status     OrderStatus
-  total      Float
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address    Address?    @relation(fields: [addressId], references: [id], onDelete: SetNull)
-  payment    Payment?    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
-  delivery   Delivery?
+  id            String               @id @default(uuid())
+  userId        String
+  addressId     String?
+  paymentId     String?
+  restaurantId  String?
+  status        OrderStatus
+  total         Decimal              @db.Decimal(12, 2)
+  submittedAt   DateTime?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address       Address?             @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  payment       Payment?             @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  restaurant    Restaurant?          @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+  orderItems    OrderItem[]
+  delivery      Delivery?
+  statusHistory OrderStatusHistory[]
+
+  @@index([restaurantId, status, createdAt])
 }
 
 model OrderItem {
@@ -159,9 +255,22 @@ model OrderItem {
   orderId    String
   menuItemId String?
   quantity   Int
-  price      Float
+  price      Decimal   @db.Decimal(12, 2)
+  itemName   String?
   order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
   menuItem   MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(uuid())
+  orderId   String
+  status    OrderStatus
+  actorId   String?
+  createdAt DateTime    @default(now())
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  actor     User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([orderId, createdAt])
 }
 
 model Address {
@@ -180,10 +289,127 @@ model Address {
 model Payment {
   id     String        @id @default(uuid())
   method MethodType
-  amount Float
+  amount Decimal       @db.Decimal(12, 2)
   status PaymentStatus
   paidAt DateTime      @default(now())
   orders Order[] // One payment can relate to multiple orders
+}
+
+model Expense {
+  id           String          @id @default(uuid())
+  restaurantId String
+  category     ExpenseCategory
+  amount       Decimal         @db.Decimal(12, 2)
+  incurredAt   DateTime
+  description  String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  restaurant   Restaurant      @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+
+  @@index([restaurantId, incurredAt])
+}
+
+model Supply {
+  id           String     @id @default(uuid())
+  restaurantId String
+  name         String
+  quantity     Decimal    @db.Decimal(12, 3)
+  unit         String
+  cost         Decimal?   @db.Decimal(12, 2)
+  expiresAt    DateTime?  @db.Date
+  isAvailable  Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+
+  @@index([restaurantId, expiresAt])
+}
+
+model Employee {
+  id              String           @id @default(uuid())
+  restaurantId    String
+  userId          String?
+  name            String
+  email           String
+  payType         PayType
+  payRate         Decimal          @db.Decimal(12, 2)
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  restaurant      Restaurant       @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  shifts          WorkShift[]
+  leaveRequests   LeaveRequest[]
+  payrollRecords  PayrollRecord[]
+  payrollAccounts PayrollAccount[]
+
+  @@unique([restaurantId, userId])
+  @@index([restaurantId, isActive])
+}
+
+model WorkShift {
+  id         String       @id @default(uuid())
+  employeeId String
+  clockIn    DateTime
+  clockOut   DateTime?
+  employee   Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  breaks     ShiftBreak[]
+
+  @@index([employeeId, clockIn])
+}
+
+model ShiftBreak {
+  id       String    @id @default(uuid())
+  shiftId  String
+  startsAt DateTime
+  endsAt   DateTime?
+  shift    WorkShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  @@index([shiftId, startsAt])
+}
+
+model LeaveRequest {
+  id         String      @id @default(uuid())
+  employeeId String
+  type       LeaveType
+  status     LeaveStatus @default(pending)
+  startsAt   DateTime
+  endsAt     DateTime
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, startsAt])
+}
+
+model PayrollAccount {
+  id                String   @id @default(uuid())
+  employeeId        String
+  provider          String
+  providerAccountId String
+  lastFour          String?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  employee          Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([provider, providerAccountId])
+  @@index([employeeId, isActive])
+}
+
+model PayrollRecord {
+  id          String        @id @default(uuid())
+  employeeId  String
+  periodStart DateTime
+  periodEnd   DateTime
+  amount      Decimal       @db.Decimal(12, 2)
+  status      PayrollStatus @default(pending)
+  paidAt      DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  employee    Employee      @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, periodStart])
 }
 
 model Delivery {

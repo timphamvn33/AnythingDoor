@@ -84,7 +84,7 @@ export class OrderService {
     });
 
     // Update total
-    const updatedTotal = order.total + item.price * item.quantity;
+    const updatedTotal = order.total.plus(item.price.mul(item.quantity));
     await this.prisma.order.update({
       where: { id: order.id },
       data: { total: updatedTotal },

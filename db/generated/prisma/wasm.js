@@ -150,6 +150,9 @@ exports.Prisma.RestaurantScalarFieldEnum = {
   name: 'name',
   description: 'description',
   ownerId: 'ownerId',
+  phoneNumber: 'phoneNumber',
+  timezone: 'timezone',
+  establishedAt: 'establishedAt',
   logoUrl: 'logoUrl',
   category: 'category',
   openHrs: 'openHrs',
@@ -157,6 +160,23 @@ exports.Prisma.RestaurantScalarFieldEnum = {
   addressId: 'addressId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RestaurantHoursScalarFieldEnum = {
+  id: 'id',
+  restaurantId: 'restaurantId',
+  day: 'day',
+  opensAt: 'opensAt',
+  closesAt: 'closesAt'
+};
+
+exports.Prisma.RestaurantHoursExceptionScalarFieldEnum = {
+  id: 'id',
+  restaurantId: 'restaurantId',
+  date: 'date',
+  isClosed: 'isClosed',
+  opensAt: 'opensAt',
+  closesAt: 'closesAt'
 };
 
 exports.Prisma.DiscoveredRestaurantScalarFieldEnum = {
@@ -181,6 +201,9 @@ exports.Prisma.MenuItemScalarFieldEnum = {
   description: 'description',
   price: 'price',
   available: 'available',
+  comingSoon: 'comingSoon',
+  ingredients: 'ingredients',
+  archivedAt: 'archivedAt',
   imgUrl: 'imgUrl',
   category: 'category',
   restaurantId: 'restaurantId',
@@ -193,8 +216,10 @@ exports.Prisma.OrderScalarFieldEnum = {
   userId: 'userId',
   addressId: 'addressId',
   paymentId: 'paymentId',
+  restaurantId: 'restaurantId',
   status: 'status',
   total: 'total',
+  submittedAt: 'submittedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -204,7 +229,16 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   orderId: 'orderId',
   menuItemId: 'menuItemId',
   quantity: 'quantity',
-  price: 'price'
+  price: 'price',
+  itemName: 'itemName'
+};
+
+exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  status: 'status',
+  actorId: 'actorId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AddressScalarFieldEnum = {
@@ -223,6 +257,91 @@ exports.Prisma.PaymentScalarFieldEnum = {
   amount: 'amount',
   status: 'status',
   paidAt: 'paidAt'
+};
+
+exports.Prisma.ExpenseScalarFieldEnum = {
+  id: 'id',
+  restaurantId: 'restaurantId',
+  category: 'category',
+  amount: 'amount',
+  incurredAt: 'incurredAt',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SupplyScalarFieldEnum = {
+  id: 'id',
+  restaurantId: 'restaurantId',
+  name: 'name',
+  quantity: 'quantity',
+  unit: 'unit',
+  cost: 'cost',
+  expiresAt: 'expiresAt',
+  isAvailable: 'isAvailable',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EmployeeScalarFieldEnum = {
+  id: 'id',
+  restaurantId: 'restaurantId',
+  userId: 'userId',
+  name: 'name',
+  email: 'email',
+  payType: 'payType',
+  payRate: 'payRate',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkShiftScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  clockIn: 'clockIn',
+  clockOut: 'clockOut'
+};
+
+exports.Prisma.ShiftBreakScalarFieldEnum = {
+  id: 'id',
+  shiftId: 'shiftId',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt'
+};
+
+exports.Prisma.LeaveRequestScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  type: 'type',
+  status: 'status',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PayrollAccountScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  lastFour: 'lastFour',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PayrollRecordScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  amount: 'amount',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.DeliveryScalarFieldEnum = {
@@ -256,11 +375,24 @@ exports.Role = exports.$Enums.Role = {
   restaurant_owner: 'restaurant_owner'
 };
 
+exports.Weekday = exports.$Enums.Weekday = {
+  monday: 'monday',
+  tuesday: 'tuesday',
+  wednesday: 'wednesday',
+  thursday: 'thursday',
+  friday: 'friday',
+  saturday: 'saturday',
+  sunday: 'sunday'
+};
+
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   pending: 'pending',
+  accepted: 'accepted',
+  preparing: 'preparing',
   ready: 'ready',
   done: 'done',
-  cancelled: 'cancelled'
+  cancelled: 'cancelled',
+  rejected: 'rejected'
 };
 
 exports.MethodType = exports.$Enums.MethodType = {
@@ -279,6 +411,42 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   pending: 'pending'
 };
 
+exports.ExpenseCategory = exports.$Enums.ExpenseCategory = {
+  supply: 'supply',
+  rent: 'rent',
+  utilities: 'utilities',
+  employees: 'employees',
+  insurance: 'insurance',
+  certifications: 'certifications',
+  tax: 'tax',
+  legal: 'legal',
+  other: 'other'
+};
+
+exports.PayType = exports.$Enums.PayType = {
+  hourly: 'hourly',
+  salary: 'salary'
+};
+
+exports.LeaveType = exports.$Enums.LeaveType = {
+  pto: 'pto',
+  sick: 'sick'
+};
+
+exports.LeaveStatus = exports.$Enums.LeaveStatus = {
+  pending: 'pending',
+  approved: 'approved',
+  rejected: 'rejected',
+  cancelled: 'cancelled'
+};
+
+exports.PayrollStatus = exports.$Enums.PayrollStatus = {
+  pending: 'pending',
+  paid: 'paid',
+  failed: 'failed',
+  cancelled: 'cancelled'
+};
+
 exports.DeliverStatus = exports.$Enums.DeliverStatus = {
   pickup: 'pickup',
   en_route: 'en_route',
@@ -290,13 +458,24 @@ exports.Prisma.ModelName = {
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
   Restaurant: 'Restaurant',
+  RestaurantHours: 'RestaurantHours',
+  RestaurantHoursException: 'RestaurantHoursException',
   DiscoveredRestaurant: 'DiscoveredRestaurant',
   GooglePlacesMonthlyUsage: 'GooglePlacesMonthlyUsage',
   MenuItem: 'MenuItem',
   Order: 'Order',
   OrderItem: 'OrderItem',
+  OrderStatusHistory: 'OrderStatusHistory',
   Address: 'Address',
   Payment: 'Payment',
+  Expense: 'Expense',
+  Supply: 'Supply',
+  Employee: 'Employee',
+  WorkShift: 'WorkShift',
+  ShiftBreak: 'ShiftBreak',
+  LeaveRequest: 'LeaveRequest',
+  PayrollAccount: 'PayrollAccount',
+  PayrollRecord: 'PayrollRecord',
   Delivery: 'Delivery'
 };
 
