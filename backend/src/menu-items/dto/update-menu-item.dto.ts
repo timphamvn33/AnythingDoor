@@ -27,6 +27,10 @@ export class UpdateMenuItemDto {
 
   @IsOptional()
   @IsString()
+  menuSection?: string | null;
+
+  @IsOptional()
+  @IsString()
   restaurantId: string;
 
   @IsOptional()

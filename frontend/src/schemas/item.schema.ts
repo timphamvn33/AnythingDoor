@@ -12,6 +12,7 @@ export const AddItemPayload = z.object({
   category: z.array(z.string()).min(1, { message: 'select at least 1 category' }),
   imgUrl: z.string(),
   ingredients: z.string().optional(),
+  menuSection: z.string().nullable().optional(),
   restaurantId: z.string(),
   restaurant: CreateStorePayload.optional(),
 });

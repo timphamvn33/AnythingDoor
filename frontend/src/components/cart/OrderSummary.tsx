@@ -49,7 +49,8 @@ export default function OrderSummary({
                       className="flex justify-between items-center gap-4 bg-muted px-4 py-2 rounded-md"
                     >
                       <div className="flex flex-col">
-                        <div className="font-medium">{item.menuItem.name}</div>
+                        <div className="font-medium">{item.menuItem?.name || item.itemName || 'Deleted menu item'}</div>
+                        {!item.menuItem && <div className="text-sm text-red-600">No longer available</div>}
                         <div className="text-sm text-muted-foreground">
                           Quantity:{' '}
                           {isEditing ? (
@@ -57,6 +58,7 @@ export default function OrderSummary({
                               type="number"
                               min={1}
                               value={item.quantity}
+                              disabled={!item.menuItem}
                               onChange={e =>
                                 handleQuantityChange(order, item, parseInt(e.target.value))
                               }

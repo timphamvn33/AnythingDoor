@@ -3,11 +3,12 @@ import type { ItemProps } from './item.types';
 
 export interface OrderItem {
   id: string;
-  menuItemId: string;
+  menuItemId: string | null;
+  itemName: string | null;
   orderId: string;
   price: number;
   quantity: number;
-  menuItem: ItemProps;
+  menuItem: ItemProps | null;
 }
 
 export interface Order {

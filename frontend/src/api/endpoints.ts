@@ -16,6 +16,7 @@ export const USERS_ENDPOINTS = {
 export const ITEMS_ENDPOINTS = {
   CREATE_ITEM: 'menu-items/create',
   UPDATE_ITEM: 'menu-items/update',
+  RENAME_SECTION: 'menu-items/section',
   GET_ALL_ITEM: 'menu-items/getAllItem',
   DELETE_ITEM: 'menu-items',
   GET_ALL: 'menu-items/all',

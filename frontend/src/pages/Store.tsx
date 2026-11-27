@@ -20,8 +20,7 @@ import {
 import type { StorePayload } from '@/schemas/store.schema';
 import StoreInfo from '@/components/shared/StoreInfo';
 import StorePageSkeleton from '@/components/skeletons/StorePageSkeleton';
-import { deleteItemByItemId, getAllItemByStore } from '@/services/item.service';
-import ItemInfo from '@/components/shared/ItemInfo';
+import { deleteItemByItemId, deleteMenuSection, getAllItemByStore, renameMenuSection } from '@/services/item.service';
 import ItemInfoSkeleton from '@/components/skeletons/ItemInfoSkeleton';
 import { toast, Toaster } from 'sonner';
 import DialogOrderItem from '@/components/dialog/DialogOrderItem';
@@ -34,8 +33,18 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import MenuTable, { type DuplicateDraft } from '@/components/shared/MenuTable';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
-type DuplicateDraft = { key: string; originalName: string; item: ItemPayload };
+type NewTable = { key: string; title: string; count: number };
 
 export default function StorePage() {
   const [openItemDialog, setOpenItemDialog] = useState(false);
@@ -58,8 +67,22 @@ export default function StorePage() {
   const [editingDraft, setEditingDraft] = useState<string | null>(null);
   const [duplicateItem, setDuplicateItem] = useState<ItemPayload | null>(null);
   const [duplicateCount, setDuplicateCount] = useState('1');
+  const [openTableDialog, setOpenTableDialog] = useState(false);
+  const [tableTitle, setTableTitle] = useState('');
+  const [tableCount, setTableCount] = useState('1');
+  const [newTables, setNewTables] = useState<NewTable[]>([]);
+  const [editingTables, setEditingTables] = useState<string[]>([]);
+  const [renamingSection, setRenamingSection] = useState<{ section: string | null; title: string } | null>(null);
+  const [renamedTitle, setRenamedTitle] = useState('');
+  const [renaming, setRenaming] = useState(false);
+  const [tableToDelete, setTableToDelete] = useState<{ section: string | null; title: string } | null>(null);
+  const [deletingTable, setDeletingTable] = useState(false);
 
   useEffect(() => {
+    setNewTables([]);
+    setEditingTables([]);
+    setRenamingSection(null);
+    setTableToDelete(null);
     const saved = sessionStorage.getItem(`menu-drafts:${storeId}`);
     if (!saved) {
       setDrafts([]);
@@ -182,6 +205,10 @@ export default function StorePage() {
   };
 
   const toggleRoleView = () => {
+    if (editingTables.length) {
+      toast.error('Save or cancel your table changes before switching views.');
+      return;
+    }
     setIsOwner(prev => !prev);
     setisBuyer(prev => !prev);
   };
@@ -226,6 +253,109 @@ export default function StorePage() {
     setOpenItemDialog(false);
     setItem(null);
     setEditingDraft(null);
+  };
+
+  const createTable = () => {
+    const title = tableTitle.trim();
+    const count = Number(tableCount);
+    if (!title) {
+      toast.error('Enter a table title.');
+      return;
+    }
+    if (!Number.isInteger(count) || count < 1 || count > 50) {
+      toast.error('Enter a number of items between 1 and 50.');
+      return;
+    }
+    const existingTitles = [
+      ...items.map(entry => entry.menuSection || 'Menu items'),
+      ...drafts.map(entry => entry.item.menuSection || 'Menu items'),
+      ...newTables.map(entry => entry.title),
+      'Menu items',
+    ];
+    if (existingTitles.some(existing => existing.toLowerCase() === title.toLowerCase())) {
+      toast.error('A table with that title already exists.');
+      return;
+    }
+    setNewTables(current => [...current, { key: crypto.randomUUID(), title, count }]);
+    setEditingTables(current => [...current, title]);
+    setOpenTableDialog(false);
+  };
+
+  const tableSections = Array.from(new Set([
+    ...items.map(entry => entry.menuSection || null),
+    ...(isOwner ? drafts.map(entry => entry.item.menuSection || null) : []),
+    ...(isOwner ? newTables.map(entry => entry.title) : []),
+  ]));
+
+  const renameTable = async () => {
+    if (!renamingSection || !storeId) return;
+    const title = renamedTitle.trim();
+    if (!title) {
+      toast.error('Enter a table title.');
+      return;
+    }
+    if (title === renamingSection.title) {
+      setRenamingSection(null);
+      return;
+    }
+    if (
+      title.toLowerCase() === 'menu items' ||
+      tableSections.some(section =>
+        section !== renamingSection.section &&
+        (section || 'Menu items').toLowerCase() === title.toLowerCase(),
+      )
+    ) {
+      toast.error('A table with that title already exists.');
+      return;
+    }
+    setRenaming(true);
+    try {
+      const { section } = renamingSection;
+      if (items.some(entry => (entry.menuSection || null) === section)) {
+        await renameMenuSection(storeId, section, title);
+      }
+      setItems(current => current.map(entry =>
+        (entry.menuSection || null) === section ? { ...entry, menuSection: title } : entry,
+      ));
+      if (drafts.some(entry => (entry.item.menuSection || null) === section)) {
+        saveDrafts(drafts.map(entry => (entry.item.menuSection || null) === section
+          ? { ...entry, item: { ...entry.item, menuSection: title } }
+          : entry));
+      }
+      setNewTables(current => current.map(entry =>
+        entry.title === section ? { ...entry, title } : entry,
+      ));
+      setEditingTables(current => current.map(entry =>
+        entry === renamingSection.title ? title : entry,
+      ));
+      setRenamingSection(null);
+      toast.success('Menu table title updated.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to rename the menu table.');
+    } finally {
+      setRenaming(false);
+    }
+  };
+
+  const deleteTable = async () => {
+    if (!tableToDelete || !storeId) return;
+    setDeletingTable(true);
+    try {
+      const { section, title } = tableToDelete;
+      await deleteMenuSection(storeId, section);
+      setItems(current => current.filter(entry => (entry.menuSection || null) !== section));
+      if (drafts.some(entry => (entry.item.menuSection || null) === section)) {
+        saveDrafts(drafts.filter(entry => (entry.item.menuSection || null) !== section));
+      }
+      setNewTables(current => current.filter(entry => entry.title !== section));
+      setEditingTables(current => current.filter(entry => entry !== title));
+      setTableToDelete(null);
+      toast.success(`${title} and its menu items were deleted.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to delete the menu table.');
+    } finally {
+      setDeletingTable(false);
+    }
   };
 
   return (
@@ -281,6 +411,31 @@ export default function StorePage() {
               setItemToDelete={setStoreToDelete}
               handleDeleteConfirmed={handleDeleteStoreConfirmed}
             />
+            <DeleteConfirm
+              itemToDelete={itemToDelete}
+              setItemToDelete={setItemToDelete}
+              handleDeleteConfirmed={handleDeleteConfirmed}
+            />
+            <AlertDialog open={Boolean(tableToDelete)} onOpenChange={open => {
+              if (!open && !deletingTable) setTableToDelete(null);
+            }}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete {tableToDelete?.title}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete the table and all menu items inside it,
+                    including any unsaved rows and duplicate drafts. This cannot be undone.
+                    Items in existing carts will no longer be available.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deletingTable}>Cancel</AlertDialogCancel>
+                  <Button variant="destructive" disabled={deletingTable} onClick={deleteTable}>
+                    {deletingTable ? 'Deleting...' : 'Delete table and items'}
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <DialogStoreItem
               open={openItemDialog}
               onClose={handleDialogOnclose}
@@ -291,6 +446,35 @@ export default function StorePage() {
               item={item}
               duplicateName={drafts.find(draft => draft.key === editingDraft)?.originalName}
             />
+            <Dialog open={openTableDialog} onOpenChange={setOpenTableDialog}>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Create menu table</DialogTitle></DialogHeader>
+                <label className="block text-sm">Table title
+                  <Input value={tableTitle} onChange={event => setTableTitle(event.target.value)} />
+                </label>
+                <label className="block text-sm">Number of items (1–50)
+                  <Input type="number" min="1" max="50" value={tableCount} onChange={event => setTableCount(event.target.value)} />
+                </label>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setOpenTableDialog(false)}>Cancel</Button>
+                  <Button onClick={createTable}>Create</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Dialog open={Boolean(renamingSection)} onOpenChange={open => {
+              if (!open && !renaming) setRenamingSection(null);
+            }}>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Edit menu table title</DialogTitle></DialogHeader>
+                <label className="block text-sm">Table title
+                  <Input value={renamedTitle} disabled={renaming} onChange={event => setRenamedTitle(event.target.value)} />
+                </label>
+                <DialogFooter>
+                  <Button variant="outline" disabled={renaming} onClick={() => setRenamingSection(null)}>Cancel</Button>
+                  <Button disabled={renaming} onClick={renameTable}>Save</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Dialog
               open={Boolean(duplicateItem)}
               onOpenChange={open => !open && setDuplicateItem(null)}
@@ -415,7 +599,11 @@ export default function StorePage() {
                   {/* Owner Controls */}
                   {isOwner && (
                     <div className="flex items-center gap-2">
-                      <Button className="w-40 mt-2" onClick={() => setOpenItemDialog(true)}>
+                      <Button className="w-40 mt-2" onClick={() => {
+                        setTableTitle('');
+                        setTableCount('1');
+                        setOpenTableDialog(true);
+                      }}>
                         Add a New Menu Item
                       </Button>
                       <Button
@@ -451,45 +639,58 @@ export default function StorePage() {
               {loading || !items ? (
                 <ItemInfoSkeleton />
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {items.map(item => (
-                    <ItemInfo
-                      key={item.id}
-                      item={item}
+                <>
+                  {tableSections.map(section => {
+                    const title = section || 'Menu items';
+                    const pending = newTables.find(entry => entry.title === section);
+                    return <MenuTable
+                      key={pending ? `new:${pending.key}` : section === null ? 'unsectioned' : `section:${section}`}
+                      title={title}
+                      section={section}
+                      storeId={storeId || ''}
+                      items={items.filter(entry => (entry.menuSection || null) === section)}
+                      drafts={isOwner ? drafts.filter(entry => (entry.item.menuSection || null) === section) : []}
+                      newCount={pending?.count}
                       isOwner={isOwner}
-                      onEdit={onEdit}
+                      isDemo={Boolean(demoRestaurant)}
+                      onSaved={saved => setItems(current => {
+                        const exists = current.some(entry => entry.id === saved.id);
+                        return exists ? current.map(entry => entry.id === saved.id ? saved : entry) : [...current, saved];
+                      })}
+                      onFinished={() => setNewTables(current => current.filter(entry => entry.title !== section))}
+                      onDiscard={() => setNewTables(current => current.filter(entry => entry.title !== section))}
+                      onEditingChange={editing => setEditingTables(current => editing
+                        ? current.includes(title) ? current : [...current, title]
+                        : current.filter(entry => entry !== title))}
+                      onRename={() => {
+                        if (editingTables.length && !(pending && editingTables.length === 1 && editingTables[0] === title)) {
+                          toast.error('Save or cancel your table changes before renaming a table.');
+                          return;
+                        }
+                        setRenamedTitle(title);
+                        setRenamingSection({ section, title });
+                      }}
+                      onDeleteTable={() => setTableToDelete({ section, title })}
+                      onEditItem={onEdit}
+                      onEditDraft={draft => {
+                        setEditingDraft(draft.key);
+                        setItem(draft.item);
+                        setOpenItemDialog(true);
+                      }}
                       onDelete={onDelete}
+                      onDeleteDraft={draft => {
+                        if (window.confirm('Discard this duplicate draft?'))
+                          saveDrafts(drafts.filter(entry => entry.key !== draft.key));
+                      }}
                       onDuplicate={selected => {
                         setDuplicateCount('1');
                         setDuplicateItem(selected);
                       }}
-                      itemToDelete={itemToDelete!}
-                      setItemToDelete={setItemToDelete}
-                      handleDeleteConfirmed={handleDeleteConfirmed}
-                      handleAddItemToCart={demoRestaurant ? handleAddDemoItem : undefined}
-                      isReadOnly={false}
-                    ></ItemInfo>
-                  ))}
-                  {isOwner &&
-                    drafts.map(draft => (
-                      <ItemInfo
-                        key={draft.key}
-                        item={draft.item}
-                        isOwner
-                        isReadOnly={false}
-                        isDuplicate
-                        onEdit={() => {
-                          setEditingDraft(draft.key);
-                          setItem(draft.item);
-                          setOpenItemDialog(true);
-                        }}
-                        onDelete={() => {
-                          if (window.confirm('Discard this duplicate draft?'))
-                            saveDrafts(drafts.filter(d => d.key !== draft.key));
-                        }}
-                      />
-                    ))}
-                </div>
+                      onAddToCart={handleAddDemoItem}
+                    />;
+                  })}
+                  {tableSections.length === 0 && <p className="text-gray-500">No menu items yet.</p>}
+                </>
               )}
             </main>
           </>

@@ -277,7 +277,12 @@ export default function CartPage() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col col-end-1 gap-2 pt-6">
-          <Button onClick={() => {toast.info('Thank you for choosing us. We have successfully accepted your order, and your items are now ready for repair.');
+          {orders.some(order => order.orderItems.some(item => !item.menuItem)) && (
+            <p role="status" className="text-sm text-red-600">
+              Remove unavailable items before proceeding to checkout.
+            </p>
+          )}
+          <Button disabled={orders.some(order => order.orderItems.some(item => !item.menuItem))} onClick={() => {toast.info('Thank you for choosing us. We have successfully accepted your order, and your items are now ready for repair.');
             setTimeout(() => {
               navigate('/landing')
             }, 1500);

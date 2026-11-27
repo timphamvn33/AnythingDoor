@@ -66,6 +66,15 @@ npx prisma migrate deploy
 npx prisma generate
 ```
 
+For an existing database, run these migration and generation commands after updating to use named
+menu tables. Existing menu items remain in the default "Menu items" table. New table rows must be
+saved before they are visible to other users.
+Owners can use the settings icon beside a table title to rename it. Save or cancel edits
+to existing tables first; a new table can be renamed while its rows are being entered.
+Duplicate drafts in a renamed table move with it.
+The same settings menu can delete a table and all its menu items, including unsaved rows
+and duplicate drafts, after confirmation. Items already in carts become unavailable.
+
 ### 4. Start the backend
 
 Open a **second PowerShell terminal** in the repository root:

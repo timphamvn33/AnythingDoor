@@ -11380,6 +11380,7 @@ export namespace Prisma {
     ingredients: string | null
     archivedAt: Date | null
     imgUrl: string | null
+    menuSection: string | null
     restaurantId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -11395,6 +11396,7 @@ export namespace Prisma {
     ingredients: string | null
     archivedAt: Date | null
     imgUrl: string | null
+    menuSection: string | null
     restaurantId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -11411,6 +11413,7 @@ export namespace Prisma {
     archivedAt: number
     imgUrl: number
     category: number
+    menuSection: number
     restaurantId: number
     createdAt: number
     updatedAt: number
@@ -11436,6 +11439,7 @@ export namespace Prisma {
     ingredients?: true
     archivedAt?: true
     imgUrl?: true
+    menuSection?: true
     restaurantId?: true
     createdAt?: true
     updatedAt?: true
@@ -11451,6 +11455,7 @@ export namespace Prisma {
     ingredients?: true
     archivedAt?: true
     imgUrl?: true
+    menuSection?: true
     restaurantId?: true
     createdAt?: true
     updatedAt?: true
@@ -11467,6 +11472,7 @@ export namespace Prisma {
     archivedAt?: true
     imgUrl?: true
     category?: true
+    menuSection?: true
     restaurantId?: true
     createdAt?: true
     updatedAt?: true
@@ -11570,6 +11576,7 @@ export namespace Prisma {
     archivedAt: Date | null
     imgUrl: string
     category: string[]
+    menuSection: string | null
     restaurantId: string | null
     createdAt: Date
     updatedAt: Date
@@ -11605,6 +11612,7 @@ export namespace Prisma {
     archivedAt?: boolean
     imgUrl?: boolean
     category?: boolean
+    menuSection?: boolean
     restaurantId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -11624,6 +11632,7 @@ export namespace Prisma {
     archivedAt?: boolean
     imgUrl?: boolean
     category?: boolean
+    menuSection?: boolean
     restaurantId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -11641,6 +11650,7 @@ export namespace Prisma {
     archivedAt?: boolean
     imgUrl?: boolean
     category?: boolean
+    menuSection?: boolean
     restaurantId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -11658,12 +11668,13 @@ export namespace Prisma {
     archivedAt?: boolean
     imgUrl?: boolean
     category?: boolean
+    menuSection?: boolean
     restaurantId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MenuItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "available" | "comingSoon" | "ingredients" | "archivedAt" | "imgUrl" | "category" | "restaurantId" | "createdAt" | "updatedAt", ExtArgs["result"]["menuItem"]>
+  export type MenuItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "available" | "comingSoon" | "ingredients" | "archivedAt" | "imgUrl" | "category" | "menuSection" | "restaurantId" | "createdAt" | "updatedAt", ExtArgs["result"]["menuItem"]>
   export type MenuItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     restaurant?: boolean | MenuItem$restaurantArgs<ExtArgs>
     orderItems?: boolean | MenuItem$orderItemsArgs<ExtArgs>
@@ -11693,6 +11704,7 @@ export namespace Prisma {
       archivedAt: Date | null
       imgUrl: string
       category: string[]
+      menuSection: string | null
       restaurantId: string | null
       createdAt: Date
       updatedAt: Date
@@ -12131,6 +12143,7 @@ export namespace Prisma {
     readonly archivedAt: FieldRef<"MenuItem", 'DateTime'>
     readonly imgUrl: FieldRef<"MenuItem", 'String'>
     readonly category: FieldRef<"MenuItem", 'String[]'>
+    readonly menuSection: FieldRef<"MenuItem", 'String'>
     readonly restaurantId: FieldRef<"MenuItem", 'String'>
     readonly createdAt: FieldRef<"MenuItem", 'DateTime'>
     readonly updatedAt: FieldRef<"MenuItem", 'DateTime'>
@@ -28671,6 +28684,7 @@ export namespace Prisma {
     archivedAt: 'archivedAt',
     imgUrl: 'imgUrl',
     category: 'category',
+    menuSection: 'menuSection',
     restaurantId: 'restaurantId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -29661,6 +29675,7 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableFilter<"MenuItem"> | Date | string | null
     imgUrl?: StringFilter<"MenuItem"> | string
     category?: StringNullableListFilter<"MenuItem">
+    menuSection?: StringNullableFilter<"MenuItem"> | string | null
     restaurantId?: StringNullableFilter<"MenuItem"> | string | null
     createdAt?: DateTimeFilter<"MenuItem"> | Date | string
     updatedAt?: DateTimeFilter<"MenuItem"> | Date | string
@@ -29679,6 +29694,7 @@ export namespace Prisma {
     archivedAt?: SortOrderInput | SortOrder
     imgUrl?: SortOrder
     category?: SortOrder
+    menuSection?: SortOrderInput | SortOrder
     restaurantId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -29700,6 +29716,7 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableFilter<"MenuItem"> | Date | string | null
     imgUrl?: StringFilter<"MenuItem"> | string
     category?: StringNullableListFilter<"MenuItem">
+    menuSection?: StringNullableFilter<"MenuItem"> | string | null
     restaurantId?: StringNullableFilter<"MenuItem"> | string | null
     createdAt?: DateTimeFilter<"MenuItem"> | Date | string
     updatedAt?: DateTimeFilter<"MenuItem"> | Date | string
@@ -29718,6 +29735,7 @@ export namespace Prisma {
     archivedAt?: SortOrderInput | SortOrder
     imgUrl?: SortOrder
     category?: SortOrder
+    menuSection?: SortOrderInput | SortOrder
     restaurantId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -29742,6 +29760,7 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableWithAggregatesFilter<"MenuItem"> | Date | string | null
     imgUrl?: StringWithAggregatesFilter<"MenuItem"> | string
     category?: StringNullableListFilter<"MenuItem">
+    menuSection?: StringNullableWithAggregatesFilter<"MenuItem"> | string | null
     restaurantId?: StringNullableWithAggregatesFilter<"MenuItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"MenuItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MenuItem"> | Date | string
@@ -31326,6 +31345,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     restaurant?: RestaurantCreateNestedOneWithoutMenuItemsInput
@@ -31343,6 +31363,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     restaurantId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31360,6 +31381,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     restaurant?: RestaurantUpdateOneWithoutMenuItemsNestedInput
@@ -31377,6 +31399,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     restaurantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31394,6 +31417,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     restaurantId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31410,6 +31434,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31425,6 +31450,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     restaurantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33090,6 +33116,7 @@ export namespace Prisma {
     archivedAt?: SortOrder
     imgUrl?: SortOrder
     category?: SortOrder
+    menuSection?: SortOrder
     restaurantId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -33109,6 +33136,7 @@ export namespace Prisma {
     ingredients?: SortOrder
     archivedAt?: SortOrder
     imgUrl?: SortOrder
+    menuSection?: SortOrder
     restaurantId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -33124,6 +33152,7 @@ export namespace Prisma {
     ingredients?: SortOrder
     archivedAt?: SortOrder
     imgUrl?: SortOrder
+    menuSection?: SortOrder
     restaurantId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -36563,6 +36592,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemCreateNestedManyWithoutMenuItemInput
@@ -36579,6 +36609,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
@@ -36910,6 +36941,7 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableFilter<"MenuItem"> | Date | string | null
     imgUrl?: StringFilter<"MenuItem"> | string
     category?: StringNullableListFilter<"MenuItem">
+    menuSection?: StringNullableFilter<"MenuItem"> | string | null
     restaurantId?: StringNullableFilter<"MenuItem"> | string | null
     createdAt?: DateTimeFilter<"MenuItem"> | Date | string
     updatedAt?: DateTimeFilter<"MenuItem"> | Date | string
@@ -37946,6 +37978,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     restaurant?: RestaurantCreateNestedOneWithoutMenuItemsInput
@@ -37962,6 +37995,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     restaurantId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38035,6 +38069,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     restaurant?: RestaurantUpdateOneWithoutMenuItemsNestedInput
@@ -38051,6 +38086,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     restaurantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40160,6 +40196,7 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     imgUrl: string
     category?: MenuItemCreatecategoryInput | string[]
+    menuSection?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -40236,6 +40273,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUpdateManyWithoutMenuItemNestedInput
@@ -40252,6 +40290,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
@@ -40268,6 +40307,7 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     imgUrl?: StringFieldUpdateOperationsInput | string
     category?: MenuItemUpdatecategoryInput | string[]
+    menuSection?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

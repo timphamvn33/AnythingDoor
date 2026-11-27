@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '@src/auth/use-cases/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/use-cases/guards/roles.guard';
 import { Role } from '@db/generated/prisma';
 import { Roles } from '@auth/decorators/role.decorators';
+import { User } from '../user/decorators/user.decorator';
 
 @Controller('menu-items')
 export class MenuItemController {
@@ -31,6 +32,28 @@ export class MenuItemController {
   @Get('getAllItem/:id')
   getAllMenuItemByID(@Param('id') id: string) {
     return this.menuItemService.findAllMenuItemByRestaurantId(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.restaurant_owner)
+  @Post('section/:storeId')
+  renameSection(
+    @Param('storeId') storeId: string,
+    @User('userId') userId: string,
+    @Body() body: { section: string | null; title: string },
+  ) {
+    return this.menuItemService.renameSection(storeId, userId, body);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.restaurant_owner)
+  @Delete('section/:storeId')
+  deleteSection(
+    @Param('storeId') storeId: string,
+    @User('userId') userId: string,
+    @Body() body: { section: string | null },
+  ) {
+    return this.menuItemService.deleteSection(storeId, userId, body);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -22,6 +22,24 @@ export const updateItem = async (itemId: String, data: ItemPayload) => {
   }
 };
 
+export const renameMenuSection = async (storeId: string, section: string | null, title: string) => {
+  try {
+    await api.post(`${ITEMS_ENDPOINTS.RENAME_SECTION}/${storeId}`, { section, title });
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Unable to rename the menu table.';
+    throw new Error(message);
+  }
+};
+
+export const deleteMenuSection = async (storeId: string, section: string | null) => {
+  try {
+    await api.delete(`${ITEMS_ENDPOINTS.RENAME_SECTION}/${storeId}`, { data: { section } });
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Unable to delete the menu table.';
+    throw new Error(message);
+  }
+};
+
 export const getAllItemByStore = async (storeId: string) => {
   try {
     const res = api.get(`${ITEMS_ENDPOINTS.GET_ALL_ITEM}/${storeId}`);

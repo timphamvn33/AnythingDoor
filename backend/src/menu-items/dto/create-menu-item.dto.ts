@@ -22,6 +22,10 @@ export class CreateMenuItemDto {
   @IsString()
   ingredients?: string;
 
+  @IsOptional()
+  @IsString()
+  menuSection?: string | null;
+
   @IsString()
   restaurantId: string | undefined;
 
